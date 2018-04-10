@@ -4,6 +4,9 @@
 /[Bb]uild/
 /[Bb]uilds/
 /Assets/AssetStoreTools*
+hod cloud 2d/
+hod cloud 2d.sln
+hod cloud 2d.userprefs/
 
 # Visual Studio 2015 cache directory
 /.vs/
