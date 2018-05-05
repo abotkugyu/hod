@@ -41,7 +41,7 @@ public class SingletonMonoBehaviour<T> : MonoBehaviour where T : SingletonMonoBe
 
 public class ConfigComponent : SingletonMonoBehaviour<ConfigComponent>
 {
-	private readonly string basePath = "Resources/Config/";
+	private readonly string basePath = "Config/";
 
 	[SerializeField] private ConfigEnvironment targetEnv = ConfigEnvironment.Development;
 	private ApplicationConfigs config;
@@ -72,11 +72,8 @@ public class ConfigComponent : SingletonMonoBehaviour<ConfigComponent>
 		switch (targetEnv)
 		{
 		case ConfigEnvironment.Development:
-			Debug.Log ("Load 'Development' conf");
-			Resources.Load<ApplicationConfigs> (basePath + "Development");
-			Debug.Log ("Load 'Development' conf1");
-			return null;
-
+			Debug.Log (basePath);
+			return Resources.Load<ApplicationConfigs> (basePath + "Development");
 		case ConfigEnvironment.Staging:
 			Debug.Log("Load 'Staging' conf");
 			return Resources.Load<ApplicationConfigs>(basePath + "Staging");
