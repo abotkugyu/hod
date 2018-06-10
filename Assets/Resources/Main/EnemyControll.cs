@@ -2,18 +2,26 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameMain : MonoBehaviour {
+//敵情報管理
+public class EnemyControll : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		GameMap map = GetComponent<GameMap>();
-		map.create ();
-
+		
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		var conf = ConfigProvider.Api;
-	}
 		
+	}
+
+    public void generate()
+    {
+        
+    }
+
+    public void repop()
+    {
+        
+    }
 }

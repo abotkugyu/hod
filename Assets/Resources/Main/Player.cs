@@ -23,29 +23,11 @@ public class Player : MonoBehaviour {
 			is_move = true;
 			move (x, z);
 		} else {
-			Rigidbody transform = GetComponent<Rigidbody>();
-			Vector3 now_position = transform.position;
-			Rigidbody rigidbody = GetComponent<Rigidbody>();
-			if (target_position.x != now_position.x) {
-				if (target_position.x + 1 < now_position.x ) {
-					rigidbody.velocity = Vector3.zero;
-					is_move = false;
-				}else if (target_position.x - 1 > now_position.x) {
-					rigidbody.velocity = Vector3.zero;
-					is_move = false;
-				}
-			} else if (target_position.z != now_position.z) {
-				if (target_position.z + 1 < now_position.z) {
-					rigidbody.velocity = Vector3.zero;
-					is_move = false;
-				}
-				else if (target_position.z - 1 > now_position.z) {
-					rigidbody.velocity = Vector3.zero;
-					is_move = false;
-				}
-			}
+            moving();
 		}
 	}
+
+    //移動処理
 	void move (float x,float z) {
 		Rigidbody transform = GetComponent<Rigidbody>();
 		Vector3 now_position = transform.position;
@@ -58,7 +40,43 @@ public class Player : MonoBehaviour {
 		rigidbody.AddForce(x, 0, z, ForceMode.Acceleration);
         target_position.x = now_position.x;
         target_position.z = now_position.z;
-
-		//is_move = false;
 	}
+    void moving(){
+        Rigidbody transform = GetComponent<Rigidbody>();
+        Vector3 now_position = transform.position;
+        Rigidbody rigidbody = GetComponent<Rigidbody>();
+        if (target_position.x != now_position.x)
+        {
+            if (target_position.x + 1 < now_position.x)
+            {
+                rigidbody.velocity = Vector3.zero;
+                is_move = false;
+            }
+            else if (target_position.x - 1 > now_position.x)
+            {
+                rigidbody.velocity = Vector3.zero;
+                is_move = false;
+            }
+        }
+        else if (target_position.z != now_position.z)
+        {
+            if (target_position.z + 1 < now_position.z)
+            {
+                rigidbody.velocity = Vector3.zero;
+                is_move = false;
+            }
+            else if (target_position.z - 1 > now_position.z)
+            {
+                rigidbody.velocity = Vector3.zero;
+                is_move = false;
+            }
+        }
+    }
+
+    //ダメージ計算
+    void damage(int value)
+    {
+        Hud hud = (GameObject.Find("Hud")).GetComponent<Hud>();
+        hud.update_health(value);
+    }
 }

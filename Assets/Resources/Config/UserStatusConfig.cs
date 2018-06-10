@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class StatusConfig
+public class UserStatus
 {
+    //座標
+    public Vector3 position;
     public int hp;
     public int mp;
     //１ターンの行動回数
@@ -16,7 +18,7 @@ public class StatusConfig
     //行動パターン
     public int[] action_pattern;
     //種族
-    public int type;
+    public int blood;
     //名前
     public string name;
     //攻撃力
@@ -27,5 +29,8 @@ public class StatusConfig
     public int base_hit_rate;
     //回避力
     public int base_avoid_rate;
-    //
+    //属性
+    public int element;
+    //jump
+    public int jump;
 }
