@@ -9,15 +9,14 @@ public class Player : MonoBehaviour {
 	}
 
 	public float speed = 4.0f;
-	public int last_key_pressed = 0;
 	public bool is_move = false;
 	public Vector3 target_position;
 
 	// Update is called once per frame
 	void Update () {
 
-		float x = Input.GetAxisRaw ("Horizontal")*100;
-		float z = Input.GetAxisRaw ("Vertical")*100;
+		float x = Input.GetAxisRaw ("Horizontal")*200;
+		float z = Input.GetAxisRaw ("Vertical")*200;
 		//Time.time - last_key_pressed > 1.00f && 
 
 		if (!is_move && (x != 0 || z != 0)) {
@@ -57,7 +56,8 @@ public class Player : MonoBehaviour {
 		//Impulse	その質量を使用して、rigidbodyに瞬時に速度変化を追加します。
 		//VelocityChange	その質量を無視して、rigidbodyに瞬時に速度変化を追加します。
 		rigidbody.AddForce(x, 0, z, ForceMode.Acceleration);
-		target_position.x = now_position.x;
+        target_position.x = now_position.x;
+        target_position.z = now_position.z;
 
 		//is_move = false;
 	}
