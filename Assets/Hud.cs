@@ -12,8 +12,8 @@ public class Hud : MonoBehaviour {
         hp = (GameObject.Find("HealthSlider")).GetComponent<Slider>();
     }
 
-	public void update_health(int health)
-	{
+    public void update_health(int health)
+    {
         hp.value = health;
-	}
+    }
 }
