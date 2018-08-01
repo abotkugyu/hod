@@ -6,8 +6,9 @@ public class Player : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+        
 	}
-
+   
 	public float speed = 4.0f;
 	public bool is_move = false;
 	public Vector3 target_position;
@@ -71,12 +72,28 @@ public class Player : MonoBehaviour {
                 is_move = false;
             }
         }
+
+        use_hp(50);
+        use_mp(40);
+        use_ep(20);
     }
 
     //ダメージ計算
-    void damage(int value)
+    void use_hp(int value)
     {
         Hud hud = (GameObject.Find("Hud")).GetComponent<Hud>();
         hud.update_health(value);
+    }
+    //mp計算
+    void use_mp(int value)
+    {
+        Hud hud = (GameObject.Find("Hud")).GetComponent<Hud>();
+        hud.update_magic(value);
+    }
+    //ep計算
+    void use_ep(int value)
+    {
+        Hud hud = (GameObject.Find("Hud")).GetComponent<Hud>();
+        hud.update_energy(value);
     }
 }
