@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
+  m_IndirectSpecularColor: {r: 0.4465785, g: 0.49641252, b: 0.574817, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -516,6 +516,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hp: {fileID: 0}
+  mp: {fileID: 0}
+  ep: {fileID: 0}
 --- !u!1 &786666873
 GameObject:
   m_ObjectHideFlags: 0
@@ -1073,6 +1075,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd3f402f81e5f4264a83e15b0d5c8358, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  status:
+    position: {x: 0, y: 0, z: 0}
+    hp: 50
+    mp: 40
+    ep: 30
+    speed: 0
+    speed_priority: 0
+    ability: 0
+    action_pattern: 
+    blood: 0
+    name: 
+    attack: 0
+    defence: 0
+    base_hit_rate: 0
+    base_avoid_rate: 0
+    element: 0
+    jump: 0
+    is_action: 0
   speed: 4
   is_move: 0
   target_position: {x: 0, y: 0, z: 0}

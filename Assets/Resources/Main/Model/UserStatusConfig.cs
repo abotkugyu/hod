@@ -7,8 +7,9 @@ public class UserStatus
 {
     //座標
     public Vector3 position;
-    public int hp;
-    public int mp;
+    public int hp = 50;
+    public int mp = 40;
+    public int ep = 30;
     //１ターンの行動回数
     public int speed;
     //行動順
@@ -33,4 +34,6 @@ public class UserStatus
     public int element;
     //jump
     public int jump;
+    //行動したか
+    public bool is_action = false;
 }

@@ -4,9 +4,10 @@ using UnityEngine;
 
 public class Player : MonoBehaviour {
 
-	// Use this for initialization
-	void Start () {
-        
+    // Use this for initialization
+    public UserStatus status;
+    void Start () {
+        status = new UserStatus();
 	}
    
 	public float speed = 4.0f;
@@ -20,7 +21,7 @@ public class Player : MonoBehaviour {
 		float z = Input.GetAxisRaw ("Vertical")*200;
 		//Time.time - last_key_pressed > 1.00f && 
 
-		if (!is_move && (x != 0 || z != 0)) {
+        if (!is_move && (x != 0 || z != 0) && status.is_action == false) {
 			is_move = true;
 			move (x, z);
 		} else {
@@ -42,6 +43,7 @@ public class Player : MonoBehaviour {
         target_position.x = now_position.x;
         target_position.z = now_position.z;
 	}
+
     void moving(){
         Rigidbody transform = GetComponent<Rigidbody>();
         Vector3 now_position = transform.position;
@@ -52,11 +54,13 @@ public class Player : MonoBehaviour {
             {
                 rigidbody.velocity = Vector3.zero;
                 is_move = false;
+                status.is_action = true;
             }
             else if (target_position.x - 1 > now_position.x)
             {
                 rigidbody.velocity = Vector3.zero;
                 is_move = false;
+                status.is_action = true;
             }
         }
         else if (target_position.z != now_position.z)
@@ -65,18 +69,21 @@ public class Player : MonoBehaviour {
             {
                 rigidbody.velocity = Vector3.zero;
                 is_move = false;
+                status.is_action = true;
             }
             else if (target_position.z - 1 > now_position.z)
             {
                 rigidbody.velocity = Vector3.zero;
                 is_move = false;
+                status.is_action = true;
             }
         }
 
-        use_hp(50);
-        use_mp(40);
-        use_ep(20);
+        use_hp(status.hp);
+        use_mp(status.mp);
+        use_ep(status.ep);
     }
+
 
     //ダメージ計算
     void use_hp(int value)
@@ -95,5 +102,10 @@ public class Player : MonoBehaviour {
     {
         Hud hud = (GameObject.Find("Hud")).GetComponent<Hud>();
         hud.update_energy(value);
+    }
+
+    public void turn_reset()
+    {
+        status.is_action = false;
     }
 }
