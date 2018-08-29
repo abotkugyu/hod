@@ -17,20 +17,14 @@ public class Player : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-		float x = Input.GetAxisRaw ("Horizontal")*200;
-		float z = Input.GetAxisRaw ("Vertical")*200;
-		//Time.time - last_key_pressed > 1.00f && 
-
-        if (!is_move && (x != 0 || z != 0) && status.is_action == false) {
-			is_move = true;
-			move (x, z);
-		} else {
+        if (is_move && status.is_action == false){
             moving();
 		}
 	}
 
     //移動処理
-	void move (float x,float z) {
+	public void move (float x,float z) {
+        is_move = true;
 		Rigidbody transform = GetComponent<Rigidbody>();
 		Vector3 now_position = transform.position;
 		 
@@ -104,8 +98,8 @@ public class Player : MonoBehaviour {
         hud.update_energy(value);
     }
 
-    public void turn_reset()
-    {
-        status.is_action = false;
+    public void set_position(Vector3 position){
+        status.position = new Vector3(status.position.x + position.x, status.position.y + position.y, status.position.z + position.z);
     }
+
 }

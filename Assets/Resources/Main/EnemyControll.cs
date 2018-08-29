@@ -19,6 +19,7 @@ public class EnemyControll : MonoBehaviour
         }
     }
 
+    //敵が全部動いたかどうか
     public bool is_all_action()
     {
         bool is_end = true;
@@ -34,6 +35,7 @@ public class EnemyControll : MonoBehaviour
         return is_end;
     }
 
+    //全ての敵に行動させる
     public void all_action()
     {
         for (int x = 0; x < enemy_list.Count; x++)
@@ -42,6 +44,7 @@ public class EnemyControll : MonoBehaviour
         }
     }
 
+    //敵の行動フラグをリセットする
     public void turn_reset(){
         for (int x = 0; x < enemy_list.Count; x++)
         {

@@ -5,13 +5,14 @@ using UnityEngine;
 public class GameMain : MonoBehaviour {
 
     // Use this for initialization
-    public Player my;
+    public Player player;
     public EnemyControll enemies;
+    public GameStatus status;
 	void Start () {
-        my = (GameObject.Find("Player")).GetComponent<Player>();
+        player = (GameObject.Find("Player")).GetComponent<Player>();
         enemies = new EnemyControll();
         enemies.generate();
-        Debug.Log("a");
+        status = new GameStatus();
 	}
     public int phase = 2;
     public int turn = 1;
@@ -26,20 +27,29 @@ public class GameMain : MonoBehaviour {
             
         } else if (phase == 2) {
             //user_turn=1,enemy_turn=2
-            if (turn == 1)
+            if (status.turn == 1)
             {
-                if (my.status.is_action == true) {
-                    turn = 2;
+                float x = Input.GetAxisRaw("Horizontal") * 200;
+                float z = Input.GetAxisRaw("Vertical") * 200;
+                if (!player.is_move && (x != 0 || z != 0) && player.status.is_action == false) {
+                    player.move(x, z);
+                    player.set_position(new Vector3((x != 0 ? Mathf.Sign(x) : 0), 0, (z != 0 ? Mathf.Sign(z) : 0)));
+                }
+
+                //自分が動いたら敵のターンにする
+                if (player.status.is_action == true) {
                     enemies.turn_reset();
                     enemies.all_action();
+                    status.turn = 2;
                 }
             }
-            else if (turn == 2)
+            else if (status.turn == 2)
             {
+                //敵が全部動いていればユーザーのターンにする
                 if(enemies.is_all_action() == true)
                 {
-                    turn = 1;
-                    my.turn_reset();
+                    player.status.is_action = false;
+                    status.turn = 1;
                 }
             }
 

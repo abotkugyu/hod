@@ -6,6 +6,6 @@ using UnityEngine;
 public class GameStatus
 {
     //座標
-    public int turn;
+    public int turn = 1;
     public int map_type;
 }

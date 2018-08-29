@@ -17,8 +17,8 @@ public class Enemy : MonoBehaviour {
     public Vector3 target_position;
 
     public void action (){
-        int x = Random.Range(0, 100) - 50;
-        int z = Random.Range(0, 100) - 50;
+        float x = Mathf.Sign(Random.Range(-1.0f, 1.0f)) * 200;
+        float z = Mathf.Sign(Random.Range(-1.0f, 1.0f)) * 200;
         is_move = true;
         move(x, z);
     }
@@ -46,6 +46,7 @@ public class Enemy : MonoBehaviour {
         rigidbody.AddForce(x, 0, z, ForceMode.Acceleration);
         target_position.x = now_position.x;
         target_position.z = now_position.z;
+        Debug.Log(target_position.x);
     }
 
     void moving()

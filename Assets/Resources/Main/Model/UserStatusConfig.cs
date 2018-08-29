@@ -6,7 +6,7 @@ using UnityEngine;
 public class UserStatus
 {
     //座標
-    public Vector3 position;
+    public Vector3 position = new Vector3(0,0,0);
     public int hp = 50;
     public int mp = 40;
     public int ep = 30;
