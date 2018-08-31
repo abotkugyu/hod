@@ -16,11 +16,17 @@ public class Player : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-
         if (is_move && status.is_action == false){
             moving();
 		}
 	}
+
+    //攻撃処理
+    public void attack()
+    {
+        
+        status.is_action = true;
+    }
 
     //移動処理
 	public void move (float x,float z) {
@@ -98,8 +104,15 @@ public class Player : MonoBehaviour {
         hud.update_energy(value);
     }
 
+    //position設定
     public void set_position(Vector3 position){
         status.position = new Vector3(status.position.x + position.x, status.position.y + position.y, status.position.z + position.z);
+    }
+
+    //向き設定
+    public void set_direction(Vector3 position)
+    {
+        status.direction = new Vector3(position.x, position.y, position.z);
     }
 
 }

@@ -14,7 +14,7 @@ public class EnemyControll : MonoBehaviour
         for (int x = 0; x < num; x++)
         {
             GameObject obj = Object.Instantiate(Resources.Load("Object/Enemy")) as GameObject;
-            obj.transform.Translate(num + 1, 0, num + 1);
+            obj.transform.Translate(x*2 + 1, 0, x*2 + 1);
             enemy_list.Add(obj.GetComponent<Enemy>());
         }
     }

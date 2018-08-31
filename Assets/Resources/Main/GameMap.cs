@@ -6,11 +6,11 @@ public class GameMap : MonoBehaviour {
 
 	public int max_map_x = 100;
     public int max_map_y = 100;
-	public int[,] map;
+    public TileStatus[,] map;
 
 	// Use this for initialization
 	void Start () {
-        map = new int[max_map_x,max_map_y];
+        map = new TileStatus[max_map_x,max_map_y];
 	}
 	
 	// Update is called once per frame
@@ -18,10 +18,9 @@ public class GameMap : MonoBehaviour {
 		
 	}
 
-	public void create() {
+    public void generate() {
         List<int> map_x = generate_map ();
         List<List<int>> map_y = new List<List<int>>();
-        int[,] map_list = new int[max_map_x, max_map_y];
         int count_x = 0;
         for (int x = 0; x < map_x.Count; x++)
         {
@@ -54,7 +53,6 @@ public class GameMap : MonoBehaviour {
                 }
             }
         }
-
     }
 
     int[,] generate_floor(int x,int y,int seq_x,int seq_y)
@@ -71,13 +69,16 @@ public class GameMap : MonoBehaviour {
             {
                 if (l >= start_x && l <= start_x + floor_x && m >= start_y && m <= start_y + floor_y)
                 {
-                    GameObject original = GameObject.Find("Tile");
+                    GameObject original = Object.Instantiate(Resources.Load("Object/Tile")) as GameObject;
                     GameObject copied = Object.Instantiate(original) as GameObject;
                     copied.transform.Translate(seq_x + l, 0, seq_y + m);
                     //Debug.Log((seq_x + l) + " : " + (seq_y + m));
                     result[l, m] = 1;
+                    map[l + seq_x, m + seq_y] = new TileStatus(); 
+                    map[l + seq_x, m + seq_y].tile_type = 1;
                 }else{
-                    result[l, m] = 0;                    
+                    result[l, m] = 0;   
+                    map[l + seq_x, m + seq_y] = new TileStatus();
                 }
             }
         }
@@ -111,6 +112,5 @@ public class GameMap : MonoBehaviour {
 		for (int x = 0; x < data.Count; x++) {
 			log += data[x].ToString ()+",";
 		}
-		Debug.Log (log);
 	}
 }

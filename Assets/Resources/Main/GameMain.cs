@@ -6,12 +6,10 @@ public class GameMain : MonoBehaviour {
 
     // Use this for initialization
     public Player player;
-    public EnemyControll enemies;
+    public EnemyControll enemies = new EnemyControll();
     public GameStatus status;
 	void Start () {
         player = (GameObject.Find("Player")).GetComponent<Player>();
-        enemies = new EnemyControll();
-        enemies.generate();
         status = new GameStatus();
 	}
     public int phase = 2;
@@ -29,11 +27,20 @@ public class GameMain : MonoBehaviour {
             //user_turn=1,enemy_turn=2
             if (status.turn == 1)
             {
+                //攻撃
+                if (Input.GetKey(KeyCode.X) && player.status.is_action == false)
+                {
+                    player.attack();
+                }
+
+                //移動
                 float x = Input.GetAxisRaw("Horizontal") * 200;
                 float z = Input.GetAxisRaw("Vertical") * 200;
-                if (!player.is_move && (x != 0 || z != 0) && player.status.is_action == false) {
+                if (!player.is_move && (x != 0 || z != 0) && player.status.is_action == false)
+                {
                     player.move(x, z);
                     player.set_position(new Vector3((x != 0 ? Mathf.Sign(x) : 0), 0, (z != 0 ? Mathf.Sign(z) : 0)));
+                    player.set_direction(new Vector3((x != 0 ? Mathf.Sign(x) : 0), 0, (z != 0 ? Mathf.Sign(z) : 0)));
                 }
 
                 //自分が動いたら敵のターンにする
@@ -57,8 +64,25 @@ public class GameMain : MonoBehaviour {
         if (is_create_map == false)
         {
             GameMap map = GetComponent<GameMap>();
-            map.create();
+            map.generate();
             is_create_map = !is_create_map;
+            //player配置 デフォルト下向き
+            for (int x = 0; x < map.max_map_x; x++)
+            {
+                for (int z = 0; z < map.max_map_y; z++)
+                {
+                    if (map.map[x, z].chara_type == 0)
+                    {
+                        map.map[x, z].chara_type = 1;
+                        player.set_position(new Vector3(x, 0, z));
+                        player.set_direction(new Vector3(0, 0, -1));
+                        break;
+                    }
+                }
+            }
+
+            //enemy 配置
+            enemies.generate();
         }
 	}
 		

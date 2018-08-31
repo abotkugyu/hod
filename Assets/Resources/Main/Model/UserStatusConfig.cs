@@ -6,7 +6,11 @@ using UnityEngine;
 public class UserStatus
 {
     //座標
+    public string id = "";
+    //座標
     public Vector3 position = new Vector3(0,0,0);
+    //向き
+    public Vector3 direction = new Vector3(0, 0, 0);
     public int hp = 50;
     public int mp = 40;
     public int ep = 30;
@@ -23,9 +27,9 @@ public class UserStatus
     //名前
     public string name;
     //攻撃力
-    public int attack;
+    public int attack = 100;
     //防御力
-    public int defence;
+    public int defence = 100;
     //命中力
     public int base_hit_rate;
     //回避力
