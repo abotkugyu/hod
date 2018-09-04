@@ -24,7 +24,7 @@ public class Player : MonoBehaviour {
     //攻撃処理
     public void attack()
     {
-        
+        Debug.Log("att");
         status.is_action = true;
     }
 
@@ -105,7 +105,8 @@ public class Player : MonoBehaviour {
     }
 
     //position設定
-    public void set_position(Vector3 position){
+    public void set_position(Vector3 position)
+    {
         status.position = new Vector3(status.position.x + position.x, status.position.y + position.y, status.position.z + position.z);
     }
 

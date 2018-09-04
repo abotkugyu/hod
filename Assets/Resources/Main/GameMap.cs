@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
+//100*100を50,25...と分割していき確率で部屋を作る
 public class GameMap : MonoBehaviour {
 
 	public int max_map_x = 100;
@@ -11,6 +13,12 @@ public class GameMap : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         map = new TileStatus[max_map_x,max_map_y];
+        for (int x = 0; x < max_map_x; x++) {
+            for (int z = 0; z < max_map_y; z++)
+            {
+                map[x, z] = new TileStatus();
+            }            
+        }
 	}
 	
 	// Update is called once per frame
@@ -27,14 +35,7 @@ public class GameMap : MonoBehaviour {
             List<int> list_y = generate_map ();
             map_y.Add(list_y);
             int count_y = 0;
-            /*
-            for (int y = 0; y < map_x[x]; y++)
-            {
-                GameObject original = GameObject.Find("Tile");
-                GameObject copied = Object.Instantiate(original) as GameObject;
-                copied.transform.Translate(count_x+y, 0, 0);
-            }
-            */
+
             for (int y = 0; y < list_y.Count; y++){
                 int[,] floor = generate_floor(map_x[x],list_y[y],count_x,count_y);
                 count_y += list_y[y];
@@ -72,13 +73,10 @@ public class GameMap : MonoBehaviour {
                     GameObject original = Object.Instantiate(Resources.Load("Object/Tile")) as GameObject;
                     GameObject copied = Object.Instantiate(original) as GameObject;
                     copied.transform.Translate(seq_x + l, 0, seq_y + m);
-                    //Debug.Log((seq_x + l) + " : " + (seq_y + m));
                     result[l, m] = 1;
-                    map[l + seq_x, m + seq_y] = new TileStatus(); 
                     map[l + seq_x, m + seq_y].tile_type = 1;
                 }else{
                     result[l, m] = 0;   
-                    map[l + seq_x, m + seq_y] = new TileStatus();
                 }
             }
         }

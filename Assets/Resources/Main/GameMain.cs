@@ -6,11 +6,12 @@ public class GameMain : MonoBehaviour {
 
     // Use this for initialization
     public Player player;
-    public EnemyControll enemies = new EnemyControll();
+    public EnemyControll enemies;
     public GameStatus status;
 	void Start () {
         player = (GameObject.Find("Player")).GetComponent<Player>();
         status = new GameStatus();
+        enemies = new EnemyControll();
 	}
     public int phase = 2;
     public int turn = 1;

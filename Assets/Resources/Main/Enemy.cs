@@ -46,7 +46,6 @@ public class Enemy : MonoBehaviour {
         rigidbody.AddForce(x, 0, z, ForceMode.Acceleration);
         target_position.x = now_position.x;
         target_position.z = now_position.z;
-        Debug.Log(target_position.x);
     }
 
     void moving()
