@@ -8,8 +8,14 @@ public class GameMain : MonoBehaviour {
     public Player player;
     public EnemyControll enemies;
     public GameStatus status;
+    public GameMap map;
 	void Start () {
-        player = (GameObject.Find("Player")).GetComponent<Player>();
+        map = GetComponent<GameMap>();
+        GameObject obj = GameObject.Find("Player");
+        player = (obj).GetComponent<Player>();
+        Debug.Log(obj.GetInstanceID());
+        player.status.id = obj.GetInstanceID();
+
         status = new GameStatus();
         enemies = new EnemyControll();
 	}
@@ -31,7 +37,7 @@ public class GameMain : MonoBehaviour {
                 //攻撃
                 if (Input.GetKey(KeyCode.X) && player.status.is_action == false)
                 {
-                    player.attack();
+                    player.attack(map);
                 }
 
                 //移動
@@ -64,7 +70,6 @@ public class GameMain : MonoBehaviour {
         }
         if (is_create_map == false)
         {
-            GameMap map = GetComponent<GameMap>();
             map.generate();
             is_create_map = !is_create_map;
             //player配置 デフォルト下向き
@@ -75,12 +80,12 @@ public class GameMain : MonoBehaviour {
                     if (map.map[x, z].chara_type == 0)
                     {
                         map.map[x, z].chara_type = 1;
-                        player.set_position(new Vector3(x, 0, z));
-                        player.set_direction(new Vector3(0, 0, -1));
+//                        player.set_position(new Vector3(0, 0, 0));
                         break;
                     }
                 }
             }
+            player.set_direction(new Vector3(0, 0, -1));
 
             //enemy 配置
             enemies.generate();

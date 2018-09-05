@@ -5,9 +5,12 @@ using UnityEngine;
 public class Player : MonoBehaviour {
 
     // Use this for initialization
-    public UserStatus status;
+    public UserStatus status = new UserStatus();
     void Start () {
-        status = new UserStatus();
+        Debug.Log(status.position);
+        set_hp(status.hp);
+        set_mp(status.mp);
+        set_ep(status.ep);
 	}
    
 	public float speed = 4.0f;
@@ -22,9 +25,17 @@ public class Player : MonoBehaviour {
 	}
 
     //攻撃処理
-    public void attack()
+    public void attack(GameMap map)
     {
-        Debug.Log("att");
+        Vector3 pos = status.position + status.direction;
+        if (pos.x < 0 || pos.z < 0){
+            return;
+        }
+        if (map.map[(int)pos.x, (int)pos.z].chara_type == 0){
+            status.hp -= 10;
+        }
+        Debug.Log(status.id);
+        set_hp(status.hp);
         status.is_action = true;
     }
 
@@ -79,26 +90,23 @@ public class Player : MonoBehaviour {
             }
         }
 
-        use_hp(status.hp);
-        use_mp(status.mp);
-        use_ep(status.ep);
     }
 
 
     //ダメージ計算
-    void use_hp(int value)
+    void set_hp(int value)
     {
         Hud hud = (GameObject.Find("Hud")).GetComponent<Hud>();
         hud.update_health(value);
     }
     //mp計算
-    void use_mp(int value)
+    void set_mp(int value)
     {
         Hud hud = (GameObject.Find("Hud")).GetComponent<Hud>();
         hud.update_magic(value);
     }
     //ep計算
-    void use_ep(int value)
+    void set_ep(int value)
     {
         Hud hud = (GameObject.Find("Hud")).GetComponent<Hud>();
         hud.update_energy(value);
@@ -115,5 +123,6 @@ public class Player : MonoBehaviour {
     {
         status.direction = new Vector3(position.x, position.y, position.z);
     }
+
 
 }

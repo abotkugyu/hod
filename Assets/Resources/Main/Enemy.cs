@@ -6,10 +6,9 @@ public class Enemy : MonoBehaviour {
 
 	// Use this for initialization
 
-    public UserStatus status;
+    public UserStatus status = new UserStatus();
     void Start()
     {
-        status = new UserStatus();
     }
 
     public float speed = 4.0f;

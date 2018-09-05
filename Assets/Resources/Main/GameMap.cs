@@ -10,23 +10,16 @@ public class GameMap : MonoBehaviour {
     public int max_map_y = 100;
     public TileStatus[,] map;
 
-	// Use this for initialization
-	void Start () {
-        map = new TileStatus[max_map_x,max_map_y];
-        for (int x = 0; x < max_map_x; x++) {
+    public void generate() {
+        map = new TileStatus[max_map_x, max_map_y];
+        for (int x = 0; x < max_map_x; x++)
+        {
             for (int z = 0; z < max_map_y; z++)
             {
                 map[x, z] = new TileStatus();
-            }            
+            }
         }
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
 
-    public void generate() {
         List<int> map_x = generate_map ();
         List<List<int>> map_y = new List<List<int>>();
         int count_x = 0;
@@ -37,7 +30,8 @@ public class GameMap : MonoBehaviour {
             int count_y = 0;
 
             for (int y = 0; y < list_y.Count; y++){
-                int[,] floor = generate_floor(map_x[x],list_y[y],count_x,count_y);
+                //int[,] floor = 
+                generate_floor(map_x[x],list_y[y],count_x,count_y);
                 count_y += list_y[y];
             }
             count_x += map_x[x];
@@ -71,8 +65,7 @@ public class GameMap : MonoBehaviour {
                 if (l >= start_x && l <= start_x + floor_x && m >= start_y && m <= start_y + floor_y)
                 {
                     GameObject original = Object.Instantiate(Resources.Load("Object/Tile")) as GameObject;
-                    GameObject copied = Object.Instantiate(original) as GameObject;
-                    copied.transform.Translate(seq_x + l, 0, seq_y + m);
+                    original.transform.Translate(seq_x + l, 0, seq_y + m);
                     result[l, m] = 1;
                     map[l + seq_x, m + seq_y].tile_type = 1;
                 }else{

@@ -6,9 +6,9 @@ using UnityEngine;
 public class UserStatus
 {
     //座標
-    public string id = "";
+    public int id = 0;
     //座標
-    public Vector3 position = new Vector3(0,0,0);
+    public Vector3 position = new Vector3(0, 0, 0);
     //向き
     public Vector3 direction = new Vector3(0, 0, 0);
     public int hp = 50;

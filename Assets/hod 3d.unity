@@ -688,22 +688,6 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 896956887}
---- !u!1 &1043066504 stripped
-GameObject:
-  m_PrefabParentObject: {fileID: 1171141337560322, guid: 4f7d638767ded4f3ca0dc942d6634895,
-    type: 2}
-  m_PrefabInternal: {fileID: 218548683}
---- !u!114 &1043066505
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1043066504}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 985f095490b9340d186a415bc8712f5b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1098048977
 GameObject:
   m_ObjectHideFlags: 0
@@ -971,8 +955,8 @@ GameObject:
   - component: {fileID: 1391964842}
   - component: {fileID: 1391964841}
   - component: {fileID: 1391964840}
-  - component: {fileID: 1391964845}
   - component: {fileID: 1391964846}
+  - component: {fileID: 1391964845}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -989,9 +973,32 @@ MonoBehaviour:
   m_GameObject: {fileID: 1391964839}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ed4f10b6c0cba4a1aacad9cc3820c399, type: 3}
+  m_Script: {fileID: 11500000, guid: bd3f402f81e5f4264a83e15b0d5c8358, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  status:
+    id: 0
+    position: {x: 0, y: 0, z: 0}
+    direction: {x: 0, y: 0, z: 0}
+    hp: 50
+    mp: 40
+    ep: 30
+    speed: 0
+    speed_priority: 0
+    ability: 0
+    action_pattern: 
+    blood: 0
+    name: 
+    attack: 100
+    defence: 100
+    base_hit_rate: 0
+    base_avoid_rate: 0
+    element: 0
+    jump: 0
+    is_action: 0
+  speed: 4
+  is_move: 0
+  target_position: {x: 0, y: 0, z: 0}
 --- !u!23 &1391964841
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1036,7 +1043,7 @@ SphereCollider:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1391964839}
   m_Material: {fileID: 0}
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.5
@@ -1063,41 +1070,20 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1391964845
-MonoBehaviour:
+--- !u!111 &1391964845
+Animation:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 114933124190470504, guid: 7adc057ed08804b54a65aeb46488f4e4,
-    type: 2}
+  m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1391964839}
   m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bd3f402f81e5f4264a83e15b0d5c8358, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  status:
-    id: 
-    position: {x: 0, y: 0, z: 0}
-    direction: {x: 0, y: 0, z: 0}
-    hp: 50
-    mp: 40
-    ep: 30
-    speed: 0
-    speed_priority: 0
-    ability: 0
-    action_pattern: 
-    blood: 0
-    name: 
-    attack: 0
-    defence: 0
-    base_hit_rate: 0
-    base_avoid_rate: 0
-    element: 0
-    jump: 0
-    is_action: 0
-  speed: 4
-  is_move: 0
-  target_position: {x: 0, y: 0, z: 0}
+  serializedVersion: 3
+  m_Animation: {fileID: 0}
+  m_Animations: []
+  m_WrapMode: 0
+  m_PlayAutomatically: 1
+  m_AnimatePhysics: 0
+  m_CullingType: 0
 --- !u!54 &1391964846
 Rigidbody:
   m_ObjectHideFlags: 0
