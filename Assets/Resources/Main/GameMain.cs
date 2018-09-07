@@ -9,6 +9,7 @@ public class GameMain : MonoBehaviour {
     public EnemyControll enemies;
     public GameStatus status;
     public GameMap map;
+
 	void Start () {
         map = GetComponent<GameMap>();
         GameObject obj = GameObject.Find("Player");
@@ -37,7 +38,7 @@ public class GameMain : MonoBehaviour {
                 //攻撃
                 if (Input.GetKey(KeyCode.X) && player.status.is_action == false)
                 {
-                    player.attack(map);
+                    player.attack(map, enemies);
                 }
 
                 //移動
@@ -80,12 +81,10 @@ public class GameMain : MonoBehaviour {
                     if (map.map[x, z].chara_type == 0)
                     {
                         map.map[x, z].chara_type = 1;
-//                        player.set_position(new Vector3(0, 0, 0));
                         break;
                     }
                 }
             }
-            player.set_direction(new Vector3(0, 0, -1));
 
             //enemy 配置
             enemies.generate();

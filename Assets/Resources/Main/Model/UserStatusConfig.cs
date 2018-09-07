@@ -5,12 +5,12 @@ using UnityEngine;
 [System.Serializable]
 public class UserStatus
 {
-    //座標
+    //id
     public int id = 0;
     //座標
     public Vector3 position = new Vector3(0, 0, 0);
-    //向き
-    public Vector3 direction = new Vector3(0, 0, 0);
+    //向き(デフォルト下向き)
+    public Vector3 direction = new Vector3(0, 0, -1);
     public int hp = 50;
     public int mp = 40;
     public int ep = 30;

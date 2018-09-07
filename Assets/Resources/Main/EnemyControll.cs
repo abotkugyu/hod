@@ -17,6 +17,7 @@ public class EnemyControll : MonoBehaviour
             obj.transform.Translate(x*2 + 1, 0, x*2 + 1);
             Enemy com = obj.GetComponent<Enemy>();
             com.status.id = obj.GetInstanceID();
+            com.status.position = new Vector3(x * 2 + 1, 0, x * 2 + 1);
             enemy_list.Add(com);
         }
     }
@@ -53,4 +54,5 @@ public class EnemyControll : MonoBehaviour
             enemy_list[x].status.is_action = false;
         }
     }
+
 }

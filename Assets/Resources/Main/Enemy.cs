@@ -18,6 +18,9 @@ public class Enemy : MonoBehaviour {
     public void action (){
         float x = Mathf.Sign(Random.Range(-1.0f, 1.0f)) * 200;
         float z = Mathf.Sign(Random.Range(-1.0f, 1.0f)) * 200;
+        set_position(new Vector3((x != 0 ? Mathf.Sign(x) : 0), 0, (z != 0 ? Mathf.Sign(z) : 0)));
+        set_direction(new Vector3((x != 0 ? Mathf.Sign(x) : 0), 0, (z != 0 ? Mathf.Sign(z) : 0)));
+  
         is_move = true;
         move(x, z);
     }
@@ -81,6 +84,27 @@ public class Enemy : MonoBehaviour {
                 is_move = false;
                 status.is_action = true;
             }
+        }
+    }
+
+    //position設定
+    public void set_position(Vector3 position)
+    {
+        status.position = new Vector3(status.position.x + position.x, status.position.y + position.y, status.position.z + position.z);
+    }
+
+    //向き設定
+    public void set_direction(Vector3 position)
+    {
+        status.direction = new Vector3(position.x, position.y, position.z);
+    }
+
+    void OnWillRenderObject()
+    {
+        //カメラに表示されている時のみ
+        if (Camera.current.name != "SceneCamera" && Camera.current.name != "Preview Camera")
+        {
+            // 処理
         }
     }
 }

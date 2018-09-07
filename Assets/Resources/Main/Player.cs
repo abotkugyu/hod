@@ -7,7 +7,6 @@ public class Player : MonoBehaviour {
     // Use this for initialization
     public UserStatus status = new UserStatus();
     void Start () {
-        Debug.Log(status.position);
         set_hp(status.hp);
         set_mp(status.mp);
         set_ep(status.ep);
@@ -25,17 +24,24 @@ public class Player : MonoBehaviour {
 	}
 
     //攻撃処理
-    public void attack(GameMap map)
+    public void attack(GameMap m,EnemyControll e)
     {
         Vector3 pos = status.position + status.direction;
         if (pos.x < 0 || pos.z < 0){
             return;
         }
-        if (map.map[(int)pos.x, (int)pos.z].chara_type == 0){
-            status.hp -= 10;
+        if (m.map[(int)pos.x, (int)pos.z].chara_type != 1){
+            for (int x = 0; x < e.enemy_list.Count; x++) {
+                if (e.enemy_list[x].status.id == m.map[(int)pos.x, (int)pos.z].chara_id){
+                    e.enemy_list[x].status.hp = 0;
+                    Destroy(e.enemy_list[x]);
+                }
+            }
+            //GameObject obj = GameObject.FindWithTag();
+            //Destroy(obj);
+            //GameObject obj = GameObjecta.Find("Player");
+            //find
         }
-        Debug.Log(status.id);
-        set_hp(status.hp);
         status.is_action = true;
     }
 
