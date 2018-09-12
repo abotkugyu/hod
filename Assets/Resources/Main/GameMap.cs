@@ -104,4 +104,6 @@ public class GameMap : MonoBehaviour {
 			log += data[x].ToString ()+",";
 		}
 	}
+
+
 }

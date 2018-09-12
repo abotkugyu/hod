@@ -14,7 +14,6 @@ public class GameMain : MonoBehaviour {
         map = GetComponent<GameMap>();
         GameObject obj = GameObject.Find("Player");
         player = (obj).GetComponent<Player>();
-        Debug.Log(obj.GetInstanceID());
         player.status.id = obj.GetInstanceID();
 
         status = new GameStatus();
@@ -28,47 +27,6 @@ public class GameMain : MonoBehaviour {
         
 		//var conf = ConfigProvider.Api;
 
-        //rest_map=1,dungen_map=2
-        if (phase == 1) {
-            
-        } else if (phase == 2) {
-            //user_turn=1,enemy_turn=2
-            if (status.turn == 1)
-            {
-                //攻撃
-                if (Input.GetKey(KeyCode.X) && player.status.is_action == false)
-                {
-                    player.attack(map, enemies);
-                }
-
-                //移動
-                float x = Input.GetAxisRaw("Horizontal") * 200;
-                float z = Input.GetAxisRaw("Vertical") * 200;
-                if (!player.is_move && (x != 0 || z != 0) && player.status.is_action == false)
-                {
-                    player.move(x, z);
-                    player.set_position(new Vector3((x != 0 ? Mathf.Sign(x) : 0), 0, (z != 0 ? Mathf.Sign(z) : 0)));
-                    player.set_direction(new Vector3((x != 0 ? Mathf.Sign(x) : 0), 0, (z != 0 ? Mathf.Sign(z) : 0)));
-                }
-
-                //自分が動いたら敵のターンにする
-                if (player.status.is_action == true) {
-                    enemies.turn_reset();
-                    enemies.all_action();
-                    status.turn = 2;
-                }
-            }
-            else if (status.turn == 2)
-            {
-                //敵が全部動いていればユーザーのターンにする
-                if(enemies.is_all_action() == true)
-                {
-                    player.status.is_action = false;
-                    status.turn = 1;
-                }
-            }
-
-        }
         if (is_create_map == false)
         {
             map.generate();
@@ -88,6 +46,63 @@ public class GameMain : MonoBehaviour {
 
             //enemy 配置
             enemies.generate();
+        }
+
+        //rest_map=1,dungen_map=2
+        if (phase == 1) {
+            
+        } else if (phase == 2) {
+            //user_turn=1,enemy_turn=2
+            if (status.turn == 1)
+            {
+                //攻撃
+                if (Input.GetKey(KeyCode.X) && player.status.is_action == false)
+                {
+                    player.attack(map, enemies);
+                }
+
+                //移動
+                float x = Input.GetAxisRaw("Horizontal") * 200;
+                float z = Input.GetAxisRaw("Vertical") * 200;
+                if (x != 0 || z != 0)
+                {
+                    //移動先の情報、何もいないか
+                    int n_x = (x != 0 ? (int)Mathf.Sign(x) : 0);
+                    int n_z = (z != 0 ? (int)Mathf.Sign(z) : 0);
+                    if ((int)player.status.position.x + n_x >= 0 && (int)player.status.position.z + n_z >= 0 &&
+                        map.map[(int)player.status.position.x + n_x, (int)player.status.position.z + n_z].chara_type == 0)
+                    {
+                        if (!player.is_move && player.status.is_action == false)
+                        {
+                            player.move(x, z);
+                            player.set_position(new Vector3(n_x, 0, n_z));
+                            player.set_direction(new Vector3(n_x, 0, n_z));
+                            map.map[(int)player.status.position.x, (int)player.status.position.z].chara_type = 0;
+                            map.map[(int)player.status.position.x + n_x, (int)player.status.position.z + n_z].chara_type = 1;
+                            Debug.Log(player.status.position.z);
+                            Debug.Log(n_z);
+                            Debug.Log(player.status.position);
+                        }
+                    }
+                }
+
+                //自分が動いたら敵のターンにする
+                if (player.status.is_action == true) {
+                    enemies.turn_reset();
+                    enemies.all_action();
+                    status.turn = 2;
+                }
+            }
+            else if (status.turn == 2)
+            {
+                //敵が全部動いていればユーザーのターンにする
+                if(enemies.is_all_action() == true)
+                {
+                    player.status.is_action = false;
+                    status.turn = 1;
+                }
+            }
+
         }
 	}
 		

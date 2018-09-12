@@ -119,9 +119,10 @@ public class Player : MonoBehaviour {
     }
 
     //position設定
-    public void set_position(Vector3 position)
+    public Vector3 set_position(Vector3 position)
     {
         status.position = new Vector3(status.position.x + position.x, status.position.y + position.y, status.position.z + position.z);
+        return status.position;
     }
 
     //向き設定
