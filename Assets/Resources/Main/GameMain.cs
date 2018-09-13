@@ -77,9 +77,10 @@ public class GameMain : MonoBehaviour {
                                 map.map[(int)player.status.position.x + n_x, (int)player.status.position.z + n_z].chara_id = player.status.id;
                                 player.set_position(new Vector3(n_x, 0, n_z));
                             }
-                            player.set_direction(new Vector3(n_x, 0, n_z));
+
                         }
                     }
+                    player.set_direction(new Vector3(n_x, 0, n_z));
                 }
 
                 //自分が動いたら敵のターンにする

@@ -7,9 +7,6 @@ public class Player : MonoBehaviour {
     // Use this for initialization
     public UserStatus status = new UserStatus();
     void Start () {
-        set_hp(status.hp);
-        set_mp(status.mp);
-        set_ep(status.ep);
 	}
    
 	public float speed = 4.0f;
@@ -135,8 +132,80 @@ public class Player : MonoBehaviour {
     //向き設定
     public void set_direction(Vector3 position)
     {
+        int n_direction = get_rotate(status.direction);
+        Debug.Log(n_direction);
+        int s_direction = get_rotate(position);
+        Debug.Log(s_direction);
+
+        int nd = 360 - n_direction;
+        int sd = 360 - s_direction;
+        if(n_direction > s_direction){
+            int rd = n_direction - s_direction;
+            if(rd > 180){
+                this.transform.Rotate(0.0f, -360 + rd, 0.0f);
+            }else{
+                this.transform.Rotate(0.0f, rd, 0.0f);
+            }
+        }else if (s_direction > n_direction)
+        {
+            int rd = s_direction - n_direction;
+            if (rd > 180)
+            {
+                this.transform.Rotate(0.0f, rd, 0.0f);
+            }
+            else
+            {
+                this.transform.Rotate(0.0f, -360 + rd, 0.0f);
+            }
+
+        }
+
+
         status.direction = new Vector3(position.x, position.y, position.z);
     }
 
+    int get_rotate(Vector3 d){
+        
+        int rotate = 0;
+        if (d.x == -1)
+        {
+            rotate += 180;
+            if (d.z == 1)
+            {
+                rotate += 135;
+            }
+            else if (d.z == 0)
+            {
+                rotate += 90;
+            }
+            else if (d.z == -1)
+            {
+                rotate += 45;
+            }
+        }
+        else if (d.x == 0)
+        {
+            if (d.z == -1)
+            {
+                rotate += 180;
+            }
+        }
+        else if (d.x == 1)
+        {
+            if (d.z == 1)
+            {
+                rotate += 45;
+            }
+            else if (d.z == 0)
+            {
+                rotate += 90;
+            }
+            else if (d.z == -1)
+            {
+                rotate += 135;
+            }
+        }
+        return rotate;
+    }
 
 }
