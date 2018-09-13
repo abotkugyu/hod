@@ -7,6 +7,8 @@ public class UserStatus
 {
     //id
     public int id = 0;
+    //type 1=player 2=enemy
+    public int type = 1;
     //座標
     public Vector3 position = new Vector3(0, 0, 0);
     //向き(デフォルト下向き)

@@ -6,10 +6,10 @@ using UnityEngine;
 public class EnemyControll : MonoBehaviour
 {
 
-    public List<Enemy> enemy_list = new List<Enemy>();
+    public List<GameObject> enemy_list = new List<GameObject>();
     public int num = 2;
 
-    public void generate()
+    public void generate(GameMap map)
     {
         for (int x = 0; x < num; x++)
         {
@@ -18,8 +18,12 @@ public class EnemyControll : MonoBehaviour
             obj.layer = 9;
             Enemy com = obj.GetComponent<Enemy>();
             com.status.id = obj.GetInstanceID();
+            com.status.type = 2;
             com.status.position = new Vector3(x * 2 + 1, 0, x * 2 + 1);
-            enemy_list.Add(com);
+            enemy_list.Add(obj);
+            //mapに配置
+            map.map[x * 2 + 1, x * 2 + 1].chara_type = com.status.type;
+            map.map[x * 2 + 1, x * 2 + 1].chara_id = com.status.id;
         }
     }
 
@@ -29,7 +33,8 @@ public class EnemyControll : MonoBehaviour
         bool is_end = true;
         for (int x = 0; x < enemy_list.Count; x++)
         {
-            if (enemy_list[x].status.is_action == false)
+            Enemy com = enemy_list[x].GetComponent<Enemy>();
+            if (com.status.is_action == false)
             {
                 is_end = !is_end;
                 break;
@@ -44,7 +49,8 @@ public class EnemyControll : MonoBehaviour
     {
         for (int l = 0; l < enemy_list.Count; l++)
         {
-            int action_type = enemy_list[l].get_action();
+            Enemy com = enemy_list[l].GetComponent<Enemy>();
+            int action_type = com.get_action();
             //とりあえず1を移動
             if (action_type == 1)
             {
@@ -52,20 +58,23 @@ public class EnemyControll : MonoBehaviour
                 float z = Mathf.Sign(Random.Range(-1.0f, 1.0f)) * 200;
                 int n_x = (x != 0 ? (int)Mathf.Sign(x) : 0);
                 int n_z = (z != 0 ? (int)Mathf.Sign(z) : 0);
-                if ((int)enemy_list[l].status.position.x + n_x >= 0 && (int)enemy_list[l].status.position.z + n_z >= 0 &&
-                    map.map[(int)enemy_list[l].status.position.x + n_x, (int)enemy_list[l].status.position.z + n_z].chara_type == 0)
+                if ((int)com.status.position.x + n_x >= 0 && (int)com.status.position.z + n_z >= 0 &&
+                    map.map[(int)com.status.position.x + n_x, (int)com.status.position.z + n_z].chara_type == 0)
                 {
-                    map.map[(int)enemy_list[l].status.position.x, (int)enemy_list[l].status.position.z].chara_type = 0;
-                    map.map[(int)enemy_list[l].status.position.x + n_x, (int)enemy_list[l].status.position.z + n_z].chara_type = 1;
+                    map.map[(int)com.status.position.x, (int)com.status.position.z].chara_type = 0;
+                    map.map[(int)com.status.position.x + n_x, (int)com.status.position.z + n_z].chara_type = com.status.type;
 
-                    enemy_list[l].set_position(new Vector3(n_x, 0, n_z));
-                    enemy_list[l].set_direction(new Vector3(n_x, 0, n_z));
+                    map.map[(int)com.status.position.x, (int)com.status.position.z].chara_id = 0;
+                    map.map[(int)com.status.position.x + n_x, (int)com.status.position.z + n_z].chara_id = com.status.id;
 
-                    enemy_list[l].is_move = true;
-                    enemy_list[l].move(x, z);
+                    com.set_position(new Vector3(n_x, 0, n_z));
+                    com.set_direction(new Vector3(n_x, 0, n_z));
+
+                    com.is_move = true;
+                    com.move(x, z);
                 }else{
                     Debug.Log("can't move");
-                    enemy_list[l].status.is_action = true;
+                    com.status.is_action = true;
                 }
             }
         }
@@ -75,8 +84,15 @@ public class EnemyControll : MonoBehaviour
     public void turn_reset(){
         for (int x = 0; x < enemy_list.Count; x++)
         {
-            enemy_list[x].status.is_action = false;
+            Enemy com = enemy_list[x].GetComponent<Enemy>();
+            com.status.is_action = false;
         }
     }
 
+	public void delete(int x)
+	{
+        Destroy(enemy_list[x]);
+        enemy_list.RemoveAt(x);
+        Debug.Log(enemy_list.Count);
+	}
 }

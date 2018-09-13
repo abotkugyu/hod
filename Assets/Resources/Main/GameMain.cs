@@ -31,21 +31,13 @@ public class GameMain : MonoBehaviour {
         {
             map.generate();
             is_create_map = !is_create_map;
-            //player配置 デフォルト下向き
-            for (int x = 0; x < map.max_map_x; x++)
-            {
-                for (int z = 0; z < map.max_map_y; z++)
-                {
-                    if (map.map[x, z].chara_type == 0)
-                    {
-                        map.map[x, z].chara_type = 1;
-                        break;
-                    }
-                }
-            }
+
+            //player 配置
+            map.map[0, 0].chara_type = 1;
+            map.map[0, 0].chara_id = player.status.id;
 
             //enemy 配置
-            enemies.generate();
+            enemies.generate(map);
         }
 
         //rest_map=1,dungen_map=2
@@ -55,12 +47,14 @@ public class GameMain : MonoBehaviour {
             //user_turn=1,enemy_turn=2
             if (status.turn == 1)
             {
+
+
                 //攻撃
                 if (Input.GetKey(KeyCode.X) && player.status.is_action == false)
                 {
                     player.attack(map, enemies);
                 }
-
+                bool is_lshift = Input.GetKey(KeyCode.LeftShift);
                 //移動
                 float x = Input.GetAxisRaw("Horizontal") * 200;
                 float z = Input.GetAxisRaw("Vertical") * 200;
@@ -74,10 +68,15 @@ public class GameMain : MonoBehaviour {
                     {
                         if (!player.is_move && player.status.is_action == false)
                         {
-                            player.move(x, z);
-                            map.map[(int)player.status.position.x, (int)player.status.position.z].chara_type = 0;
-                            map.map[(int)player.status.position.x + n_x, (int)player.status.position.z + n_z].chara_type = 1;
-                            player.set_position(new Vector3(n_x, 0, n_z));
+                            if (!is_lshift)
+                            {
+                                player.move(x, z);
+                                map.map[(int)player.status.position.x, (int)player.status.position.z].chara_type = 0;
+                                map.map[(int)player.status.position.x + n_x, (int)player.status.position.z + n_z].chara_type = 1;
+                                map.map[(int)player.status.position.x, (int)player.status.position.z].chara_id = 0;
+                                map.map[(int)player.status.position.x + n_x, (int)player.status.position.z + n_z].chara_id = player.status.id;
+                                player.set_position(new Vector3(n_x, 0, n_z));
+                            }
                             player.set_direction(new Vector3(n_x, 0, n_z));
                         }
                     }

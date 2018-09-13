@@ -58,6 +58,7 @@ public class GameMap : MonoBehaviour {
         int floor_y = Random.Range(5, y-2);
         int start_x = Random.Range(1, x-floor_x-1);
         int start_y = Random.Range(1, y-floor_y-1);
+        Debug.Log("aaa");
         for (int l = 0; l < x; l++)
         {
             for (int m = 0; m < y; m++)

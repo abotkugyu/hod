@@ -30,11 +30,18 @@ public class Player : MonoBehaviour {
         if (pos.x < 0 || pos.z < 0){
             return;
         }
+        Debug.Log(pos);
         if (m.map[(int)pos.x, (int)pos.z].chara_type != 1){
+            Debug.Log("c_type:" + m.map[(int)pos.x, (int)pos.z].chara_type);
+            Debug.Log("c_id:" + m.map[(int)pos.x, (int)pos.z].chara_id);
             for (int x = 0; x < e.enemy_list.Count; x++) {
-                if (e.enemy_list[x].status.id == m.map[(int)pos.x, (int)pos.z].chara_id){
-                    e.enemy_list[x].status.hp = 0;
-                    Destroy(e.enemy_list[x]);
+                Enemy com = e.enemy_list[x].GetComponent<Enemy>();
+                Debug.Log("attack:e_id=" + com.status.id);
+                if (com.status.id == m.map[(int)pos.x, (int)pos.z].chara_id){
+                    Debug.Log("delete:id="+com.status.id);
+                    com.status.hp = 0;
+                    e.delete(x);
+                    break;
                 }
             }
             //GameObject obj = GameObject.FindWithTag();
