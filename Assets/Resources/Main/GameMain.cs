@@ -75,13 +75,10 @@ public class GameMain : MonoBehaviour {
                         if (!player.is_move && player.status.is_action == false)
                         {
                             player.move(x, z);
-                            player.set_position(new Vector3(n_x, 0, n_z));
-                            player.set_direction(new Vector3(n_x, 0, n_z));
                             map.map[(int)player.status.position.x, (int)player.status.position.z].chara_type = 0;
                             map.map[(int)player.status.position.x + n_x, (int)player.status.position.z + n_z].chara_type = 1;
-                            Debug.Log(player.status.position.z);
-                            Debug.Log(n_z);
-                            Debug.Log(player.status.position);
+                            player.set_position(new Vector3(n_x, 0, n_z));
+                            player.set_direction(new Vector3(n_x, 0, n_z));
                         }
                     }
                 }
@@ -89,7 +86,7 @@ public class GameMain : MonoBehaviour {
                 //自分が動いたら敵のターンにする
                 if (player.status.is_action == true) {
                     enemies.turn_reset();
-                    enemies.all_action();
+                    enemies.all_action(map);
                     status.turn = 2;
                 }
             }

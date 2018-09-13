@@ -957,7 +957,7 @@ GameObject:
   - component: {fileID: 1391964840}
   - component: {fileID: 1391964846}
   - component: {fileID: 1391964845}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -979,7 +979,7 @@ MonoBehaviour:
   status:
     id: 0
     position: {x: 0, y: 0, z: 0}
-    direction: {x: 0, y: 0, z: 0}
+    direction: {x: 0, y: 0, z: -1}
     hp: 50
     mp: 40
     ep: 30

@@ -15,14 +15,9 @@ public class Enemy : MonoBehaviour {
     public bool is_move = false;
     public Vector3 target_position;
 
-    public void action (){
-        float x = Mathf.Sign(Random.Range(-1.0f, 1.0f)) * 200;
-        float z = Mathf.Sign(Random.Range(-1.0f, 1.0f)) * 200;
-        set_position(new Vector3((x != 0 ? Mathf.Sign(x) : 0), 0, (z != 0 ? Mathf.Sign(z) : 0)));
-        set_direction(new Vector3((x != 0 ? Mathf.Sign(x) : 0), 0, (z != 0 ? Mathf.Sign(z) : 0)));
-  
-        is_move = true;
-        move(x, z);
+    public int get_action()
+    {
+        return Random.Range(1, 2);
     }
 
     // Update is called once per frame
@@ -35,7 +30,7 @@ public class Enemy : MonoBehaviour {
     }
 
     //移動処理
-    void move(float x, float z)
+    public void move(float x, float z)
     {
         Rigidbody transform = GetComponent<Rigidbody>();
         Vector3 now_position = transform.position;
