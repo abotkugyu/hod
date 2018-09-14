@@ -17,7 +17,7 @@ public class Player : MonoBehaviour {
 	void Update () {
         if (is_move && status.is_action == false){
             moving();
-		}
+        }
 	}
 
     //攻撃処理
@@ -137,28 +137,32 @@ public class Player : MonoBehaviour {
         int s_direction = get_rotate(position);
         Debug.Log(s_direction);
 
-        int nd = 360 - n_direction;
-        int sd = 360 - s_direction;
+        /*
         if(n_direction > s_direction){
+           
             int rd = n_direction - s_direction;
-            if(rd > 180){
-                this.transform.Rotate(0.0f, -360 + rd, 0.0f);
+            if(rd >= 180){
+                this.transform.Rotate(0.0f, 360-rd, 0.0f);
             }else{
-                this.transform.Rotate(0.0f, rd, 0.0f);
+                this.transform.Rotate(0.0f, -rd, 0.0f);
             }
-        }else if (s_direction > n_direction)
+        }
+        else if (s_direction > n_direction)
         {
             int rd = s_direction - n_direction;
-            if (rd > 180)
+            if (rd >= 180)
             {
-                this.transform.Rotate(0.0f, rd, 0.0f);
+                this.transform.Rotate(0.0f, -360+rd, 0.0f);
             }
             else
             {
-                this.transform.Rotate(0.0f, -360 + rd, 0.0f);
+                this.transform.Rotate(0.0f, rd, 0.0f);
             }
 
         }
+        */
+        float angle = Mathf.LerpAngle(n_direction, s_direction, Time.time);
+        this.transform.eulerAngles = new Vector3(0, angle, 0);
 
 
         status.direction = new Vector3(position.x, position.y, position.z);
