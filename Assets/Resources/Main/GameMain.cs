@@ -70,6 +70,8 @@ public class GameMain : MonoBehaviour {
                         {
                             if (!is_lshift)
                             {
+                                Debug.Log("move:x=" + x);
+                                Debug.Log("move:z=" + z);
                                 player.move(x, z);
                                 map.map[(int)player.status.position.x, (int)player.status.position.z].chara_type = 0;
                                 map.map[(int)player.status.position.x + n_x, (int)player.status.position.z + n_z].chara_type = 1;
