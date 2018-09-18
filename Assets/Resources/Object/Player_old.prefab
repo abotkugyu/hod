@@ -26,7 +26,7 @@ GameObject:
   - component: {fileID: 114933124190470504}
   - component: {fileID: 54295547053457124}
   m_Layer: 0
-  m_Name: Player
+  m_Name: Player_old
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -124,6 +124,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd3f402f81e5f4264a83e15b0d5c8358, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  status:
+    id: 0
+    type: 1
+    position: {x: 0, y: 0, z: 0}
+    direction: {x: 0, y: 0, z: -1}
+    hp: 50
+    mp: 40
+    ep: 30
+    speed: 0
+    speed_priority: 0
+    ability: 0
+    action_pattern: 
+    blood: 0
+    name: 
+    attack: 100
+    defence: 100
+    base_hit_rate: 0
+    base_avoid_rate: 0
+    element: 0
+    jump: 0
+    is_action: 0
   speed: 3
   is_move: 0
   target_position: {x: 0, y: 0, z: 0}

@@ -6,7 +6,10 @@ public class Player : MonoBehaviour {
 
     // Use this for initialization
     public UserStatus status = new UserStatus();
+    Animator _animator;
     void Start () {
+        _animator = GetComponent<Animator>();
+        _animator.Play("Wait");
 	}
    
 	public float speed = 4.0f;
@@ -55,14 +58,15 @@ public class Player : MonoBehaviour {
 		Rigidbody transform = this.GetComponent<Rigidbody>();
 		Vector3 now_position = transform.position;
 
-        target_position.x = x/200;
-        target_position.z = z/200;
+        target_position.x = x/200 + now_position.x;
+        target_position.z = z/200 + now_position.z;
 
 		//Force	その質量を使用して、rigidbodyへの継続的な力を追加します。
 		//Acceleration	その質量を無視して、rigidbodyへの継続的な加速を追加します。
 		//Impulse	その質量を使用して、rigidbodyに瞬時に速度変化を追加します。
 		//VelocityChange	その質量を無視して、rigidbodyに瞬時に速度変化を追加します。
         //transform.AddForce(x, 0, z, ForceMode.Acceleration);
+        _animator.SetBool("is_run", true);
 
 	}
 
@@ -70,10 +74,6 @@ public class Player : MonoBehaviour {
         Rigidbody transform = this.GetComponent<Rigidbody>();
         Vector3 now_position = transform.position;
 
-        Debug.Log("moving:x=" + now_position.x);
-        Debug.Log("moving:z=" + now_position.z);
-        Debug.Log("tmoving:x=" + target_position.x);
-        Debug.Log("tmoving:z=" + target_position.z);
         float step = speed * Time.deltaTime;
         transform.position = Vector3.MoveTowards(transform.position, new Vector3(target_position.x, 0, target_position.z), step);
         if (target_position.x == now_position.x && target_position.z == now_position.z)
@@ -81,6 +81,7 @@ public class Player : MonoBehaviour {
             transform.velocity = Vector3.zero;
             is_move = false;
             status.is_action = true;
+            _animator.SetBool("is_run", false);
         }
     }
 
