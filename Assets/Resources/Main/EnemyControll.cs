@@ -14,16 +14,21 @@ public class EnemyControll : MonoBehaviour
         for (int x = 0; x < num; x++)
         {
             GameObject obj = Object.Instantiate(Resources.Load("Object/Enemy")) as GameObject;
-            obj.transform.position = new Vector3(x * 2 + 1, 0, x * 2 + 1);
+            List<int> pos = map.get_pop_point();
+            int posx = pos[0];
+            int posz = pos[1];
+            Debug.Log(posx);
+            Debug.Log(posz);
+            obj.transform.position = new Vector3(posx, 0, posz);
             obj.layer = 9;
             Enemy com = obj.GetComponent<Enemy>();
             com.status.id = obj.GetInstanceID();
             com.status.type = 2;
-            com.status.position = new Vector3(x * 2 + 1, 0, x * 2 + 1);
+            com.status.position = new Vector3(posx, 0, posz);
             enemy_list.Add(obj);
             //mapに配置
-            map.map[x * 2 + 1, x * 2 + 1].chara_type = com.status.type;
-            map.map[x * 2 + 1, x * 2 + 1].chara_id = com.status.id;
+            map.map[posx, posz].chara_type = com.status.type;
+            map.map[posx, posz].chara_id = com.status.id;
         }
     }
 

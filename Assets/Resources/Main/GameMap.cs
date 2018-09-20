@@ -9,6 +9,7 @@ public class GameMap : MonoBehaviour {
 	public int max_map_x = 100;
     public int max_map_y = 100;
     public TileStatus[,] map;
+    public List<string> pop_point = new List<string>();
 
     public void generate() {
         map = new TileStatus[max_map_x, max_map_y];
@@ -58,7 +59,6 @@ public class GameMap : MonoBehaviour {
         int floor_y = Random.Range(5, y-2);
         int start_x = Random.Range(1, x-floor_x-1);
         int start_y = Random.Range(1, y-floor_y-1);
-        Debug.Log("aaa");
         for (int l = 0; l < x; l++)
         {
             for (int m = 0; m < y; m++)
@@ -69,8 +69,9 @@ public class GameMap : MonoBehaviour {
                     original.transform.Translate(seq_x + l, 0, seq_y + m);
                     result[l, m] = 1;
                     map[l + seq_x, m + seq_y].tile_type = 1;
+                    pop_point.Add((l + seq_x)+","+(m + seq_y));
                 }else{
-                    result[l, m] = 0;   
+                    result[l, m] = 0;
                 }
             }
         }
@@ -106,5 +107,19 @@ public class GameMap : MonoBehaviour {
 		}
 	}
 
-
+    public List<int> get_pop_point()
+    {
+        for (int l = 0; l < 1000; l++){
+            int pos_s = Random.Range(0, pop_point.Count - 1);
+            string[] pos = pop_point[pos_s].Split(',');
+            int x = int.Parse(pos[0]);
+            int z = int.Parse(pos[1]);
+            if (map[x,z].tile_type == 1)
+            {
+                return new List<int>{x, z};
+            }
+        }
+        //全部map埋まってたりしたら諦める。
+        return new List<int> { 0, 0 };
+    }
 }

@@ -30,7 +30,6 @@ public class Player : MonoBehaviour {
         if (pos.x < 0 || pos.z < 0){
             return;
         }
-        Debug.Log(pos);
         if (m.map[(int)pos.x, (int)pos.z].chara_type != 1){
             Debug.Log("c_type:" + m.map[(int)pos.x, (int)pos.z].chara_type);
             Debug.Log("c_id:" + m.map[(int)pos.x, (int)pos.z].chara_id);
