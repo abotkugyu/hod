@@ -49,6 +49,8 @@ public class Player : MonoBehaviour {
             //find
         }
         status.is_action = true;
+
+        GetComponent<Animator>().SetTrigger("attack");
     }
 
     //移動処理

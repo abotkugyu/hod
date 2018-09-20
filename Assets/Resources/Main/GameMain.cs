@@ -50,7 +50,7 @@ public class GameMain : MonoBehaviour {
 
 
                 //攻撃
-                if (Input.GetKey(KeyCode.X) && player.status.is_action == false)
+                if (Input.GetKey(KeyCode.X) && player.status.is_action == false && !player.is_move)
                 {
                     player.attack(map, enemies);
                 }
