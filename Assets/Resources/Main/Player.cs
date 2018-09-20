@@ -74,7 +74,7 @@ public class Player : MonoBehaviour {
         Rigidbody transform = this.GetComponent<Rigidbody>();
         Vector3 now_position = transform.position;
 
-        float step = speed * Time.deltaTime;
+        float step = 0.02f;//speed * Time.deltaTime;
         transform.position = Vector3.MoveTowards(transform.position, new Vector3(target_position.x, 0, target_position.z), step);
         if (target_position.x == now_position.x && target_position.z == now_position.z)
         {
