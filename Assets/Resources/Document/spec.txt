@@ -1,0 +1,13 @@
+﻿Map
+
+tile_type
+0=タイルなし
+1=タイルあり
+
+chara_type
+0=キャラなし
+1=キャラあり
+
+
+Player
+hp

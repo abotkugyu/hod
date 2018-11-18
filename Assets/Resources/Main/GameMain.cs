@@ -38,6 +38,16 @@ public class GameMain : MonoBehaviour {
 
             //enemy 配置
             enemies.generate(map);
+
+			List<int> pos = map.get_pop_point();
+			int posx = pos[0];
+			int posz = pos[1];
+			player.transform.position = new Vector3(posx, 0, posz);
+			player.set_position(new Vector3(posx, 0, posz));
+			player.set_direction(new Vector3(0, 0, -1));
+			//mapに配置
+			map.map[posx, posz].chara_type = player.status.type;
+			map.map[posx, posz].chara_id = player.status.id;
         }
 
         //rest_map=1,dungen_map=2
@@ -64,7 +74,8 @@ public class GameMain : MonoBehaviour {
                     int n_x = (x != 0 ? (int)Mathf.Sign(x) : 0);
                     int n_z = (z != 0 ? (int)Mathf.Sign(z) : 0);
                     if ((int)player.status.position.x + n_x >= 0 && (int)player.status.position.z + n_z >= 0 &&
-                        map.map[(int)player.status.position.x + n_x, (int)player.status.position.z + n_z].chara_type == 0)
+                        map.map[(int)player.status.position.x + n_x, (int)player.status.position.z + n_z].chara_type == 0 &&
+						map.map[(int)player.status.position.x + n_x, (int)player.status.position.z + n_z].tile_type == 1)
                     {
                         if (!player.is_move && player.status.is_action == false)
                         {

@@ -114,7 +114,7 @@ public class GameMap : MonoBehaviour {
             string[] pos = pop_point[pos_s].Split(',');
             int x = int.Parse(pos[0]);
             int z = int.Parse(pos[1]);
-            if (map[x,z].tile_type == 1)
+			if (map[x,z].tile_type == 1 && map[x,z].chara_type == 0)
             {
                 return new List<int>{x, z};
             }

@@ -7,7 +7,7 @@ public class EnemyControll : MonoBehaviour
 {
 
     public List<GameObject> enemy_list = new List<GameObject>();
-    public int num = 2;
+    public int num = 100;
 
     public void generate(GameMap map)
     {
@@ -21,6 +21,7 @@ public class EnemyControll : MonoBehaviour
             Debug.Log(posz);
             obj.transform.position = new Vector3(posx, 0, posz);
             obj.layer = 9;
+
             Enemy com = obj.GetComponent<Enemy>();
             com.status.id = obj.GetInstanceID();
             com.status.type = 2;
@@ -64,7 +65,8 @@ public class EnemyControll : MonoBehaviour
                 int n_x = (x != 0 ? (int)Mathf.Sign(x) : 0);
                 int n_z = (z != 0 ? (int)Mathf.Sign(z) : 0);
                 if ((int)com.status.position.x + n_x >= 0 && (int)com.status.position.z + n_z >= 0 &&
-                    map.map[(int)com.status.position.x + n_x, (int)com.status.position.z + n_z].chara_type == 0)
+                    map.map[(int)com.status.position.x + n_x, (int)com.status.position.z + n_z].chara_type == 0 &&
+					map.map[(int)com.status.position.x + n_x, (int)com.status.position.z + n_z].tile_type == 1)
                 {
                     map.map[(int)com.status.position.x, (int)com.status.position.z].chara_type = 0;
                     map.map[(int)com.status.position.x + n_x, (int)com.status.position.z + n_z].chara_type = com.status.type;
