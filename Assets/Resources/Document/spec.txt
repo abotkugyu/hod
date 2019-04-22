@@ -10,4 +10,4 @@ chara_type
 
 
 Player
-hp
+hpgit a

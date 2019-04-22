@@ -8,16 +8,16 @@ public class GameMap : MonoBehaviour {
 
 	public int max_map_x = 100;
     public int max_map_y = 100;
-    public TileStatus[,] map;
+    public TileModel[,] map;
     public List<string> pop_point = new List<string>();
 
     public void generate() {
-        map = new TileStatus[max_map_x, max_map_y];
+        map = new TileModel[max_map_x, max_map_y];
         for (int x = 0; x < max_map_x; x++)
         {
             for (int z = 0; z < max_map_y; z++)
             {
-                map[x, z] = new TileStatus();
+                map[x, z] = new TileModel();
             }
         }
 

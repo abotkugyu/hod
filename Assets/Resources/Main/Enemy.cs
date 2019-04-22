@@ -6,7 +6,7 @@ public class Enemy : MonoBehaviour {
 
 	// Use this for initialization
 
-    public UserStatus status = new UserStatus();
+    public UserModel status = new UserModel();
     void Start()
     {
     }

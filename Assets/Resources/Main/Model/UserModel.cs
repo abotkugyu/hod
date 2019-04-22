@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class UserStatus
+public class UserModel
 {
     //id
     public int id = 0;

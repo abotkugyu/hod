@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //敵情報管理
-public class EnemyControll : MonoBehaviour
+public class EnemyController : MonoBehaviour
 {
 
     public List<GameObject> enemy_list = new List<GameObject>();
@@ -17,8 +17,8 @@ public class EnemyControll : MonoBehaviour
             List<int> pos = map.get_pop_point();
             int posx = pos[0];
             int posz = pos[1];
-            Debug.Log(posx);
-            Debug.Log(posz);
+            //Debug.Log(posx);
+            //Debug.Log(posz);
             obj.transform.position = new Vector3(posx, 0, posz);
             obj.layer = 9;
 

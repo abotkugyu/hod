@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class GameStatus
+public class GameModel
 {
     //座標
     public int turn = 1;

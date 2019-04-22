@@ -1,20 +1,34 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Player : MonoBehaviour {
 
     // Use this for initialization
-    public UserStatus status = new UserStatus();
+    public UserModel status = new UserModel();
     Animator _animator;
+    
+    public float speed = 4.0f;
+    public bool is_move = false;
+    public Vector3 target_position;
+    
+    //所持アイテム
+    public List<Item> items = new List<Item>();
+    
     void Start () {
         _animator = GetComponent<Animator>();
         _animator.Play("Wait");
-	}
-   
-	public float speed = 4.0f;
-	public bool is_move = false;
-	public Vector3 target_position;
+        
+        Item item = new Item();
+        item.generate();
+        for (int x = 0; x < 10; x++)
+        {
+            item.re_random();
+            items.Add(item);
+        }
+
+    }
 
 	// Update is called once per frame
 	void Update () {
@@ -24,7 +38,7 @@ public class Player : MonoBehaviour {
 	}
 
     //攻撃処理
-    public void attack(GameMap m,EnemyControll e)
+    public void attack(GameMap m,EnemyController e)
     {
         Vector3 pos = status.position + status.direction;
         if (pos.x < 0 || pos.z < 0){
@@ -67,6 +81,7 @@ public class Player : MonoBehaviour {
 		//Impulse	その質量を使用して、rigidbodyに瞬時に速度変化を追加します。
 		//VelocityChange	その質量を無視して、rigidbodyに瞬時に速度変化を追加します。
         //transform.AddForce(x, 0, z, ForceMode.Acceleration);
+        
         _animator.SetBool("is_run", true);
 
 	}
@@ -75,7 +90,7 @@ public class Player : MonoBehaviour {
         Rigidbody transform = this.GetComponent<Rigidbody>();
         Vector3 now_position = transform.position;
 
-        float step = 0.02f;//speed * Time.deltaTime;
+        float step = 0.04f;//speed * Time.deltaTime;
         transform.position = Vector3.MoveTowards(transform.position, new Vector3(target_position.x, 0, target_position.z), step);
         if (target_position.x == now_position.x && target_position.z == now_position.z)
         {
@@ -106,14 +121,19 @@ public class Player : MonoBehaviour {
         hud.update_energy(value);
     }
 
-    //position設定
+    /// user.status.position に座標保存
     public Vector3 set_position(Vector3 position)
     {
         status.position = new Vector3(status.position.x + position.x, status.position.y + position.y, status.position.z + position.z);
         return status.position;
     }
 
-    //向き設定
+    /// <summary>
+    /// <code>
+    /// transform.eulerAnglesで向きを変更
+    /// user.status.directionに向き保存
+    /// </code>
+    /// </summary>
     public void set_direction(Vector3 position)
     {
         int n_direction = get_rotate(status.direction);
