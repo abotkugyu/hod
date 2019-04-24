@@ -17,7 +17,7 @@ public class TileModel
     /// 3=階段
     public int tile_type = 0;
     
-    /// キャラクター_id
+    /// charactor_id (objects instance id)
     public int chara_id;
     
     /// 現在のタイルにいるキャラクター
@@ -26,6 +26,11 @@ public class TileModel
     /// 2=enemy
     /// 3=support
     public int chara_type = 0;
+    
+    /// <summary>
+    /// item_id (objects instance id)
+    /// </summary>
+    public int item_id;
     
     /// 現在のタイルにあるアイテム
     public int item_type = 0;

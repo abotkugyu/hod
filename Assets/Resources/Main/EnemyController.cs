@@ -96,10 +96,10 @@ public class EnemyController : MonoBehaviour
         }
     }
 
-	public void delete(int x)
+	public void delete(int index)
 	{
-        Destroy(enemy_list[x]);
-        enemy_list.RemoveAt(x);
+        Destroy(enemy_list[index]);
+        enemy_list.RemoveAt(index);
         Debug.Log(enemy_list.Count);
 	}
 }

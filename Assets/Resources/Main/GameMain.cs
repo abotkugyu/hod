@@ -138,7 +138,7 @@ public class GameMain : MonoBehaviour {
                                     {
                                         Debug.Log("get item");
                                         
-                                        //items.delete((int) player.status.position.x + n_x, (int) player.status.position.z + n_z);
+                                        items.delete(map.map[(int)player.status.position.x, (int)player.status.position.z].item_id);
                                     }
                                 }
                             }
