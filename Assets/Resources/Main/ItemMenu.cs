@@ -4,21 +4,26 @@ using UnityEngine;
 
 public class ItemMenu : MonoBehaviour {
 	
+	[SerializeField]
 	public GameObject item_menu;
-	public UserItemModel user_item_model;
+	[SerializeField]
+	public int item_width = 100;
+	[SerializeField]
+	public int item_height = 100;
+	
+	[SerializeField]
+	public GameObject item_cell;
+	
+	public UserItemModel user_item_model = new UserItemModel();
 
 	private void initialize()
-	{
-		
+	{	
 	}
 	
-	void Start()
-	{
-		item_menu = GameObject.Find("ItemMenu");
-	}
 	public void show ()
 	{
 		item_menu.SetActive(true);
+		refresh();
 	}
 
 	public void hide ()
@@ -30,5 +35,18 @@ public class ItemMenu : MonoBehaviour {
 	{
 		return item_menu.active;
 	}
-	
+
+	public void refresh()
+	{		
+		user_item_model.items.Add(new ItemModel(1,"魔法の石"));
+		user_item_model.items.Add(new ItemModel(2,"夢のしずく"));
+
+		for (int i = 0; i < user_item_model.items.Count; i++)
+		{
+			GameObject item_cell = Object.Instantiate(Resources.Load("Object/ItemWindow/ItemCell")) as GameObject;
+			item_cell.transform.parent = item_menu.transform;
+			item_cell.transform.localPosition = new Vector2(250 / -10 ,(Screen.height - 150) / 2 + item_height * i  );
+		}
+	}
 }
+

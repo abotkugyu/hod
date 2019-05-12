@@ -3,5 +3,5 @@ using System.Collections.Generic;
 using UnityEngine;
 public class UserItemModel
 {
-    public ItemModel items;
+    public List<ItemModel> items = new List<ItemModel>();
 }

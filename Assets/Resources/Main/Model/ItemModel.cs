@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 [System.Serializable]
 //item情報
@@ -13,13 +14,23 @@ using UnityEngine;
 //max_count : 最大数
 public class ItemModel
 {
+    public ItemModel()
+    {
+        
+    }
+    public ItemModel(int id, string name)
+    {
+        id = id;
+        name = name;
+    }
+    
     public int id;
     public string name;
     public int type = 0;
     public int sub_type = 0;
     public int value = 0;
     public Vector3 position = new Vector3(0, 0, 0);
-    public int use_count = 0;    //使用回数
+    [FormerlySerializedAs("use_count")] public int useCount = 0;    //使用回数
     public int remain_count = 0; //残り回数
 }
 
