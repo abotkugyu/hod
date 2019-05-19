@@ -12,9 +12,7 @@ public class ItemMenuView : MonoBehaviour {
 	public int item_height = 100;
 	
 	[SerializeField]
-	public GameObject item_cell;
-	
-	public UserItemModel user_item_model = new UserItemModel();
+	public List<ItemCellView> itemCellViewList;
 
 	private void initialize()
 	{	
@@ -23,7 +21,6 @@ public class ItemMenuView : MonoBehaviour {
 	public void show ()
 	{
 		item_menu.SetActive(true);
-		refresh();
 	}
 
 	public void hide ()
@@ -36,17 +33,17 @@ public class ItemMenuView : MonoBehaviour {
 		return item_menu.active;
 	}
 
-	public void refresh()
+	public void Refresh(List<ItemModel> itemModels)
 	{		
-		user_item_model.items.Add(new ItemModel(1,"魔法の石"));
-		user_item_model.items.Add(new ItemModel(2,"夢のしずく"));
-
-		for (int i = 0; i < user_item_model.items.Count; i++)
+		for (int i = 0; i < itemModels.Count; i++)
 		{
-			GameObject item_cell = Object.Instantiate(Resources.Load("Object/ItemWindow/ItemCell")) as GameObject;
-			item_cell.transform.parent = item_menu.transform;
-			item_cell.transform.localPosition = new Vector2(250 / -10 ,(Screen.height - 150) / 2 + item_height * i  );
+			ItemCellView itemCellView = item_menu.AddComponent<ItemCellView>();
+			itemCellViewList.Add(itemCellView);
+			itemCellView.ItemCell.transform.parent = item_menu.transform;
+			itemCellView.ItemCell.transform.localPosition = new Vector2(250 / -10 ,(Screen.height - 150) / 2 + item_height * i  );
+			itemCellView.name.text = itemModels[i].name;
 		}
+		
 	}
 }
 

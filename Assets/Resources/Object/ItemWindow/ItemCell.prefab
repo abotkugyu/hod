@@ -53,6 +53,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 224877250875422862}
+  - component: {fileID: 114529025852248102}
   m_Layer: 0
   m_Name: ItemCell
   m_TagString: Untagged
@@ -93,6 +94,19 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: "\u30A2\u30A4\u30C6\u30E0"
+--- !u!114 &114529025852248102
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1922356731254030}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc5488b276474e6083da275d9f429519, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  name: {fileID: 114105078377748702}
+  ItemCell: {fileID: 1922356731254030}
 --- !u!114 &114694567201425472
 MonoBehaviour:
   m_ObjectHideFlags: 1

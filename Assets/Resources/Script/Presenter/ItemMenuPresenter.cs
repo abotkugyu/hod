@@ -14,15 +14,20 @@ public class ItemMenuPresenter : MonoBehaviour {
 	
 	public void ShowItemMenu(bool is_show)
 	{
-        
 		if (is_show)
 		{
+			Refresh();
 			itemMenuView.show();
 		}
 		else
 		{
 			itemMenuView.hide();
 		}
+	}
+
+	public void Refresh()
+	{
+		itemMenuView.Refresh(itemsModels);
 	}
     
 	public bool GetIsShowItemMenu()
