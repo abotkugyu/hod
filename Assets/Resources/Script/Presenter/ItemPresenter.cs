@@ -2,30 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Item : MonoBehaviour {
+public class ItemPresenter : MonoBehaviour {
 
     public float speed = 4.0f;
     public bool is_move = false;
     public Vector3 target_position;
     public ItemModel status = new ItemModel();
-
-    private ItemModelJson item_master;
-    public void generate()
-    {
-        TextAsset item_master_json = Resources.Load<TextAsset>("Main/Master/Item");
-        item_master = JsonUtility.FromJson<ItemModelJson>(item_master_json.ToString());
-        Debug.Log(item_master.item[0].name);
-    }
-
-    public void re_random()
-    {
-        status = item_master.item[Random.Range(0, item_master.item.Length-1)];
-    }
     
-    //使用
-    public void use()
+    public void initialize()
     {
-
+        
     }
 
     //移動

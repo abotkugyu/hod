@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ItemMenu : MonoBehaviour {
+public class ItemMenuView : MonoBehaviour {
 	
 	[SerializeField]
 	public GameObject item_menu;

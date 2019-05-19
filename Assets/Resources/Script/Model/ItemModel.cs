@@ -32,6 +32,7 @@ public class ItemModel
     public Vector3 position = new Vector3(0, 0, 0);
     [FormerlySerializedAs("use_count")] public int useCount = 0;    //使用回数
     public int remain_count = 0; //残り回数
+   
 }
 
 public class ItemModelJson

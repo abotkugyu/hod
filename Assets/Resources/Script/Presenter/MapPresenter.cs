@@ -4,7 +4,7 @@ using UnityEngine;
 
 
 //100*100を50,25...と分割していき確率で部屋を作る
-public class GameMap : MonoBehaviour {
+public class MapPresenter : MonoBehaviour {
 
 	public int max_map_x = 100;
     public int max_map_y = 100;
