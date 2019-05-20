@@ -6,9 +6,6 @@ using UnityEngine.UI;
 public class ItemCellView : MonoBehaviour {
 	
     [SerializeField]
-    public Text name;
-    [SerializeField]
-    public GameObject ItemCell;
-
+    public Text Name;
 }
 

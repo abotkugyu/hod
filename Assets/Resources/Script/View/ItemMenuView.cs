@@ -37,11 +37,13 @@ public class ItemMenuView : MonoBehaviour {
 	{		
 		for (int i = 0; i < itemModels.Count; i++)
 		{
-			ItemCellView itemCellView = item_menu.AddComponent<ItemCellView>();
+			GameObject itemCell = Instantiate ((GameObject)Resources.Load ("Object/ItemWindow/ItemCell"));
+			itemCell.transform.parent = item_menu.transform;
+			itemCell.transform.localPosition = new Vector2(250 / -10 ,(Screen.height - 150) / 2 + item_height * i  );
+			
+			ItemCellView itemCellView = itemCell.AddComponent<ItemCellView>();
 			itemCellViewList.Add(itemCellView);
-			itemCellView.ItemCell.transform.parent = item_menu.transform;
-			itemCellView.ItemCell.transform.localPosition = new Vector2(250 / -10 ,(Screen.height - 150) / 2 + item_height * i  );
-			itemCellView.name.text = itemModels[i].name;
+			itemCellView.Name.text = itemModels[i].name;
 		}
 		
 	}
