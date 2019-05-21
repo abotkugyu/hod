@@ -42,7 +42,7 @@ public class GameMain : MonoBehaviour {
         //item 配置
         itemsListPresenter.generate(mapPresenter);
 
-        menuPresenter.itemMenuPresenter.Initialize(playerPresenter.itemsModels);
+        menuPresenter.itemMenuPresenter.Initialize(playerPresenter.itemModels);
 
     }
 	
@@ -113,8 +113,24 @@ public class GameMain : MonoBehaviour {
                                             .item_type == 1)
                                     {
                                         Debug.Log("get item");
+                                        ItemModel itemModel = itemsListPresenter.find(mapPresenter.map[(int)playerPresenter.status.position.x, (int)playerPresenter.status.position.z].item_guid);
                                         
-                                        itemsListPresenter.delete(mapPresenter.map[(int)playerPresenter.status.position.x, (int)playerPresenter.status.position.z].item_id);
+                                        
+                                        if (itemModel != null)
+                                        {
+                                            // itemを取得出来たらマップ上のitemを削除
+                                            if (playerPresenter.SetItem(itemModel))
+                                            {
+                                                itemsListPresenter.delete(mapPresenter
+                                                    .map[(int) playerPresenter.status.position.x,
+                                                        (int) playerPresenter.status.position.z].item_guid);
+                                            }
+                                        }
+                                        else
+                                        {                                            
+                                            Debug.Log(String.Format("FATAL ERROR:Get Item By GUID {0}",mapPresenter.map[(int)playerPresenter.status.position.x, (int)playerPresenter.status.position.z].item_guid.ToString()));
+                                        }
+                                        
                                     }
                                 }
                             }

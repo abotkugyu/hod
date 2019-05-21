@@ -15,7 +15,7 @@ public class PlayerPresenter : MonoBehaviour {
     [SerializeField]
     public PlayerView playerView;
     
-    public List<ItemModel> itemsModels;
+    public List<ItemModel> itemModels;
 
     public void initialize()
     {
@@ -25,7 +25,7 @@ public class PlayerPresenter : MonoBehaviour {
     
     public void dummy_item()
     {        
-        itemsModels.Add(ItemData.GetRandom());
+        itemModels.Add(ItemData.GetRandom());
     }
     
     public void dummy_initialize(List<int> pos)
@@ -129,5 +129,17 @@ public class PlayerPresenter : MonoBehaviour {
         playerView.SetAngles(new Vector3(0, angle, 0));
 
         status.direction = new Vector3(position.x, position.y, position.z);
+    }
+    
+    public bool SetItem(ItemModel itemModel)
+    {
+        if (GameConfig.ItemMaxLimit <= itemModels.Count)
+        {
+            Debug.Log("NOTICE : Over Has Item Limit");
+            return false;
+        }
+            
+        itemModels.Add(itemModel);
+        return true;
     }
 }

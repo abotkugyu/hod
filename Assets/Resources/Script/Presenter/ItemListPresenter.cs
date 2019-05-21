@@ -8,7 +8,6 @@ public class ItemListPresenter : MonoBehaviour
 {
 
     public List<GameObject> item_objects = new List<GameObject>();
-    public List<ItemPresenter> item_list = new List<ItemPresenter>();
     public int num = 100;
 
     public void generate(MapPresenter mapPresenter)
@@ -24,31 +23,39 @@ public class ItemListPresenter : MonoBehaviour
             obj.layer = 9;
 
             // item model作成
-            ItemPresenter itemPresenter = obj.GetComponent<ItemPresenter>();
-            itemPresenter.status.id = obj.GetInstanceID();
-            itemPresenter.status.type = 1;
-            itemPresenter.status.position = new Vector3(posx, 0, posz);
-            
-            item_list.Add(itemPresenter);
-            item_objects.Add(obj);
+            ItemPresenter itemPresenter = obj.GetComponent<ItemPresenter>();            
+            itemPresenter.status = ItemData.GetRandom();
+            itemPresenter.status.guid = obj.GetInstanceID();
+            itemPresenter.status.position = new Vector3(posx, 0, posz);            
             
             //mapに配置
-            mapPresenter.map[posx, posz].item_type = itemPresenter.status.type;
-            mapPresenter.map[posx, posz].item_id = itemPresenter.status.id;
+            mapPresenter.map[posx, posz].item_type = 1;
+            mapPresenter.map[posx, posz].item_guid = itemPresenter.status.guid;
+            
+            item_objects.Add(obj);
+                        
         }
     }
-
-    public void delete(int id)
+    
+    public ItemModel find(int guid)
+    {
+        var obj = item_objects.FirstOrDefault(i => i.GetInstanceID() == guid);
+        if (obj != null)
+        {
+            return obj.GetComponent<ItemPresenter>().status;
+        }
+        return null;
+    }
+    
+    public void delete(int guid)
     {
         // 遅かったらindex検索にする
-        GameObject item = item_objects.FirstOrDefault(i => i.GetInstanceID() == id);
+        GameObject obj = item_objects.FirstOrDefault(i => i.GetInstanceID() == guid);
         
-        if (item != null)
+        if (obj != null)
         {
-            Destroy(item);
-            var x = item_list.Select((i, index) => new {i, index}).First(i => i.i.status.id == id).index;
-            item_list.RemoveAt(x);
-            Debug.Log(item_list.Count);
+            Destroy(obj);
+            Debug.Log(item_objects.Count);
         }
     }
 }

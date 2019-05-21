@@ -30,7 +30,7 @@ public class TileModel
     /// <summary>
     /// item_id (objects instance id)
     /// </summary>
-    public int item_id;
+    public int item_guid;
     
     /// 現在のタイルにあるアイテム
     public int item_type = 0;

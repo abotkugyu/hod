@@ -24,6 +24,7 @@ public class ItemModel
         name = name;
     }
     
+    public int guid;
     public int id;
     public string name;
     public int type = 0;

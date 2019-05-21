@@ -1,18 +1,18 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class ItemMenuView : MonoBehaviour {
 	
 	[SerializeField]
-	public GameObject item_menu;
-	[SerializeField]
-	public int item_width = 100;
-	[SerializeField]
-	public int item_height = 100;
+	public GameObject itemWindow;
+	
+	private int item_cell_width = 100;
+	private int item_cell_height = -20;
 	
 	[SerializeField]
-	public List<ItemCellView> itemCellViewList;
+	public List<GameObject> itemCellViewList;
 
 	private void initialize()
 	{	
@@ -20,29 +20,30 @@ public class ItemMenuView : MonoBehaviour {
 	
 	public void show ()
 	{
-		item_menu.SetActive(true);
+		itemWindow.SetActive(true);
 	}
 
 	public void hide ()
 	{
-		item_menu.SetActive(false);
+		itemWindow.SetActive(false);
 	}
 
 	public bool is_visible()
 	{
-		return item_menu.active;
+		return itemWindow.active;
 	}
 
 	public void Refresh(List<ItemModel> itemModels)
-	{		
+	{
+		itemCellViewList.ForEach(Destroy);
+		itemCellViewList.Clear();
 		for (int i = 0; i < itemModels.Count; i++)
 		{
-			GameObject itemCell = Instantiate ((GameObject)Resources.Load ("Object/ItemWindow/ItemCell"));
-			itemCell.transform.parent = item_menu.transform;
-			itemCell.transform.localPosition = new Vector2(250 / -10 ,(Screen.height - 150) / 2 + item_height * i  );
+			GameObject itemCell = Instantiate (Resources.Load ("Object/ItemWindow/ItemCell"), itemWindow.transform, true) as GameObject;
+			itemCell.transform.localPosition = new Vector2(250 / -10 ,(Screen.height - 150) / 2 + item_cell_height * i  );
+			itemCellViewList.Add(itemCell);
 			
-			ItemCellView itemCellView = itemCell.AddComponent<ItemCellView>();
-			itemCellViewList.Add(itemCellView);
+			ItemCellView itemCellView = itemCell.GetComponent<ItemCellView>();
 			itemCellView.Name.text = itemModels[i].name;
 		}
 		
