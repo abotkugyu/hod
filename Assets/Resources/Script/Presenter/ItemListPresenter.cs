@@ -29,8 +29,8 @@ public class ItemListPresenter : MonoBehaviour
             itemPresenter.status.position = new Vector3(posx, 0, posz);            
             
             //mapに配置
-            mapPresenter.map[posx, posz].item_type = 1;
-            mapPresenter.map[posx, posz].item_guid = itemPresenter.status.guid;
+            mapPresenter.map[posx, posz].itemType = 1;
+            mapPresenter.map[posx, posz].itemGuid = itemPresenter.status.guid;
             
             item_objects.Add(obj);
                         

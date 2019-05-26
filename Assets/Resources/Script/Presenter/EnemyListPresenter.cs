@@ -28,8 +28,8 @@ public class EnemyListPresenter : MonoBehaviour
             com.status.position = new Vector3(posx, 0, posz);
             enemy_list.Add(obj);
             //mapに配置
-            mapPresenter.map[posx, posz].chara_type = com.status.type;
-            mapPresenter.map[posx, posz].chara_id = com.status.id;
+            mapPresenter.map[posx, posz].charaType = com.status.type;
+            mapPresenter.map[posx, posz].charaId = com.status.id;
         }
     }
 
@@ -65,14 +65,14 @@ public class EnemyListPresenter : MonoBehaviour
                 int n_x = (x != 0 ? (int)Mathf.Sign(x) : 0);
                 int n_z = (z != 0 ? (int)Mathf.Sign(z) : 0);
                 if ((int)com.status.position.x + n_x >= 0 && (int)com.status.position.z + n_z >= 0 &&
-                    mapPresenter.map[(int)com.status.position.x + n_x, (int)com.status.position.z + n_z].chara_type == 0 &&
-					mapPresenter.map[(int)com.status.position.x + n_x, (int)com.status.position.z + n_z].tile_type == 1)
+                    mapPresenter.map[(int)com.status.position.x + n_x, (int)com.status.position.z + n_z].charaType == 0 &&
+					mapPresenter.map[(int)com.status.position.x + n_x, (int)com.status.position.z + n_z].tileType == TileModel.TileType.Floor)
                 {
-                    mapPresenter.map[(int)com.status.position.x, (int)com.status.position.z].chara_type = 0;
-                    mapPresenter.map[(int)com.status.position.x + n_x, (int)com.status.position.z + n_z].chara_type = com.status.type;
+                    mapPresenter.map[(int)com.status.position.x, (int)com.status.position.z].charaType = 0;
+                    mapPresenter.map[(int)com.status.position.x + n_x, (int)com.status.position.z + n_z].charaType = com.status.type;
 
-                    mapPresenter.map[(int)com.status.position.x, (int)com.status.position.z].chara_id = 0;
-                    mapPresenter.map[(int)com.status.position.x + n_x, (int)com.status.position.z + n_z].chara_id = com.status.id;
+                    mapPresenter.map[(int)com.status.position.x, (int)com.status.position.z].charaId = 0;
+                    mapPresenter.map[(int)com.status.position.x + n_x, (int)com.status.position.z + n_z].charaId = com.status.id;
 
                     com.set_position(new Vector3(n_x, 0, n_z));
                     com.set_direction(new Vector3(n_x, 0, n_z));
@@ -80,7 +80,7 @@ public class EnemyListPresenter : MonoBehaviour
                     com.is_move = true;
                     com.move(x, z);
                 }else{
-                    Debug.Log("can't move");
+                    Debug.Log("can't enemy move");
                     com.status.is_action = true;
                 }
             }

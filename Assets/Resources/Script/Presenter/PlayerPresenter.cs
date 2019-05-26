@@ -51,13 +51,13 @@ public class PlayerPresenter : MonoBehaviour {
         if (pos.x < 0 || pos.z < 0){
             return;
         }
-        if (m.map[(int)pos.x, (int)pos.z].chara_type != 1){
-            Debug.Log("c_type:" + m.map[(int)pos.x, (int)pos.z].chara_type);
-            Debug.Log("c_id:" + m.map[(int)pos.x, (int)pos.z].chara_id);
+        if (m.map[(int)pos.x, (int)pos.z].charaType != 1){
+            Debug.Log("c_type:" + m.map[(int)pos.x, (int)pos.z].charaType);
+            Debug.Log("c_id:" + m.map[(int)pos.x, (int)pos.z].charaId);
             for (int x = 0; x < e.enemy_list.Count; x++) {
                 EnemyPresenter com = e.enemy_list[x].GetComponent<EnemyPresenter>();
                 Debug.Log("attack:e_id=" + com.status.id);
-                if (com.status.id == m.map[(int)pos.x, (int)pos.z].chara_id){
+                if (com.status.id == m.map[(int)pos.x, (int)pos.z].charaId){
                     Debug.Log("delete:id="+com.status.id);
                     com.status.hp = 0;
                     e.delete(x);

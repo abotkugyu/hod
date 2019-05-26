@@ -18,6 +18,8 @@ public class GameMain : MonoBehaviour {
     [SerializeField]    
     public EnemyListPresenter enemiesListPresenter;
     [SerializeField]    
+    public StairsListPresenter stairsListPresenter;
+    [SerializeField]    
     public MenuPresenter menuPresenter;
 
 	void Start () {
@@ -36,11 +38,17 @@ public class GameMain : MonoBehaviour {
         //player 配置
         List<int> pos = mapPresenter.get_pop_point();
         playerPresenter.dummy_initialize(pos);
-        mapPresenter.map[pos[0], pos[1]].chara_type = playerPresenter.status.type;
-        mapPresenter.map[pos[0], pos[1]].chara_id = playerPresenter.status.id;
+        mapPresenter.map[pos[0], pos[1]].charaType = playerPresenter.status.type;
+        mapPresenter.map[pos[0], pos[1]].charaId = playerPresenter.status.id;
 			
         //item 配置
         itemsListPresenter.generate(mapPresenter);
+        
+        //階段配置
+        stairsListPresenter.Generate(mapPresenter);
+        
+        //階段配置
+        stairsListPresenter.DummyGenerate(mapPresenter, mapPresenter.CanSetObject(pos));
 
         menuPresenter.itemMenuPresenter.Initialize(playerPresenter.itemModels);
 
@@ -77,17 +85,21 @@ public class GameMain : MonoBehaviour {
                     float x = Input.GetAxisRaw("Horizontal") * 200;
                     float z = Input.GetAxisRaw("Vertical") * 200;
                     
-                    Debug.Log("move");
                     if (x != 0 || z != 0)
                     {
                         //移動先の情報、何もいないか
                         int n_x = (x != 0 ? (int) Mathf.Sign(x) : 0);
                         int n_z = (z != 0 ? (int) Mathf.Sign(z) : 0);
-                        if ((int) playerPresenter.status.position.x + n_x >= 0 && (int) playerPresenter.status.position.z + n_z >= 0 &&
-                            mapPresenter.map[(int) playerPresenter.status.position.x + n_x, (int) playerPresenter.status.position.z + n_z]
-                                .chara_type == 0 &&
-                            mapPresenter.map[(int) playerPresenter.status.position.x + n_x, (int) playerPresenter.status.position.z + n_z]
-                                .tile_type == 1)
+
+                        int afterPositionX = (int) playerPresenter.status.position.x + n_x;
+                        int afterPositionZ = (int) playerPresenter.status.position.z + n_z;
+                        if (afterPositionX >= 0 && (int) playerPresenter.status.position.z + n_z >= 0 &&
+                            mapPresenter.map[afterPositionX, afterPositionZ]
+                                .charaType == 0 &&
+                            (mapPresenter.map[afterPositionX, afterPositionZ]
+                                .tileType == TileModel.TileType.Floor ||
+                            mapPresenter.map[afterPositionX, afterPositionZ]
+                                .tileType == TileModel.TileType.Stairs))
                         {
                             if (!playerPresenter.is_move && playerPresenter.status.is_action == false)
                             {
@@ -96,24 +108,23 @@ public class GameMain : MonoBehaviour {
                                     Debug.Log("move:x=" + x);
                                     Debug.Log("move:z=" + z);
                                     playerPresenter.move(x, z);
-                                    mapPresenter.map[(int) playerPresenter.status.position.x, (int) playerPresenter.status.position.z].chara_type =
-                                        0;
-                                    mapPresenter.map[(int) playerPresenter.status.position.x + n_x, (int) playerPresenter.status.position.z + n_z]
-                                        .chara_type = 1;
-                                    mapPresenter.map[(int) playerPresenter.status.position.x, (int) playerPresenter.status.position.z].chara_id =
-                                        0;
-                                    mapPresenter.map[(int) playerPresenter.status.position.x + n_x, (int) playerPresenter.status.position.z + n_z]
-                                        .chara_id = playerPresenter.status.id;
+                                    
+                                    mapPresenter.map[(int) playerPresenter.status.position.x, (int) playerPresenter.status.position.z].charaId = 0;
+                                    mapPresenter.map[(int) playerPresenter.status.position.x, (int) playerPresenter.status.position.z].charaType = 0;
+                                    
+                                    mapPresenter.map[afterPositionX, afterPositionZ].charaType = 1;
+                                    mapPresenter.map[afterPositionX, afterPositionZ].charaId = playerPresenter.status.id;
+                                    
                                     playerPresenter.set_position(new Vector3(n_x, 0, n_z));
                                     playerPresenter.set_direction(new Vector3(n_x, 0, n_z));
                                     
                                     //アイテムがあれば取得
                                     if (mapPresenter.map[(int) playerPresenter.status.position.x,
                                                 (int) playerPresenter.status.position.z]
-                                            .item_type == 1)
+                                            .itemType == 1)
                                     {
                                         Debug.Log("get item");
-                                        ItemModel itemModel = itemsListPresenter.find(mapPresenter.map[(int)playerPresenter.status.position.x, (int)playerPresenter.status.position.z].item_guid);
+                                        ItemModel itemModel = itemsListPresenter.find(mapPresenter.map[(int)playerPresenter.status.position.x, (int)playerPresenter.status.position.z].itemGuid);
                                         
                                         
                                         if (itemModel != null)
@@ -123,14 +134,22 @@ public class GameMain : MonoBehaviour {
                                             {
                                                 itemsListPresenter.delete(mapPresenter
                                                     .map[(int) playerPresenter.status.position.x,
-                                                        (int) playerPresenter.status.position.z].item_guid);
+                                                        (int) playerPresenter.status.position.z].itemGuid);
                                             }
                                         }
                                         else
                                         {                                            
-                                            Debug.Log(String.Format("FATAL ERROR:Get Item By GUID {0}",mapPresenter.map[(int)playerPresenter.status.position.x, (int)playerPresenter.status.position.z].item_guid.ToString()));
+                                            Debug.Log(String.Format("FATAL ERROR:Get Item By GUID {0}",mapPresenter.map[(int)playerPresenter.status.position.x, (int)playerPresenter.status.position.z].itemGuid.ToString()));
                                         }
                                         
+                                    }
+                                    
+                                    //階段あれば移動
+                                    if(mapPresenter.map[afterPositionX, afterPositionZ]
+                                           .tileType == TileModel.TileType.Stairs)
+                                    {
+                                        Debug.Log("In Stairs");
+                                        mapPresenter.regenerate();
                                     }
                                 }
                             }

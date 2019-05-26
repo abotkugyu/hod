@@ -298,6 +298,11 @@ PrefabInstance:
       propertyPath: menuPresenter
       value: 
       objectReference: {fileID: 2069964498}
+    - target: {fileID: 114858658576021038, guid: 4f7d638767ded4f3ca0dc942d6634895,
+        type: 3}
+      propertyPath: stairsListPresenter
+      value: 
+      objectReference: {fileID: 1324926538}
     m_RemovedComponents:
     - {fileID: 114442329095637132, guid: 4f7d638767ded4f3ca0dc942d6634895, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 4f7d638767ded4f3ca0dc942d6634895, type: 3}
@@ -930,7 +935,7 @@ MonoBehaviour:
   is_move: 0
   target_position: {x: 0, y: 0, z: 0}
   playerView: {fileID: 588293019}
-  itemsModels: []
+  itemModels: []
 --- !u!4 &1071728546
 Transform:
   m_ObjectHideFlags: 0
@@ -1216,6 +1221,51 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1273292250}
   m_CullTransparentMesh: 0
+--- !u!1 &1324926537
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1324926539}
+  - component: {fileID: 1324926538}
+  m_Layer: 0
+  m_Name: StairsListPresenter
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1324926538
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1324926537}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec69c86d3c024a16a7a2ad04b9760cbe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  stairsList: []
+  num: 1
+--- !u!4 &1324926539
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1324926537}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 559.46027, y: 603.11554, z: 97.69299}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 11
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1376324035
 GameObject:
   m_ObjectHideFlags: 0
@@ -1246,7 +1296,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   item_objects: []
-  item_list: []
   num: 100
 --- !u!4 &1376324037
 Transform:
@@ -1349,6 +1398,12 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.Slider+SliderEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
+--- !u!1 &1528721326 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1480351138713884, guid: e848cebf4690b664caa62f360129828d,
+    type: 3}
+  m_PrefabInstance: {fileID: 1588841038}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1588841038
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1360,9 +1415,32 @@ PrefabInstance:
       propertyPath: m_Name
       value: ItemMenu
       objectReference: {fileID: 0}
+    - target: {fileID: 1577208197242830, guid: e848cebf4690b664caa62f360129828d, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 114524499258826880, guid: e848cebf4690b664caa62f360129828d,
         type: 3}
       propertyPath: itemCellViewList.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114524499258826880, guid: e848cebf4690b664caa62f360129828d,
+        type: 3}
+      propertyPath: itemWindow
+      value: 
+      objectReference: {fileID: 1528721326}
+    - target: {fileID: 114524499258826880, guid: e848cebf4690b664caa62f360129828d,
+        type: 3}
+      propertyPath: item_width
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 114524499258826880, guid: e848cebf4690b664caa62f360129828d,
+        type: 3}
+      propertyPath: item_height
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 1480351138713884, guid: e848cebf4690b664caa62f360129828d, type: 3}
+      propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 224006608170323116, guid: e848cebf4690b664caa62f360129828d,
@@ -1403,7 +1481,7 @@ PrefabInstance:
     - target: {fileID: 224006608170323116, guid: e848cebf4690b664caa62f360129828d,
         type: 3}
       propertyPath: m_RootOrder
-      value: 12
+      value: 13
       objectReference: {fileID: 0}
     - target: {fileID: 224006608170323116, guid: e848cebf4690b664caa62f360129828d,
         type: 3}
@@ -1793,7 +1871,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 11
+  m_RootOrder: 12
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2069964500
 MonoBehaviour:
