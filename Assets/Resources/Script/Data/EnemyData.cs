@@ -10,10 +10,10 @@ public static class EnemyData{
 
     public static void Load()
     {
-        TextAsset item_master_json = Resources.Load<TextAsset>("Master/Enemy");
-        master = JsonUtility.FromJson<EnemyModelJson>(item_master_json.ToString());
+        TextAsset master_json = Resources.Load<TextAsset>("Master/Enemy");
+        master = JsonUtility.FromJson<EnemyModelJson>(master_json.ToString());
         Debug.Log(String.Format("Load Success Enemy Data : {0}",master.list[0].name));
-    }
+    }    
 
     public static UserModel GetRandom()
     {

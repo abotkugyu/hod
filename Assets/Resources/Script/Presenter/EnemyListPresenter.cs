@@ -6,7 +6,7 @@ using UnityEngine;
 public class EnemyListPresenter : MonoBehaviour
 {
 
-    public List<GameObject> enemy_list = new List<GameObject>();
+    public List<EnemyPresenter> enemy_list = new List<EnemyPresenter>();
     public int num = 100;
 
     public void generate(MapPresenter mapPresenter)
@@ -26,11 +26,12 @@ public class EnemyListPresenter : MonoBehaviour
             enemyPresenter.status = EnemyData.GetRandom();
             enemyPresenter.status.id = obj.GetInstanceID();
             enemyPresenter.status.type = 2;
+            enemyPresenter.status.is_action = false;
             enemyPresenter.status.position = new Vector3(posx, 0, posz);
-            enemy_list.Add(obj);
+            enemy_list.Add(enemyPresenter);
             //mapに配置
-            mapPresenter.map[posx, posz].charaType = enemyPresenter.status.type;
             mapPresenter.map[posx, posz].charaId = enemyPresenter.status.id;
+            mapPresenter.map[posx, posz].charaType = enemyPresenter.status.type;
         }
     }
 
@@ -40,8 +41,8 @@ public class EnemyListPresenter : MonoBehaviour
         bool is_end = true;
         for (int x = 0; x < enemy_list.Count; x++)
         {
-            EnemyPresenter com = enemy_list[x].GetComponent<EnemyPresenter>();
-            if (com.status.is_action == false)
+            EnemyPresenter enemyPresenter = enemy_list[x];
+            if (enemyPresenter.status.is_action == false && enemyPresenter.is_move == true)
             {
                 is_end = !is_end;
                 break;
@@ -56,8 +57,8 @@ public class EnemyListPresenter : MonoBehaviour
     {
         for (int l = 0; l < enemy_list.Count; l++)
         {
-            EnemyPresenter com = enemy_list[l].GetComponent<EnemyPresenter>();
-            int action_type = com.get_action();
+            EnemyPresenter enemyPresenter = enemy_list[l];
+            int action_type = enemyPresenter.get_action();
             //とりあえず1を移動
             if (action_type == 1)
             {
@@ -65,25 +66,28 @@ public class EnemyListPresenter : MonoBehaviour
                 float z = Mathf.Sign(Random.Range(-1.0f, 1.0f)) * 200;
                 int n_x = (x != 0 ? (int)Mathf.Sign(x) : 0);
                 int n_z = (z != 0 ? (int)Mathf.Sign(z) : 0);
-                if ((int)com.status.position.x + n_x >= 0 && (int)com.status.position.z + n_z >= 0 &&
-                    mapPresenter.map[(int)com.status.position.x + n_x, (int)com.status.position.z + n_z].charaType == 0 &&
-					mapPresenter.map[(int)com.status.position.x + n_x, (int)com.status.position.z + n_z].tileType == TileModel.TileType.Floor)
+                int afterPositionX = (int) enemyPresenter.status.position.x + n_x;
+                int afterPositionZ = (int) enemyPresenter.status.position.z + n_z;
+                if (afterPositionX >= 0 && afterPositionZ >= 0 &&
+                    mapPresenter.map[afterPositionX, afterPositionZ].charaType == 0 &&
+					mapPresenter.map[afterPositionX, afterPositionZ].tileType == TileModel.TileType.Floor)
                 {
-                    mapPresenter.map[(int)com.status.position.x, (int)com.status.position.z].charaType = 0;
-                    mapPresenter.map[(int)com.status.position.x + n_x, (int)com.status.position.z + n_z].charaType = com.status.type;
+                    mapPresenter.map[(int)enemyPresenter.status.position.x, (int)enemyPresenter.status.position.z].charaType = 0;
+                    mapPresenter.map[afterPositionX, afterPositionZ].charaType = enemyPresenter.status.type;
 
-                    mapPresenter.map[(int)com.status.position.x, (int)com.status.position.z].charaId = 0;
-                    mapPresenter.map[(int)com.status.position.x + n_x, (int)com.status.position.z + n_z].charaId = com.status.id;
+                    mapPresenter.map[(int)enemyPresenter.status.position.x, (int)enemyPresenter.status.position.z].charaId = 0;
+                    mapPresenter.map[afterPositionX, afterPositionZ].charaId = enemyPresenter.status.id;
 
-                    com.set_position(new Vector3(n_x, 0, n_z));
-                    com.set_direction(new Vector3(n_x, 0, n_z));
+                    enemyPresenter.set_position(new Vector3(n_x, 0, n_z));
+                    enemyPresenter.set_direction(new Vector3(n_x, 0, n_z));
 
-                    com.is_move = true;
-                    com.move(x, z);
+                    enemyPresenter.is_move = true;
+                    enemyPresenter.move(x, z);
                 }else{
-                    Debug.Log("can't enemy move");
-                    com.status.is_action = true;
+                    enemyPresenter.status.is_action = true;
                 }
+            }else{
+                enemyPresenter.status.is_action = true;
             }
         }
     }
@@ -92,11 +96,11 @@ public class EnemyListPresenter : MonoBehaviour
     public void turn_reset(){
         for (int x = 0; x < enemy_list.Count; x++)
         {
-            EnemyPresenter com = enemy_list[x].GetComponent<EnemyPresenter>();
-            com.status.is_action = false;
+            EnemyPresenter enemyPresenter = enemy_list[x];
+            enemyPresenter.status.is_action = false;
         }
     }
-
+    
 	public void delete(int index)
 	{
         Destroy(enemy_list[index]);

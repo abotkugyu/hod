@@ -10,9 +10,9 @@ public static class ItemData{
 
     public static void Load()
     {
-        TextAsset item_master_json = Resources.Load<TextAsset>("Master/Item");
-        master = JsonUtility.FromJson<ItemModelJson>(item_master_json.ToString());
-        Debug.Log(String.Format("Load Success Item Data : {0}",master.list[0].name));
+        TextAsset master_json = Resources.Load<TextAsset>("Master/Item");
+        master = JsonUtility.FromJson<ItemModelJson>(master_json.ToString());
+        Debug.Log(String.Format("Load Success Item Data : {0}", master.list[0].name));
     }
 
     public static ItemModel GetRandom()
