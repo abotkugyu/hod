@@ -35,9 +35,3 @@ public class ItemModel
     public int remain_count = 0; //残り回数
    
 }
-
-public class ItemModelJson
-{
-    public ItemModel[] item;
-}
-

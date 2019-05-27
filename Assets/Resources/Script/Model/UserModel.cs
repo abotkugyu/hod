@@ -33,9 +33,9 @@ public class UserModel
     //防御力
     public int defence = 100;
     //命中力
-    public int base_hit_rate;
+    public int hit_rate;
     //回避力
-    public int base_avoid_rate;
+    public int avoid_rate;
     //属性
     public int element;
     //jump

@@ -22,14 +22,15 @@ public class EnemyListPresenter : MonoBehaviour
             obj.transform.position = new Vector3(posx, 0, posz);
             obj.layer = 9;
 
-            EnemyPresenter com = obj.GetComponent<EnemyPresenter>();
-            com.status.id = obj.GetInstanceID();
-            com.status.type = 2;
-            com.status.position = new Vector3(posx, 0, posz);
+            EnemyPresenter enemyPresenter = obj.GetComponent<EnemyPresenter>();                    
+            enemyPresenter.status = EnemyData.GetRandom();
+            enemyPresenter.status.id = obj.GetInstanceID();
+            enemyPresenter.status.type = 2;
+            enemyPresenter.status.position = new Vector3(posx, 0, posz);
             enemy_list.Add(obj);
             //mapに配置
-            mapPresenter.map[posx, posz].charaType = com.status.type;
-            mapPresenter.map[posx, posz].charaId = com.status.id;
+            mapPresenter.map[posx, posz].charaType = enemyPresenter.status.type;
+            mapPresenter.map[posx, posz].charaId = enemyPresenter.status.id;
         }
     }
 

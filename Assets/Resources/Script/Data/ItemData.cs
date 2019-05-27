@@ -6,17 +6,22 @@ using Random = UnityEngine.Random;
 
 public static class ItemData{
 
-    private static ItemModelJson item_master;
+    private static ItemModelJson master;
 
     public static void Load()
     {
         TextAsset item_master_json = Resources.Load<TextAsset>("Master/Item");
-        item_master = JsonUtility.FromJson<ItemModelJson>(item_master_json.ToString());
-        Debug.Log(String.Format("Load Success Item Data : {0}",item_master.item[0].name));
+        master = JsonUtility.FromJson<ItemModelJson>(item_master_json.ToString());
+        Debug.Log(String.Format("Load Success Item Data : {0}",master.list[0].name));
     }
 
     public static ItemModel GetRandom()
     {
-        return item_master.item[Random.Range(0, item_master.item.Length-1)];
+        return master.list[Random.Range(0, master.list.Length-1)];
     }
 }
+public class ItemModelJson
+{
+    public ItemModel[] list;
+}
+
