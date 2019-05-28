@@ -39,7 +39,7 @@ public class PlayerPresenter : MonoBehaviour {
     
 	// Update is called once per frame
 	void Update () {
-        if (is_move && status.is_action == false){
+        if (is_move && status.isAction == false){
             moving();
         }
 	}
@@ -65,7 +65,7 @@ public class PlayerPresenter : MonoBehaviour {
                 }
             }
         }
-        status.is_action = true;
+        status.isAction = true;
 
         playerView.attack();
     }
@@ -101,7 +101,7 @@ public class PlayerPresenter : MonoBehaviour {
         {
             transform.velocity = Vector3.zero;
             is_move = false;
-            status.is_action = true;
+            status.isAction = true;
             playerView.run(false);
         }
     }

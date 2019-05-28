@@ -41,5 +41,5 @@ public class UserModel
     //jump
     public int jump;
     //行動したか
-    public bool is_action = false;
+    public bool isAction = false;
 }

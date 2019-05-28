@@ -4,94 +4,87 @@ using UnityEngine;
 
 public class EnemyPresenter : MonoBehaviour {
 
-	// Use this for initialization
-
     public UserModel status = new UserModel();
-    void Start()
-    {
-    }
-
     public float speed = 4.0f;
-    public bool is_move = false;
-    public Vector3 target_position;
+    public bool isMove = false;
+    public Vector3 targetPosition;
 
-    public int get_action()
+    void Update()
+    {
+        if (isMove)
+        {
+            Moving();
+        }
+    }
+        
+    public int GetAction()
     {
         return Random.Range(1, 2);
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        if (is_move && status.is_action == false)
-        {
-            moving();
-        }
-    }
-
     //移動処理
-    public void move(float x, float z)
+    public void StartMove(float x, float z)
     {
+        isMove = true;
         Rigidbody transform = GetComponent<Rigidbody>();
-        Vector3 now_position = transform.position;
-
-        Rigidbody rigidbody = GetComponent<Rigidbody>();
-        //Force その質量を使用して、rigidbodyへの継続的な力を追加します。
-        //Acceleration  その質量を無視して、rigidbodyへの継続的な加速を追加します。
-        //Impulse   その質量を使用して、rigidbodyに瞬時に速度変化を追加します。
-        //VelocityChange    その質量を無視して、rigidbodyに瞬時に速度変化を追加します。
-        rigidbody.AddForce(x, 0, z, ForceMode.Acceleration);
-        target_position.x = now_position.x;
-        target_position.z = now_position.z;
+        Vector3 nowPosition = transform.position;
+        transform.AddForce(x, 0, z, ForceMode.Acceleration);
+        targetPosition.x = nowPosition.x;
+        targetPosition.z = nowPosition.z;
     }
 
-    void moving()
+    void Moving()
     {
         Rigidbody transform = GetComponent<Rigidbody>();
-        Vector3 now_position = transform.position;
-        Rigidbody rigidbody = GetComponent<Rigidbody>();
-        if (target_position.x != now_position.x)
+        Vector3 nowPosition = transform.position;
+        if (targetPosition.x != nowPosition.x)
         {
-            if (target_position.x + 1 < now_position.x)
+            if (targetPosition.x + 1 < nowPosition.x)
             {
-                rigidbody.velocity = Vector3.zero;
-                is_move = false;
-                status.is_action = true;
+                transform.velocity = Vector3.zero;
+                isMove = false;
+                status.isAction = true;
             }
-            else if (target_position.x - 1 > now_position.x)
+            else if (targetPosition.x - 1 > nowPosition.x)
             {
-                rigidbody.velocity = Vector3.zero;
-                is_move = false;
-                status.is_action = true;
+                transform.velocity = Vector3.zero;
+                isMove = false;
+                status.isAction = true;
             }
         }
-        else if (target_position.z != now_position.z)
+        else if (targetPosition.z != nowPosition.z)
         {
-            if (target_position.z + 1 < now_position.z)
+            if (targetPosition.z + 1 < nowPosition.z)
             {
-                rigidbody.velocity = Vector3.zero;
-                is_move = false;
-                status.is_action = true;
+                transform.velocity = Vector3.zero;
+                isMove = false;
+                status.isAction = true;
             }
-            else if (target_position.z - 1 > now_position.z)
+            else if (targetPosition.z - 1 > nowPosition.z)
             {
-                rigidbody.velocity = Vector3.zero;
-                is_move = false;
-                status.is_action = true;
+                transform.velocity = Vector3.zero;
+                isMove = false;
+                status.isAction = true;
             }
         }
     }
 
     //position設定
-    public void set_position(Vector3 position)
+    public void SetPosition(Vector3 position)
     {
         status.position = new Vector3(status.position.x + position.x, status.position.y + position.y, status.position.z + position.z);
     }
 
     //向き設定
-    public void set_direction(Vector3 position)
+    public void SetDirection(Vector3 position)
     {
         status.direction = new Vector3(position.x, position.y, position.z);
+    }
+        
+    //向き設定
+    public void SetIsAction(bool isAction)
+    {
+        status.isAction = isAction;
     }
 
     void OnWillRenderObject()

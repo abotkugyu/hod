@@ -26,7 +26,7 @@ public class EnemyListPresenter : MonoBehaviour
             enemyPresenter.status = EnemyData.GetRandom();
             enemyPresenter.status.id = obj.GetInstanceID();
             enemyPresenter.status.type = 2;
-            enemyPresenter.status.is_action = false;
+            enemyPresenter.status.isAction = false;
             enemyPresenter.status.position = new Vector3(posx, 0, posz);
             enemy_list.Add(enemyPresenter);
             //mapに配置
@@ -42,7 +42,7 @@ public class EnemyListPresenter : MonoBehaviour
         for (int x = 0; x < enemy_list.Count; x++)
         {
             EnemyPresenter enemyPresenter = enemy_list[x];
-            if (enemyPresenter.status.is_action == false && enemyPresenter.is_move == true)
+            if (enemyPresenter.status.isAction == false && enemyPresenter.isMove == true)
             {
                 is_end = !is_end;
                 break;
@@ -58,7 +58,7 @@ public class EnemyListPresenter : MonoBehaviour
         for (int l = 0; l < enemy_list.Count; l++)
         {
             EnemyPresenter enemyPresenter = enemy_list[l];
-            int action_type = enemyPresenter.get_action();
+            int action_type = enemyPresenter.GetAction();
             //とりあえず1を移動
             if (action_type == 1)
             {
@@ -78,16 +78,16 @@ public class EnemyListPresenter : MonoBehaviour
                     mapPresenter.map[(int)enemyPresenter.status.position.x, (int)enemyPresenter.status.position.z].charaId = 0;
                     mapPresenter.map[afterPositionX, afterPositionZ].charaId = enemyPresenter.status.id;
 
-                    enemyPresenter.set_position(new Vector3(n_x, 0, n_z));
-                    enemyPresenter.set_direction(new Vector3(n_x, 0, n_z));
+                    enemyPresenter.SetPosition(new Vector3(n_x, 0, n_z));
+                    enemyPresenter.SetDirection(new Vector3(n_x, 0, n_z));
 
-                    enemyPresenter.is_move = true;
-                    enemyPresenter.move(x, z);
+                    enemyPresenter.StartMove(x, z);
                 }else{
-                    enemyPresenter.status.is_action = true;
+                    //移動先がなければ行動済みにする。
+                    enemyPresenter.SetIsAction(true);
                 }
             }else{
-                enemyPresenter.status.is_action = true;
+                enemyPresenter.SetIsAction(true);
             }
         }
     }
@@ -97,7 +97,7 @@ public class EnemyListPresenter : MonoBehaviour
         for (int x = 0; x < enemy_list.Count; x++)
         {
             EnemyPresenter enemyPresenter = enemy_list[x];
-            enemyPresenter.status.is_action = false;
+            enemyPresenter.SetIsAction(false);
         }
     }
     

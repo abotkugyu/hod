@@ -76,7 +76,7 @@ public class GameMain : MonoBehaviour {
                 if (!menuPresenter.itemMenuPresenter.GetIsShowItemMenu())
                 {
                     //攻撃
-                    if (Input.GetKeyDown(KeyCode.X) && playerPresenter.status.is_action == false && !playerPresenter.is_move)
+                    if (Input.GetKeyDown(KeyCode.X) && playerPresenter.status.isAction == false && !playerPresenter.is_move)
                     {
                         playerPresenter.attack(mapPresenter, enemiesListPresenter);
                     }
@@ -102,7 +102,7 @@ public class GameMain : MonoBehaviour {
                             mapPresenter.map[afterPositionX, afterPositionZ]
                                 .tileType == TileModel.TileType.Stairs))
                         {
-                            if (!playerPresenter.is_move && playerPresenter.status.is_action == false)
+                            if (!playerPresenter.is_move && playerPresenter.status.isAction == false)
                             {
                                 if (!is_lshift)
                                 {
@@ -163,7 +163,7 @@ public class GameMain : MonoBehaviour {
                     }
 
                     //自分が動いたら敵のターンにする
-                    if (playerPresenter.status.is_action)
+                    if (playerPresenter.status.isAction)
                     {
                         enemiesListPresenter.turn_reset();
                         enemiesListPresenter.all_action(mapPresenter);
@@ -176,7 +176,7 @@ public class GameMain : MonoBehaviour {
                 //敵が全部動いていればユーザーのターンにする
                 if(enemiesListPresenter.is_all_action())
                 {
-                    playerPresenter.status.is_action = false;
+                    playerPresenter.status.isAction = false;
                     gameStatus.turn = 1;
                 }
             }
