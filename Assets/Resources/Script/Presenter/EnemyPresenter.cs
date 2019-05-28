@@ -8,6 +8,9 @@ public class EnemyPresenter : MonoBehaviour {
     public float speed = 4.0f;
     public bool isMove = false;
     public Vector3 targetPosition;
+    
+    [SerializeField]
+    public EnemyView enemyView;
 
     void Update()
     {
@@ -15,6 +18,11 @@ public class EnemyPresenter : MonoBehaviour {
         {
             Moving();
         }
+    }
+    
+    public void Initialize()
+    {
+        enemyView.Initialize();
     }
         
     public int GetAction()
@@ -26,46 +34,26 @@ public class EnemyPresenter : MonoBehaviour {
     public void StartMove(float x, float z)
     {
         isMove = true;
-        Rigidbody transform = GetComponent<Rigidbody>();
+        Rigidbody transform = enemyView.GetTransForm();
         Vector3 nowPosition = transform.position;
-        transform.AddForce(x, 0, z, ForceMode.Acceleration);
-        targetPosition.x = nowPosition.x;
-        targetPosition.z = nowPosition.z;
+
+        targetPosition.x = x/200 + nowPosition.x;
+        targetPosition.z = z/200 + nowPosition.z;
+        
     }
 
     void Moving()
-    {
-        Rigidbody transform = GetComponent<Rigidbody>();
+    {        
+        Rigidbody transform = enemyView.GetTransForm();
         Vector3 nowPosition = transform.position;
-        if (targetPosition.x != nowPosition.x)
+
+        float step = 0.04f;//speed * Time.deltaTime;
+        transform.position = Vector3.MoveTowards(transform.position, new Vector3(targetPosition.x, 0, targetPosition.z), step);
+        if (targetPosition.x == nowPosition.x && targetPosition.z == nowPosition.z)
         {
-            if (targetPosition.x + 1 < nowPosition.x)
-            {
-                transform.velocity = Vector3.zero;
-                isMove = false;
-                status.isAction = true;
-            }
-            else if (targetPosition.x - 1 > nowPosition.x)
-            {
-                transform.velocity = Vector3.zero;
-                isMove = false;
-                status.isAction = true;
-            }
-        }
-        else if (targetPosition.z != nowPosition.z)
-        {
-            if (targetPosition.z + 1 < nowPosition.z)
-            {
-                transform.velocity = Vector3.zero;
-                isMove = false;
-                status.isAction = true;
-            }
-            else if (targetPosition.z - 1 > nowPosition.z)
-            {
-                transform.velocity = Vector3.zero;
-                isMove = false;
-                status.isAction = true;
-            }
+            transform.velocity = Vector3.zero;
+            isMove = false;
+            status.isAction = true;
         }
     }
 
@@ -74,13 +62,23 @@ public class EnemyPresenter : MonoBehaviour {
     {
         status.position = new Vector3(status.position.x + position.x, status.position.y + position.y, status.position.z + position.z);
     }
-
-    //向き設定
+    /// <summary>
+    /// <code>
+    /// transform.eulerAnglesで向きを変更
+    /// user.status.directionに向き保存
+    /// </code>
+    /// </summary>
     public void SetDirection(Vector3 position)
     {
+        int nowDirection = TransFormUtil.GetChangeRotate(status.direction);
+        int targetDirection = TransFormUtil.GetChangeRotate(position);
+
+        float angle = Mathf.LerpAngle(nowDirection, targetDirection, Time.time);
+        
+        enemyView.SetAngles(new Vector3(0, angle, 0));
+
         status.direction = new Vector3(position.x, position.y, position.z);
     }
-        
     //向き設定
     public void SetIsAction(bool isAction)
     {
