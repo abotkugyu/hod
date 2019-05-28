@@ -9,65 +9,64 @@ public class PlayerPresenter : MonoBehaviour {
     public UserModel status = new UserModel();
     
     public float speed = 4.0f;
-    public bool is_move = false;
-    public Vector3 target_position;
+    public bool isMove = false;
+    public Vector3 targetPosition;
     
     [SerializeField]
     public PlayerView playerView;
     
     public List<ItemModel> itemModels;
 
-    public void initialize()
-    {
-        playerView.initialize();
-        dummy_item();
+    void Update () {
+        if (isMove && status.isAction == false){
+            Moving();
+        }
     }
     
-    public void dummy_item()
+    public void Initialize()
+    {
+        playerView.Initialize();
+        DummyItem();
+    }
+    
+    public void DummyItem()
     {        
         itemModels.Add(ItemData.GetRandom());
     }
     
-    public void dummy_initialize(List<int> pos)
+    public void DummyInitialize(List<int> pos)
     {        
         int posx = pos[0];
         int posz = pos[1];
         playerView.player.transform.position = new Vector3(posx, 0, posz);
-        set_position(new Vector3(posx, 0, posz));
-        set_direction(new Vector3(0, 0, -1));
+        SetPosition(new Vector3(posx, 0, posz));
+        SetDirection(new Vector3(0, 0, -1));
     }
-    
-	// Update is called once per frame
-	void Update () {
-        if (is_move && status.isAction == false){
-            moving();
-        }
-	}
 
     //攻撃処理
-    public void attack(MapPresenter m,EnemyListPresenter e)
+    public void Attack(MapPresenter m,EnemyListPresenter e)
     {
         Vector3 pos = status.position + status.direction;
         if (pos.x < 0 || pos.z < 0){
             return;
         }
-        if (m.map[(int)pos.x, (int)pos.z].charaType != 1){
+        if (m.map[(int)pos.x, (int)pos.z].charaType != TileModel.CharaType.Player){
             Debug.Log("c_type:" + m.map[(int)pos.x, (int)pos.z].charaType);
             Debug.Log("c_id:" + m.map[(int)pos.x, (int)pos.z].charaId);
-            for (int x = 0; x < e.enemy_list.Count; x++) {
-                EnemyPresenter com = e.enemy_list[x].GetComponent<EnemyPresenter>();
-                Debug.Log("attack:e_id=" + com.status.id);
-                if (com.status.id == m.map[(int)pos.x, (int)pos.z].charaId){
-                    Debug.Log("delete:id="+com.status.id);
-                    com.status.hp = 0;
-                    e.delete(x);
+            for (int x = 0; x < e.enemyList.Count; x++) {
+                EnemyPresenter enemyPresenter = e.enemyList[x].GetComponent<EnemyPresenter>();
+                Debug.Log("attack:e_id=" + enemyPresenter.status.id);
+                if (enemyPresenter.status.id == m.map[(int)pos.x, (int)pos.z].charaId){
+                    Debug.Log("delete:id="+enemyPresenter.status.id);
+                    enemyPresenter.status.hp = 0;
+                    e.Delete(x);
                     break;
                 }
             }
         }
         status.isAction = true;
 
-        playerView.attack();
+        playerView.Attack();
     }
 
     /// <summary>
@@ -79,35 +78,35 @@ public class PlayerPresenter : MonoBehaviour {
     /// </summary>
     /// <param name="x"></param>
     /// <param name="z"></param>
-	public void move (float x,float z) {
-        is_move = true;
+	public void Move (float x,float z) {
+        isMove = true;
 		Rigidbody transform = playerView.GetTransForm();
-		Vector3 now_position = transform.position;
+		Vector3 nowPosition = transform.position;
 
-        target_position.x = x/200 + now_position.x;
-        target_position.z = z/200 + now_position.z;
+        targetPosition.x = x/200 + nowPosition.x;
+        targetPosition.z = z/200 + nowPosition.z;
         
-        playerView.run(true);
+        playerView.Run(true);
 
 	}
 
-    void moving(){
+    void Moving(){
         Rigidbody transform = playerView.GetTransForm();
-        Vector3 now_position = transform.position;
+        Vector3 nowPosition = transform.position;
 
         float step = 0.04f;//speed * Time.deltaTime;
-        transform.position = Vector3.MoveTowards(transform.position, new Vector3(target_position.x, 0, target_position.z), step);
-        if (target_position.x == now_position.x && target_position.z == now_position.z)
+        transform.position = Vector3.MoveTowards(transform.position, new Vector3(targetPosition.x, 0, targetPosition.z), step);
+        if (targetPosition.x == nowPosition.x && targetPosition.z == nowPosition.z)
         {
             transform.velocity = Vector3.zero;
-            is_move = false;
+            isMove = false;
             status.isAction = true;
-            playerView.run(false);
+            playerView.Run(false);
         }
     }
 
     /// user.status.position に座標保存
-    public Vector3 set_position(Vector3 position)
+    public Vector3 SetPosition(Vector3 position)
     {
         status.position = new Vector3(status.position.x + position.x, status.position.y + position.y, status.position.z + position.z);
         return status.position;
@@ -119,12 +118,12 @@ public class PlayerPresenter : MonoBehaviour {
     /// user.status.directionに向き保存
     /// </code>
     /// </summary>
-    public void set_direction(Vector3 position)
+    public void SetDirection(Vector3 position)
     {
-        int n_direction = TransFormUtil.GetChangeRotate(status.direction);
-        int s_direction = TransFormUtil.GetChangeRotate(position);
+        int nowDirection = TransFormUtil.GetChangeRotate(status.direction);
+        int targetDirection = TransFormUtil.GetChangeRotate(position);
 
-        float angle = Mathf.LerpAngle(n_direction, s_direction, Time.time);
+        float angle = Mathf.LerpAngle(nowDirection, targetDirection, Time.time);
         
         playerView.SetAngles(new Vector3(0, angle, 0));
 

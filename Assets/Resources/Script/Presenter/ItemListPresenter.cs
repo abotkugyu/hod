@@ -10,13 +10,13 @@ public class ItemListPresenter : MonoBehaviour
     public List<GameObject> item_objects = new List<GameObject>();
     public int num = 100;
 
-    public void generate(MapPresenter mapPresenter)
+    public void Generate(MapPresenter mapPresenter)
     {
         for (int x = 0; x < num; x++)
         {
             // item object作成
             GameObject obj = Object.Instantiate(Resources.Load("Object/Item")) as GameObject;
-            List<int> pos = mapPresenter.get_pop_point();
+            List<int> pos = mapPresenter.GetPopPoint();
             int posx = pos[0];
             int posz = pos[1];
             obj.transform.position = new Vector3(posx, 0, posz);
@@ -37,7 +37,7 @@ public class ItemListPresenter : MonoBehaviour
         }
     }
     
-    public ItemModel find(int guid)
+    public ItemModel Find(int guid)
     {
         var obj = item_objects.FirstOrDefault(i => i.GetInstanceID() == guid);
         if (obj != null)
@@ -47,7 +47,7 @@ public class ItemListPresenter : MonoBehaviour
         return null;
     }
     
-    public void delete(int guid)
+    public void Delete(int guid)
     {
         // 遅かったらindex検索にする
         GameObject obj = item_objects.FirstOrDefault(i => i.GetInstanceID() == guid);

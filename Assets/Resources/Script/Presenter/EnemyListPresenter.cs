@@ -6,42 +6,40 @@ using UnityEngine;
 public class EnemyListPresenter : MonoBehaviour
 {
 
-    public List<EnemyPresenter> enemy_list = new List<EnemyPresenter>();
+    public List<EnemyPresenter> enemyList = new List<EnemyPresenter>();
     public int num = 100;
 
-    public void generate(MapPresenter mapPresenter)
+    public void Generate(MapPresenter mapPresenter)
     {
         for (int x = 0; x < num; x++)
         {
             GameObject obj = Object.Instantiate(Resources.Load("Object/Enemy")) as GameObject;
-            List<int> pos = mapPresenter.get_pop_point();
-            int posx = pos[0];
-            int posz = pos[1];
-            //Debug.Log(posx);
-            //Debug.Log(posz);
-            obj.transform.position = new Vector3(posx, 0, posz);
+            List<int> pos = mapPresenter.GetPopPoint();
+            int posX = pos[0];
+            int posZ = pos[1];
+            obj.transform.position = new Vector3(posX, 0, posZ);
             obj.layer = 9;
 
             EnemyPresenter enemyPresenter = obj.GetComponent<EnemyPresenter>();                    
             enemyPresenter.status = EnemyData.GetRandom();
             enemyPresenter.status.id = obj.GetInstanceID();
-            enemyPresenter.status.type = 2;
+            enemyPresenter.status.type = TileModel.CharaType.Enemy;
             enemyPresenter.status.isAction = false;
-            enemyPresenter.status.position = new Vector3(posx, 0, posz);
-            enemy_list.Add(enemyPresenter);
+            enemyPresenter.status.position = new Vector3(posX, 0, posZ);
+            enemyList.Add(enemyPresenter);
             //mapに配置
-            mapPresenter.map[posx, posz].charaId = enemyPresenter.status.id;
-            mapPresenter.map[posx, posz].charaType = enemyPresenter.status.type;
+            mapPresenter.map[posX, posZ].charaId = enemyPresenter.status.id;
+            mapPresenter.map[posX, posZ].charaType = enemyPresenter.status.type;
         }
     }
 
     //敵が全部動いたかどうか
-    public bool is_all_action()
+    public bool IsAllAction()
     {
         bool is_end = true;
-        for (int x = 0; x < enemy_list.Count; x++)
+        for (int x = 0; x < enemyList.Count; x++)
         {
-            EnemyPresenter enemyPresenter = enemy_list[x];
+            EnemyPresenter enemyPresenter = enemyList[x];
             if (enemyPresenter.status.isAction == false && enemyPresenter.isMove == true)
             {
                 is_end = !is_end;
@@ -53,11 +51,11 @@ public class EnemyListPresenter : MonoBehaviour
     }
 
     //全ての敵に行動させる
-    public void all_action(MapPresenter mapPresenter)
+    public void AllAction(MapPresenter mapPresenter)
     {
-        for (int l = 0; l < enemy_list.Count; l++)
+        for (int l = 0; l < enemyList.Count; l++)
         {
-            EnemyPresenter enemyPresenter = enemy_list[l];
+            EnemyPresenter enemyPresenter = enemyList[l];
             int action_type = enemyPresenter.GetAction();
             //とりあえず1を移動
             if (action_type == 1)
@@ -68,9 +66,7 @@ public class EnemyListPresenter : MonoBehaviour
                 int n_z = (z != 0 ? (int)Mathf.Sign(z) : 0);
                 int afterPositionX = (int) enemyPresenter.status.position.x + n_x;
                 int afterPositionZ = (int) enemyPresenter.status.position.z + n_z;
-                if (afterPositionX >= 0 && afterPositionZ >= 0 &&
-                    mapPresenter.map[afterPositionX, afterPositionZ].charaType == 0 &&
-					mapPresenter.map[afterPositionX, afterPositionZ].tileType == TileModel.TileType.Floor)
+                if (mapPresenter.IsCanMove(afterPositionX, afterPositionZ, TileModel.CharaType.Enemy))
                 {
                     mapPresenter.map[(int)enemyPresenter.status.position.x, (int)enemyPresenter.status.position.z].charaType = 0;
                     mapPresenter.map[afterPositionX, afterPositionZ].charaType = enemyPresenter.status.type;
@@ -93,18 +89,18 @@ public class EnemyListPresenter : MonoBehaviour
     }
 
     //敵の行動フラグをリセットする
-    public void turn_reset(){
-        for (int x = 0; x < enemy_list.Count; x++)
+    public void TurnReset(){
+        for (int x = 0; x < enemyList.Count; x++)
         {
-            EnemyPresenter enemyPresenter = enemy_list[x];
+            EnemyPresenter enemyPresenter = enemyList[x];
             enemyPresenter.SetIsAction(false);
         }
     }
     
-	public void delete(int index)
+	public void Delete(int index)
 	{
-        Destroy(enemy_list[index]);
-        enemy_list.RemoveAt(index);
-        Debug.Log(enemy_list.Count);
+        Destroy(enemyList[index]);
+        enemyList.RemoveAt(index);
+        Debug.Log(enemyList.Count);
 	}
 }

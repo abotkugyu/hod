@@ -7,33 +7,33 @@ using UnityEngine.SceneManagement;
 //100*100を50,25...と分割していき確率で部屋を作る
 public class MapPresenter : MonoBehaviour {
 
-	public int max_map_x = 100;
-    public int max_map_y = 100;
+	public int maxMapX = 100;
+    public int maxMapY = 100;
     public TileModel[,] map;
-    public List<string> pop_point = new List<string>();
+    public List<string> popPoint = new List<string>();
 
-    public void generate() {
-        map = new TileModel[max_map_x, max_map_y];
-        for (int x = 0; x < max_map_x; x++)
+    public void Generate() {
+        map = new TileModel[maxMapX, maxMapY];
+        for (int x = 0; x < maxMapX; x++)
         {
-            for (int z = 0; z < max_map_y; z++)
+            for (int z = 0; z < maxMapY; z++)
             {
                 map[x, z] = new TileModel();
             }
         }
 
-        List<int> map_x = generate_map ();
+        List<int> map_x = GenerateMap ();
         List<List<int>> map_y = new List<List<int>>();
         int count_x = 0;
         for (int x = 0; x < map_x.Count; x++)
         {
-            List<int> list_y = generate_map ();
+            List<int> list_y = GenerateMap ();
             map_y.Add(list_y);
             int count_y = 0;
 
             for (int y = 0; y < list_y.Count; y++){
                 //int[,] floor = 
-                generate_floor(map_x[x],list_y[y],count_x,count_y);
+                GenerateFloor(map_x[x],list_y[y],count_x,count_y);
                 count_y += list_y[y];
             }
             count_x += map_x[x];
@@ -42,14 +42,14 @@ public class MapPresenter : MonoBehaviour {
         }
 	}
 
-    public void regenerate()
+    public void Regenerate()
     {
 
         Scene loadScene = SceneManager.GetActiveScene();
         SceneManager.LoadScene(loadScene.name);        
     }
 
-    void generate_wall (int[,] data){
+    void GenerateWall (int[,] data){
         for (int x = 0; x < data.Length; x++) {
             for (int y = 0; y < data.Length; y++) {
                 if(data[x+1,y] == 1){
@@ -59,7 +59,7 @@ public class MapPresenter : MonoBehaviour {
         }
     }
 
-    int[,] generate_floor(int x,int y,int seq_x,int seq_y)
+    int[,] GenerateFloor(int x,int y,int seq_x,int seq_y)
     {
         //maxだと部屋同士でくっつくので-1
         int[,] result = new int[x, y];
@@ -77,7 +77,7 @@ public class MapPresenter : MonoBehaviour {
                     original.transform.Translate(seq_x + l, 0, seq_y + m);
                     result[l, m] = 1;
                     map[l + seq_x, m + seq_y].tileType = TileModel.TileType.Floor;
-                    pop_point.Add((l + seq_x)+","+(m + seq_y));
+                    popPoint.Add((l + seq_x)+","+(m + seq_y));
                 }else{
                     result[l, m] = 0;
                 }
@@ -86,11 +86,11 @@ public class MapPresenter : MonoBehaviour {
         return result;
     }
 
-    List<int> generate_map(){
-        return split_map(new List<int>{max_map_x});
+    List<int> GenerateMap(){
+        return SplitMap(new List<int>{maxMapX});
 	}
 
-    List<int> split_map(List<int> data){
+    List<int> SplitMap(List<int> data){
 		Random.Range (0, 2);
 		//show_list_log (data);
 		for (int x = 0; x < data.Count; x++) {
@@ -110,21 +110,21 @@ public class MapPresenter : MonoBehaviour {
         return data;
 	}
 
-	void show_list_log(List<int> data){
+	void ShowListLog(List<int> data){
 		string log = "";
 		for (int x = 0; x < data.Count; x++) {
 			log += data[x].ToString ()+",";
 		}
 	}
 
-    public List<int> get_pop_point()
+    public List<int> GetPopPoint()
     {
         for (int l = 0; l < 1000; l++){
-            int pos_s = Random.Range(0, pop_point.Count - 1);
-            string[] pos = pop_point[pos_s].Split(',');
+            int pos_s = Random.Range(0, popPoint.Count - 1);
+            string[] pos = popPoint[pos_s].Split(',');
             int x = int.Parse(pos[0]);
             int z = int.Parse(pos[1]);
-			if (map[x,z].tileType == TileModel.TileType.Floor && map[x,z].charaType == 0)
+			if (map[x,z].tileType == TileModel.TileType.Floor && map[x,z].charaType == TileModel.CharaType.None)
             {
                 return new List<int>{x, z};
             }
@@ -133,15 +133,35 @@ public class MapPresenter : MonoBehaviour {
         return new List<int> { 0, 0 };
     }
     
-    public bool CanSetStairs(int x, int z)
+    /// <summary>
+    /// 移動できるかどうかs
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="z"></param>
+    /// <param name="type"></param>
+    /// <returns></returns>
+    public bool IsCanMove(int x, int z, TileModel.CharaType type)
     {
-        if (map[x, z].tileType == TileModel.TileType.Floor && map[x, z].charaType == 0)
-        {
-            return true;
+        //移動先が0以上
+        if (x > 0 && z > 0)
+        {            
+            if (type == TileModel.CharaType.Player)
+            {
+                if ((map[x, z].tileType == TileModel.TileType.Floor || map[x, z].tileType == TileModel.TileType.Stairs) && map[x, z].charaType == TileModel.CharaType.None)
+                {
+                    return true;
+                }
+            }else if (type == TileModel.CharaType.Enemy)
+            {
+                if (map[x, z].tileType == TileModel.TileType.Floor && map[x, z].charaType == TileModel.CharaType.None)
+                {
+                    return true;
+                }
+            }
         }
+
         return false;
     }
-
 
     /// <summary>
     /// 八方向List<int>を返す

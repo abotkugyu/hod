@@ -14,7 +14,7 @@ public class StairsListPresenter : MonoBehaviour
         for (int x = 0; x < num; x++)
         {
             GameObject obj = Object.Instantiate(Resources.Load("Object/Stairs")) as GameObject;
-            List<int> pos = mapPresenter.get_pop_point();
+            List<int> pos = mapPresenter.GetPopPoint();
             int posx = pos[0];
             int posz = pos[1];
             obj.transform.position = new Vector3(posx, 0, posz);

@@ -7,5 +7,5 @@ public class GameStatusModel
 {
     //座標
     public int turn = 1;
-    public int map_type;
+    public int mapType;
 }

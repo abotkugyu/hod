@@ -10,8 +10,8 @@ public static class EnemyData{
 
     public static void Load()
     {
-        TextAsset master_json = Resources.Load<TextAsset>("Master/Enemy");
-        master = JsonUtility.FromJson<EnemyModelJson>(master_json.ToString());
+        TextAsset masterJson = Resources.Load<TextAsset>("Master/Enemy");
+        master = JsonUtility.FromJson<EnemyModelJson>(masterJson.ToString());
         Debug.Log(String.Format("Load Success Enemy Data : {0}",master.list[0].name));
     }    
 

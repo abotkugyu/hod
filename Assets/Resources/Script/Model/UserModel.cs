@@ -8,7 +8,7 @@ public class UserModel
     //id
     public int id = 0;
     //type 1=player 2=enemy
-    public int type = 1;
+    public TileModel.CharaType type = 0;
     //座標
     public Vector3 position = new Vector3(0, 0, 0);
     //向き(デフォルト下向き)
@@ -19,11 +19,11 @@ public class UserModel
     //１ターンの行動回数
     public int speed;
     //行動順
-    public int speed_priority;
+    public int speedPriority;
     //ability
     public int ability;
     //行動パターン
-    public int[] action_pattern;
+    public int[] actionPattern;
     //種族
     public int blood;
     //名前

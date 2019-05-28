@@ -14,6 +14,14 @@ public class TileModel
         Stairs
     }
     
+    public enum CharaType
+    {
+        None,        
+        Player,
+        Enemy,
+        Support
+    }
+    
     /// 0=壁
     /// 1=床
     /// 2=水
@@ -28,7 +36,7 @@ public class TileModel
     /// 1=player
     /// 2=enemy
     /// 3=support
-    public int charaType = 0;
+    public CharaType charaType = 0;
     
     /// <summary>
     /// item_id (objects instance id)

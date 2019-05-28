@@ -11,18 +11,18 @@ public class PlayerView : MonoBehaviour {
     [SerializeField]
     Rigidbody trans;
     
-    public void initialize()
+    public void Initialize()
     {
 	    animator = player.GetComponent<Animator>();
 	    animator.Play("Wait");
     }
     
-    public void run(bool is_run)
+    public void Run(bool is_run)
     {
 	    animator.SetBool("is_run", is_run);
     }
     
-    public void attack()
+    public void Attack()
     {
 	    GetComponent<Animator>().SetTrigger("attack");
     }
