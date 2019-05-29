@@ -73,13 +73,19 @@ public class MapPresenter : MonoBehaviour {
             {
                 if (l >= start_x && l <= start_x + floor_x && m >= start_y && m <= start_y + floor_y)
                 {
+                    //床
                     GameObject original = Object.Instantiate(Resources.Load("Object/Tile")) as GameObject;
                     original.transform.Translate(seq_x + l, 0, seq_y + m);
                     result[l, m] = 1;
                     map[l + seq_x, m + seq_y].tileType = TileModel.TileType.Floor;
                     popPoint.Add((l + seq_x)+","+(m + seq_y));
                 }else{
+                    //壁
+                    GameObject original = Object.Instantiate(Resources.Load("Object/Block")) as GameObject;
+                    original.transform.Translate(seq_x + l, 0, seq_y + m);
                     result[l, m] = 0;
+                    map[l + seq_x, m + seq_y].tileType = TileModel.TileType.Wall;
+                    popPoint.Add((l + seq_x)+","+(m + seq_y));
                 }
             }
         }
