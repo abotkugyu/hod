@@ -49,7 +49,10 @@ public class GameMain : MonoBehaviour {
         //階段配置
         stairsListPresenter.Generate(mapPresenter);
         
-        //階段配置
+        //dummy エネミー配置
+        enemiesListPresenter.DummyGenerate(mapPresenter, mapPresenter.CanSetObject(pos));
+        
+        //dummy 階段配置
         stairsListPresenter.DummyGenerate(mapPresenter, mapPresenter.CanSetObject(pos));
 
         menuPresenter.itemMenuPresenter.Initialize(playerPresenter.itemModels);
@@ -107,11 +110,9 @@ public class GameMain : MonoBehaviour {
                                     Debug.Log("player move:z=" + z);
                                     playerPresenter.Move(x, z);
                                     
-                                    mapPresenter.map[beforePositionX, beforePositionZ].charaId = 0;
-                                    mapPresenter.map[beforePositionX, beforePositionZ].charaType = 0;
-                                    
-                                    mapPresenter.map[afterPositionX, afterPositionZ].charaType = TileModel.CharaType.Player;
-                                    mapPresenter.map[afterPositionX, afterPositionZ].charaId = playerPresenter.status.id;
+                                    //移動元と移動先にキャラクター情報を設定
+                                    mapPresenter.SetUserModel(beforePositionX, beforePositionZ, null);
+                                    mapPresenter.SetUserModel(afterPositionX, afterPositionZ, playerPresenter.status);
                                                                         
                                     //アイテムがあれば取得
                                     if (mapPresenter.map[afterPositionX, afterPositionZ].itemType == 1)

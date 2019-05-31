@@ -7,7 +7,7 @@ public class EnemyListPresenter : MonoBehaviour
 {
 
     public List<EnemyPresenter> enemyList = new List<EnemyPresenter>();
-    public int num = 100;
+    public int num = 1;
 
     public void Generate(MapPresenter mapPresenter)
     {
@@ -27,9 +27,36 @@ public class EnemyListPresenter : MonoBehaviour
             enemyPresenter.status.isAction = false;
             enemyPresenter.status.position = new Vector3(posX, 0, posZ);
             enemyList.Add(enemyPresenter);
+
             //mapに配置
-            mapPresenter.map[posX, posZ].charaId = enemyPresenter.status.id;
-            mapPresenter.map[posX, posZ].charaType = enemyPresenter.status.type;
+            mapPresenter.SetUserModel(posX, posZ, enemyPresenter.status);
+        }
+    }
+    
+    /// <summary>
+    /// 階段場所直接指定
+    /// </summary>
+    /// <param name="mapPresenter"></param>
+    /// <param name="pos"></param>
+    public void DummyGenerate(MapPresenter mapPresenter, List<int> pos)
+    {
+        if (pos != null)
+        {
+            for (int x = 0; x < num; x++)
+            {
+                GameObject obj = Object.Instantiate(Resources.Load("Object/Enemy")) as GameObject;
+                obj.transform.position = new Vector3(pos[0], 0, pos[1]);
+                obj.layer = 9;
+
+                EnemyPresenter enemyPresenter = obj.GetComponent<EnemyPresenter>();                    
+                enemyPresenter.status = EnemyData.GetRandom();
+                enemyPresenter.status.id = obj.GetInstanceID();
+                enemyPresenter.status.type = TileModel.CharaType.Enemy;
+                enemyPresenter.status.isAction = false;
+                enemyPresenter.status.position = new Vector3(pos[0], 0, pos[1]);
+                enemyList.Add(enemyPresenter);
+
+            }
         }
     }
 
@@ -68,11 +95,9 @@ public class EnemyListPresenter : MonoBehaviour
                 int afterPositionZ = (int) enemyPresenter.status.position.z + n_z;
                 if (mapPresenter.IsCanMove(afterPositionX, afterPositionZ, TileModel.CharaType.Enemy))
                 {
-                    mapPresenter.map[(int)enemyPresenter.status.position.x, (int)enemyPresenter.status.position.z].charaType = 0;
-                    mapPresenter.map[afterPositionX, afterPositionZ].charaType = enemyPresenter.status.type;
-
-                    mapPresenter.map[(int)enemyPresenter.status.position.x, (int)enemyPresenter.status.position.z].charaId = 0;
-                    mapPresenter.map[afterPositionX, afterPositionZ].charaId = enemyPresenter.status.id;
+                    //移動元と移動先にキャラクター情報を設定
+                    mapPresenter.SetUserModel((int)enemyPresenter.status.position.x, (int)enemyPresenter.status.position.z, null);
+                    mapPresenter.SetUserModel(afterPositionX, afterPositionZ, enemyPresenter.status);
 
                     enemyPresenter.SetPosition(new Vector3(n_x, 0, n_z));
                     enemyPresenter.SetDirection(new Vector3(n_x, 0, n_z));

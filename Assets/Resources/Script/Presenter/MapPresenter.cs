@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Xml.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -200,5 +201,19 @@ public class MapPresenter : MonoBehaviour {
         }
 
         return null;
+    }
+    
+    public void SetUserModel(int x, int z, UserModel user)
+    {
+        if (user != null)
+        {
+            map[x, z].charaId = user.id;
+            map[x, z].charaType = user.type;
+        }
+        else
+        {            
+            map[x, z].charaId = 0;
+            map[x, z].charaType = 0;
+        }
     }
 }
