@@ -1,12 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 //敵情報管理
 public class EnemyListPresenter : MonoBehaviour
 {
-
-    public List<EnemyPresenter> enemyList = new List<EnemyPresenter>();
+    public Dictionary<int, GameObject> enemyListObject = new Dictionary<int, GameObject>();
+    public Dictionary<int, EnemyPresenter> enemyListPresenter = new Dictionary<int, EnemyPresenter>();
+    public int uniqueKey = 1;
     public int num = 1;
 
     public void Generate(MapPresenter mapPresenter)
@@ -22,14 +24,17 @@ public class EnemyListPresenter : MonoBehaviour
 
             EnemyPresenter enemyPresenter = obj.GetComponent<EnemyPresenter>();                    
             enemyPresenter.status = EnemyData.GetRandom();
-            enemyPresenter.status.id = obj.GetInstanceID();
+            enemyPresenter.status.id = uniqueKey;
             enemyPresenter.status.type = TileModel.CharaType.Enemy;
             enemyPresenter.status.isAction = false;
-            enemyPresenter.status.position = new Vector3(posX, 0, posZ);
-            enemyList.Add(enemyPresenter);
-
+            enemyPresenter.SetPosition(new Vector3(posX, 0, posZ));
+            enemyListPresenter[uniqueKey] = enemyPresenter;
+            enemyListObject[uniqueKey] = obj;
+            uniqueKey++;
+            
             //mapに配置
             mapPresenter.SetUserModel(posX, posZ, enemyPresenter.status);
+
         }
     }
     
@@ -42,7 +47,7 @@ public class EnemyListPresenter : MonoBehaviour
     {
         if (pos != null)
         {
-            for (int x = 0; x < num; x++)
+            for (int x = 0; x < 1; x++)
             {
                 GameObject obj = Object.Instantiate(Resources.Load("Object/Enemy")) as GameObject;
                 obj.transform.position = new Vector3(pos[0], 0, pos[1]);
@@ -50,11 +55,17 @@ public class EnemyListPresenter : MonoBehaviour
 
                 EnemyPresenter enemyPresenter = obj.GetComponent<EnemyPresenter>();                    
                 enemyPresenter.status = EnemyData.GetRandom();
-                enemyPresenter.status.id = obj.GetInstanceID();
+                enemyPresenter.status.id = uniqueKey;
                 enemyPresenter.status.type = TileModel.CharaType.Enemy;
                 enemyPresenter.status.isAction = false;
-                enemyPresenter.status.position = new Vector3(pos[0], 0, pos[1]);
-                enemyList.Add(enemyPresenter);
+                enemyPresenter.SetPosition(new Vector3(pos[0], 0, pos[1]));
+                
+                enemyListPresenter[uniqueKey] = enemyPresenter;
+                enemyListObject[uniqueKey] = obj;
+                uniqueKey++;
+                
+                //mapに配置
+                mapPresenter.SetUserModel(pos[0], pos[1], enemyPresenter.status);
 
             }
         }
@@ -64,9 +75,9 @@ public class EnemyListPresenter : MonoBehaviour
     public bool IsAllAction()
     {
         bool is_end = true;
-        for (int x = 0; x < enemyList.Count; x++)
+        foreach (KeyValuePair<int, EnemyPresenter> enemy in enemyListPresenter)
         {
-            EnemyPresenter enemyPresenter = enemyList[x];
+            EnemyPresenter enemyPresenter = enemy.Value;
             if (enemyPresenter.status.isAction == false && enemyPresenter.isMove == true)
             {
                 is_end = !is_end;
@@ -80,9 +91,9 @@ public class EnemyListPresenter : MonoBehaviour
     //全ての敵に行動させる
     public void AllAction(MapPresenter mapPresenter)
     {
-        for (int l = 0; l < enemyList.Count; l++)
+        foreach (KeyValuePair<int, EnemyPresenter> enemy in enemyListPresenter)
         {
-            EnemyPresenter enemyPresenter = enemyList[l];
+            EnemyPresenter enemyPresenter = enemy.Value;
             int action_type = enemyPresenter.GetAction();
             //とりあえず1を移動
             if (action_type == 1)
@@ -91,18 +102,25 @@ public class EnemyListPresenter : MonoBehaviour
                 float z = Mathf.Sign(Random.Range(-1.0f, 1.0f)) * 200;
                 int n_x = (x != 0 ? (int)Mathf.Sign(x) : 0);
                 int n_z = (z != 0 ? (int)Mathf.Sign(z) : 0);
-                int afterPositionX = (int) enemyPresenter.status.position.x + n_x;
-                int afterPositionZ = (int) enemyPresenter.status.position.z + n_z;
+                
+                Debug.Log(n_x+":"+n_z);
+                int beforePositionX = (int) enemyPresenter.status.position.x;
+                int beforePositionZ = (int) enemyPresenter.status.position.z;
+                int afterPositionX = beforePositionX + n_x;
+                int afterPositionZ = beforePositionZ + n_z;
                 if (mapPresenter.IsCanMove(afterPositionX, afterPositionZ, TileModel.CharaType.Enemy))
                 {
+                    enemyPresenter.Move(x, z);
+                    
                     //移動元と移動先にキャラクター情報を設定
-                    mapPresenter.SetUserModel((int)enemyPresenter.status.position.x, (int)enemyPresenter.status.position.z, null);
+                    mapPresenter.SetUserModel(beforePositionX, beforePositionZ, null);
                     mapPresenter.SetUserModel(afterPositionX, afterPositionZ, enemyPresenter.status);
-
-                    enemyPresenter.SetPosition(new Vector3(n_x, 0, n_z));
+                    
+                    //StartMoveしてからSetPositionをする。
+                    enemyPresenter.SetPosition(new Vector3(afterPositionX, 0, afterPositionZ));
                     enemyPresenter.SetDirection(new Vector3(n_x, 0, n_z));
 
-                    enemyPresenter.StartMove(x, z);
+                    Debug.Log(mapPresenter.map[afterPositionX, afterPositionZ].tileType);
                 }else{
                     //移動先がなければ行動済みにする。
                     enemyPresenter.SetIsAction(true);
@@ -114,18 +132,25 @@ public class EnemyListPresenter : MonoBehaviour
     }
 
     //敵の行動フラグをリセットする
-    public void TurnReset(){
-        for (int x = 0; x < enemyList.Count; x++)
+    public void TurnReset()
+    {    
+        foreach (KeyValuePair<int, EnemyPresenter> enemy in enemyListPresenter)
         {
-            EnemyPresenter enemyPresenter = enemyList[x];
-            enemyPresenter.SetIsAction(false);
+            enemy.Value.SetIsAction(false);
         }
     }
     
-	public void Delete(int index)
+	public void Delete(int id)
 	{
-        Destroy(enemyList[index]);
-        enemyList.RemoveAt(index);
-        Debug.Log(enemyList.Count);
+        EnemyPresenter enemyPresenter = enemyListPresenter.FirstOrDefault(enemy =>
+            enemy.Key == id).Value;
+        if (enemyPresenter != null)
+        {
+            Debug.Log("Attack:" + enemyPresenter.status.id);
+            enemyPresenter.status.hp = 0;
+            Destroy(enemyListObject[id]);
+            enemyListPresenter.Remove(id);
+        }
+        Debug.Log(enemyListPresenter.Count);
 	}
 }

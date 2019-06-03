@@ -34,7 +34,7 @@ public class MapPresenter : MonoBehaviour {
 
             for (int y = 0; y < list_y.Count; y++){
                 //int[,] floor = 
-                GenerateFloor(map_x[x],list_y[y],count_x,count_y);
+                GenerateFloor(map_x[x],list_y[y], count_x, count_y);
                 count_y += list_y[y];
             }
             count_x += map_x[x];
@@ -60,7 +60,7 @@ public class MapPresenter : MonoBehaviour {
         }
     }
 
-    int[,] GenerateFloor(int x,int y,int seq_x,int seq_y)
+    int[,] GenerateFloor(int x, int y, int seq_x, int seq_y)
     {
         //maxだと部屋同士でくっつくので-1
         int[,] result = new int[x, y];
@@ -77,16 +77,16 @@ public class MapPresenter : MonoBehaviour {
                     //床
                     GameObject original = Object.Instantiate(Resources.Load("Object/Tile")) as GameObject;
                     original.transform.Translate(seq_x + l, 0, seq_y + m);
-                    result[l, m] = 1;
                     map[l + seq_x, m + seq_y].tileType = TileModel.TileType.Floor;
                     popPoint.Add((l + seq_x)+","+(m + seq_y));
+                    result[l, m] = 1;
                 }else{
                     //壁
+                    
                     GameObject original = Object.Instantiate(Resources.Load("Object/Block")) as GameObject;
                     original.transform.Translate(seq_x + l, 0, seq_y + m);
-                    result[l, m] = 0;
                     map[l + seq_x, m + seq_y].tileType = TileModel.TileType.Wall;
-                    popPoint.Add((l + seq_x)+","+(m + seq_y));
+                    result[l, m] = 0;
                 }
             }
         }
@@ -213,7 +213,22 @@ public class MapPresenter : MonoBehaviour {
         else
         {            
             map[x, z].charaId = 0;
-            map[x, z].charaType = 0;
+            map[x, z].charaType = TileModel.CharaType.None;
+        }
+    }
+
+    public void ShowMapInfo()
+    {
+        for (int z = maxMapY-1; z >= 0; z--)
+        {
+            string m = "";
+            for (int x = 0; x < maxMapX; x++)
+            {
+                string m1 = map[x, z].tileType.ToString().Substring(0, 1);
+                string m2 = map[x, z].charaType.ToString().Substring(0, 1);
+                m += m1+m2 +",";
+            }
+            Debug.Log(m);
         }
     }
 }

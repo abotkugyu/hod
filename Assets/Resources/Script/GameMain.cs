@@ -27,7 +27,7 @@ public class GameMain : MonoBehaviour {
         EnemyData.Load();
         
         playerPresenter.Initialize();
-        playerPresenter.status.id = playerPresenter.GetInstanceID();
+        playerPresenter.status.id = 1;
         playerPresenter.status.type = TileModel.CharaType.Player;
         gameStatus = new GameStatusModel();
         
@@ -75,6 +75,11 @@ public class GameMain : MonoBehaviour {
                 if (Input.GetKeyDown(KeyCode.I))
                 {
                     menuPresenter.itemMenuPresenter.ShowItemMenu(!menuPresenter.itemMenuPresenter.GetIsShowItemMenu());
+                }
+                
+                if (Input.GetKeyDown(KeyCode.L))
+                {
+                    mapPresenter.ShowMapInfo();
                 }
                 
                 if (!menuPresenter.itemMenuPresenter.GetIsShowItemMenu())
@@ -134,7 +139,7 @@ public class GameMain : MonoBehaviour {
                                         }                                        
                                     }
                                                                         
-                                    playerPresenter.SetPosition(new Vector3(n_x, 0, n_z));
+                                    playerPresenter.SetPosition(new Vector3(afterPositionX, 0, afterPositionZ));
                                     playerPresenter.SetDirection(new Vector3(n_x, 0, n_z));
                                     
                                     //階段あれば移動
@@ -172,7 +177,6 @@ public class GameMain : MonoBehaviour {
                     gameStatus.turn = 1;
                 }
             }
-
         }
 	}		
 }

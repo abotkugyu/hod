@@ -44,25 +44,14 @@ public class PlayerPresenter : MonoBehaviour {
     }
 
     //攻撃処理
-    public void Attack(MapPresenter m,EnemyListPresenter e)
+    public void Attack(MapPresenter m, EnemyListPresenter e)
     {
         Vector3 pos = status.position + status.direction;
         if (pos.x < 0 || pos.z < 0){
             return;
         }
-        if (m.map[(int)pos.x, (int)pos.z].charaType != TileModel.CharaType.Player){
-            Debug.Log("c_type:" + m.map[(int)pos.x, (int)pos.z].charaType);
-            Debug.Log("c_id:" + m.map[(int)pos.x, (int)pos.z].charaId);
-            for (int x = 0; x < e.enemyList.Count; x++) {
-                EnemyPresenter enemyPresenter = e.enemyList[x].GetComponent<EnemyPresenter>();
-                Debug.Log("attack:e_id=" + enemyPresenter.status.id);
-                if (enemyPresenter.status.id == m.map[(int)pos.x, (int)pos.z].charaId){
-                    Debug.Log("delete:id="+enemyPresenter.status.id);
-                    enemyPresenter.status.hp = 0;
-                    e.Delete(x);
-                    break;
-                }
-            }
+        if (m.map[(int)pos.x, (int)pos.z].charaType == TileModel.CharaType.Enemy){
+            e.Delete(m.map[(int) pos.x, (int) pos.z].charaId);
         }
         status.isAction = true;
 
@@ -106,10 +95,9 @@ public class PlayerPresenter : MonoBehaviour {
     }
 
     /// user.status.position に座標保存
-    public Vector3 SetPosition(Vector3 position)
+    public void SetPosition(Vector3 position)
     {
-        status.position = new Vector3(status.position.x + position.x, status.position.y + position.y, status.position.z + position.z);
-        return status.position;
+        status.position = position;
     }
 
     /// <summary>

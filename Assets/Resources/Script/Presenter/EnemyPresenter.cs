@@ -31,7 +31,7 @@ public class EnemyPresenter : MonoBehaviour {
     }
 
     //移動処理
-    public void StartMove(float x, float z)
+    public void Move(float x, float z)
     {
         isMove = true;
         Rigidbody transform = enemyView.GetTransForm();
@@ -53,14 +53,14 @@ public class EnemyPresenter : MonoBehaviour {
         {
             transform.velocity = Vector3.zero;
             isMove = false;
-            status.isAction = true;
+            SetIsAction(true);
         }
     }
 
     //position設定
     public void SetPosition(Vector3 position)
     {
-        status.position = new Vector3(status.position.x + position.x, status.position.y + position.y, status.position.z + position.z);
+        status.position = position;
     }
     /// <summary>
     /// <code>

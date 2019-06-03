@@ -9,7 +9,7 @@ public class EnemyView : MonoBehaviour {
     [SerializeField]
     Animator animator;
     [SerializeField]
-    Rigidbody trans;
+    public Rigidbody trans;
     
     public void Initialize()
     {
