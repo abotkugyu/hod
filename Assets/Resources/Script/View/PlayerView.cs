@@ -9,7 +9,7 @@ public class PlayerView : MonoBehaviour {
     [SerializeField]
     Animator animator;
     [SerializeField]
-    Rigidbody trans;
+    public Rigidbody trans;
     
     public void Initialize()
     {

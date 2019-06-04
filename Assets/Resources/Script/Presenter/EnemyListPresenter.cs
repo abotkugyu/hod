@@ -22,20 +22,19 @@ public class EnemyListPresenter : MonoBehaviour
             obj.transform.position = new Vector3(posX, 0, posZ);
             obj.layer = 9;
 
-            EnemyPresenter enemyPresenter = obj.GetComponent<EnemyPresenter>();                    
-            enemyPresenter.status = EnemyData.GetRandom();
-            enemyPresenter.status.id = uniqueKey;
-            enemyPresenter.status.type = TileModel.CharaType.Enemy;
-            enemyPresenter.status.isAction = false;
-            enemyPresenter.SetPosition(new Vector3(posX, 0, posZ));
+            EnemyPresenter enemyPresenter = obj.GetComponent<EnemyPresenter>();
+            enemyPresenter.Initialize(EnemyData.GetRandom(), pos, uniqueKey);
+            
             enemyListPresenter[uniqueKey] = enemyPresenter;
             enemyListObject[uniqueKey] = obj;
             uniqueKey++;
-            
+
             //mapに配置
             mapPresenter.SetUserModel(posX, posZ, enemyPresenter.status);
-
+    
+            Debug.Log(enemyPresenter.status.position.x + ":"+ enemyPresenter.status.position.z + "," + enemyPresenter.enemyView.trans.position.x + ":" + enemyPresenter.enemyView.trans.position.z);
         }
+        Debug.Log("***********");
     }
     
     /// <summary>
@@ -53,20 +52,15 @@ public class EnemyListPresenter : MonoBehaviour
                 obj.transform.position = new Vector3(pos[0], 0, pos[1]);
                 obj.layer = 9;
 
-                EnemyPresenter enemyPresenter = obj.GetComponent<EnemyPresenter>();                    
-                enemyPresenter.status = EnemyData.GetRandom();
-                enemyPresenter.status.id = uniqueKey;
-                enemyPresenter.status.type = TileModel.CharaType.Enemy;
-                enemyPresenter.status.isAction = false;
-                enemyPresenter.SetPosition(new Vector3(pos[0], 0, pos[1]));
-                
+                EnemyPresenter enemyPresenter = obj.GetComponent<EnemyPresenter>();
+                enemyPresenter.Initialize(EnemyData.GetRandom(), pos, uniqueKey);
+                                
                 enemyListPresenter[uniqueKey] = enemyPresenter;
                 enemyListObject[uniqueKey] = obj;
                 uniqueKey++;
                 
                 //mapに配置
                 mapPresenter.SetUserModel(pos[0], pos[1], enemyPresenter.status);
-
             }
         }
     }
@@ -103,13 +97,16 @@ public class EnemyListPresenter : MonoBehaviour
                 int n_x = (x != 0 ? (int)Mathf.Sign(x) : 0);
                 int n_z = (z != 0 ? (int)Mathf.Sign(z) : 0);
                 
-                Debug.Log(n_x+":"+n_z);
                 int beforePositionX = (int) enemyPresenter.status.position.x;
                 int beforePositionZ = (int) enemyPresenter.status.position.z;
                 int afterPositionX = beforePositionX + n_x;
                 int afterPositionZ = beforePositionZ + n_z;
                 if (mapPresenter.IsCanMove(afterPositionX, afterPositionZ, TileModel.CharaType.Enemy))
                 {
+                    
+                    Debug.Log(mapPresenter.map[afterPositionX, afterPositionZ].tileType);
+                    Debug.Log(enemyPresenter.status.position.x + ":"+ enemyPresenter.status.position.z + "," + enemyPresenter.enemyView.trans.position.x + ":" + enemyPresenter.enemyView.trans.position.z);
+                    
                     enemyPresenter.Move(x, z);
                     
                     //移動元と移動先にキャラクター情報を設定
@@ -120,7 +117,6 @@ public class EnemyListPresenter : MonoBehaviour
                     enemyPresenter.SetPosition(new Vector3(afterPositionX, 0, afterPositionZ));
                     enemyPresenter.SetDirection(new Vector3(n_x, 0, n_z));
 
-                    Debug.Log(mapPresenter.map[afterPositionX, afterPositionZ].tileType);
                 }else{
                     //移動先がなければ行動済みにする。
                     enemyPresenter.SetIsAction(true);
@@ -153,4 +149,17 @@ public class EnemyListPresenter : MonoBehaviour
         }
         Debug.Log(enemyListPresenter.Count);
 	}
+	
+    public void ShowLog()
+    {
+
+        foreach (KeyValuePair<int, EnemyPresenter> enemy in enemyListPresenter)
+        {
+            Debug.Log(enemy.Key);
+            EnemyPresenter enemyPresenter = enemy.Value;
+            Debug.Log(enemyPresenter.status.position.x + ":"+ enemyPresenter.status.position.z + "," + enemyPresenter.enemyView.trans.position.x + ":" + enemyPresenter.enemyView.trans.position.z);
+        }
+    }
+
+    
 }

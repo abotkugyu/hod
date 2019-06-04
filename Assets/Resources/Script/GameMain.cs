@@ -36,10 +36,15 @@ public class GameMain : MonoBehaviour {
 
         //enemy 配置
         enemiesListPresenter.Generate(mapPresenter);
+        enemiesListPresenter.ShowLog();
 
         //player 配置
         List<int> pos = mapPresenter.GetPopPoint();
         playerPresenter.DummyInitialize(pos);
+        
+        
+        Debug.Log("PP:"+playerPresenter.status.position.x + ":"+ playerPresenter.status.position.z + "," + playerPresenter.playerView.trans.position.x + ":" + playerPresenter.playerView.trans.position.z);
+        
         mapPresenter.map[pos[0], pos[1]].charaType = playerPresenter.status.type;
         mapPresenter.map[pos[0], pos[1]].charaId = playerPresenter.status.id;
 			
@@ -50,12 +55,14 @@ public class GameMain : MonoBehaviour {
         stairsListPresenter.Generate(mapPresenter);
         
         //dummy エネミー配置
-        enemiesListPresenter.DummyGenerate(mapPresenter, mapPresenter.CanSetObject(pos));
+        //enemiesListPresenter.DummyGenerate(mapPresenter, mapPresenter.CanSetObject(pos));
         
         //dummy 階段配置
         stairsListPresenter.DummyGenerate(mapPresenter, mapPresenter.CanSetObject(pos));
 
         menuPresenter.itemMenuPresenter.Initialize(playerPresenter.itemModels);
+                
+        //dummy エネミー配置
 
     }
 	

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class EnemyPresenter : MonoBehaviour {
 
-    public UserModel status = new UserModel();
+    public UserModel status;
     public float speed = 4.0f;
     public bool isMove = false;
     public Vector3 targetPosition;
@@ -19,11 +19,21 @@ public class EnemyPresenter : MonoBehaviour {
             Moving();
         }
     }
-    
-    public void Initialize()
-    {
-        enemyView.Initialize();
+        
+    public void Initialize(UserModel model, List<int> pos, int uniqueKey)
+    {                
+        status = model;
+        status.id = uniqueKey;
+        status.type = TileModel.CharaType.Enemy;
+        status.isAction = false;
+        
+        int posx = pos[0];
+        int posz = pos[1];
+        enemyView.enemy.transform.position = new Vector3(posx, 0, posz);
+        SetPosition(new Vector3(posx, 0, posz));
+        SetDirection(new Vector3(0, 0, -1));
     }
+
         
     public int GetAction()
     {
@@ -62,6 +72,7 @@ public class EnemyPresenter : MonoBehaviour {
     {
         status.position = position;
     }
+    
     /// <summary>
     /// <code>
     /// transform.eulerAnglesで向きを変更
