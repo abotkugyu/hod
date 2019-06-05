@@ -6,8 +6,8 @@ public class ItemPresenter : MonoBehaviour {
 
     public float speed = 4.0f;
     public bool is_move = false;
-    public Vector3 target_position;
-    public ItemModel status = new ItemModel();
+    public Vector3 targetPosition;
+    public ItemModel status;
     
     public void initialize()
     {
@@ -20,8 +20,8 @@ public class ItemPresenter : MonoBehaviour {
 		Rigidbody transform = this.GetComponent<Rigidbody>();
 		Vector3 now_position = transform.position;
 
-        target_position.x = x/200 + now_position.x;
-        target_position.z = z/200 + now_position.z;
+        targetPosition.x = x/200 + now_position.x;
+        targetPosition.z = z/200 + now_position.z;
 
 		//Force	その質量を使用して、rigidbodyへの継続的な力を追加します。
 		//Acceleration	その質量を無視して、rigidbodyへの継続的な加速を追加します。
@@ -34,27 +34,27 @@ public class ItemPresenter : MonoBehaviour {
         Rigidbody transform = GetComponent<Rigidbody>();
         Vector3 now_position = transform.position;
         Rigidbody rigidbody = GetComponent<Rigidbody>();
-        if (target_position.x != now_position.x)
+        if (targetPosition.x != now_position.x)
         {
-            if (target_position.x + 1 < now_position.x)
+            if (targetPosition.x + 1 < now_position.x)
             {
                 rigidbody.velocity = Vector3.zero;
                 is_move = false;
             }
-            else if (target_position.x - 1 > now_position.x)
+            else if (targetPosition.x - 1 > now_position.x)
             {
                 rigidbody.velocity = Vector3.zero;
                 is_move = false;
             }
         }
-        else if (target_position.z != now_position.z)
+        else if (targetPosition.z != now_position.z)
         {
-            if (target_position.z + 1 < now_position.z)
+            if (targetPosition.z + 1 < now_position.z)
             {
                 rigidbody.velocity = Vector3.zero;
                 is_move = false;
             }
-            else if (target_position.z - 1 > now_position.z)
+            else if (targetPosition.z - 1 > now_position.z)
             {
                 rigidbody.velocity = Vector3.zero;
                 is_move = false;

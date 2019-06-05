@@ -28,6 +28,8 @@ public class TileModel
     /// 3=階段
     public TileType tileType = 0;
     
+    public int guid;
+    
     /// charactor_id (objects instance id)
     public int charaId;
     

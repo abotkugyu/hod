@@ -6,7 +6,7 @@ using UnityEngine;
 public class PlayerPresenter : MonoBehaviour {
 
     // Use this for initialization
-    public UserModel status = new UserModel();
+    public UserModel status;
     
     public float speed = 4.0f;
     public bool isMove = false;
@@ -31,7 +31,7 @@ public class PlayerPresenter : MonoBehaviour {
     
     public void DummyItem()
     {        
-        itemModels.Add(ItemData.GetRandom());
+        itemModels.Add(new ItemModel(ItemData.GetRandom()));
     }
     
     public void DummyInitialize(List<int> pos)
@@ -51,7 +51,7 @@ public class PlayerPresenter : MonoBehaviour {
             return;
         }
         if (m.map[(int)pos.x, (int)pos.z].charaType == TileModel.CharaType.Enemy){
-            e.Delete(m.map[(int) pos.x, (int) pos.z].charaId);
+            e.Delete(m.map[(int) pos.x, (int) pos.z].guid);
         }
         status.isAction = true;
 

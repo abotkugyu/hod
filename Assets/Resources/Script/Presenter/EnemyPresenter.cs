@@ -20,17 +20,14 @@ public class EnemyPresenter : MonoBehaviour {
         }
     }
         
-    public void Initialize(UserModel model, List<int> pos, int uniqueKey)
+    public void Initialize(UserModel model, List<int> pos, int guid)
     {                
-        status = model;
-        status.id = uniqueKey;
-        status.type = TileModel.CharaType.Enemy;
-        status.isAction = false;
-        
-        int posx = pos[0];
-        int posz = pos[1];
-        enemyView.enemy.transform.position = new Vector3(posx, 0, posz);
-        SetPosition(new Vector3(posx, 0, posz));
+        //絶対にnewしないと参照が変になる。
+        status = new UserModel(model) {guid = guid, isAction = false};
+
+        int posX = pos[0];
+        int posZ = pos[1];
+        SetPosition(new Vector3(posX, 0, posZ));
         SetDirection(new Vector3(0, 0, -1));
     }
 

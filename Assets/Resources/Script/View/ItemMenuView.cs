@@ -37,9 +37,10 @@ public class ItemMenuView : MonoBehaviour {
 	{
 		itemCellViewList.ForEach(Destroy);
 		itemCellViewList.Clear();
+		GameObject res = Resources.Load("Object/ItemWindow/ItemCell") as GameObject;
 		for (int i = 0; i < itemModels.Count; i++)
 		{
-			GameObject itemCell = Instantiate (Resources.Load ("Object/ItemWindow/ItemCell"), itemWindow.transform, true) as GameObject;
+			GameObject itemCell = Instantiate (res, itemWindow.transform, true);
 			itemCell.transform.localPosition = new Vector2(250 / -10 ,(Screen.height - 150) / 2 + item_cell_height * i  );
 			itemCellViewList.Add(itemCell);
 			

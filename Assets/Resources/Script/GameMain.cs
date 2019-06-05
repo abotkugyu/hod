@@ -45,8 +45,7 @@ public class GameMain : MonoBehaviour {
         
         Debug.Log("PP:"+playerPresenter.status.position.x + ":"+ playerPresenter.status.position.z + "," + playerPresenter.playerView.trans.position.x + ":" + playerPresenter.playerView.trans.position.z);
         
-        mapPresenter.map[pos[0], pos[1]].charaType = playerPresenter.status.type;
-        mapPresenter.map[pos[0], pos[1]].charaId = playerPresenter.status.id;
+        mapPresenter.SetUserModel(pos[0], pos[1], playerPresenter.status);
 			
         //item 配置
         itemsListPresenter.Generate(mapPresenter);
@@ -159,6 +158,13 @@ public class GameMain : MonoBehaviour {
                                 }
                             }
                         }
+                        else
+                        {
+                            if (!playerPresenter.isMove){
+                                playerPresenter.SetDirection(new Vector3(n_x, 0, n_z));
+                            }
+                        }
+                    
 
                         if (!playerPresenter.isMove && is_lshift)
                         {

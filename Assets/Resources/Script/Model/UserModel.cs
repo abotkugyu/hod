@@ -5,6 +5,28 @@ using UnityEngine;
 [System.Serializable]
 public class UserModel
 {
+    
+    public UserModel(UserModel model)
+    {
+        id = model.id;
+        hp = model.hp;
+        ep = model.ep;
+        mp = model.mp;
+        type = model.type;
+        speed = model.speed;
+        attack = model.attack;
+        defence = model.defence;
+        position = model.position;
+        direction = model.direction;
+        element = model.element;
+        speedPriority = model.speedPriority;
+        ability = model.ability;
+        blood = model.blood;
+        hitRate = model.hitRate;
+        avoidRate = model.avoidRate;
+        jump = model.jump;
+    }
+    public int guid = 0;
     //id
     public int id = 0;
     //type 1=player 2=enemy

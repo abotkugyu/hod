@@ -8,26 +8,26 @@ public class EnemyListPresenter : MonoBehaviour
 {
     public Dictionary<int, GameObject> enemyListObject = new Dictionary<int, GameObject>();
     public Dictionary<int, EnemyPresenter> enemyListPresenter = new Dictionary<int, EnemyPresenter>();
-    public int uniqueKey = 1;
+    public int guid = 1;
     public int num = 1;
 
     public void Generate(MapPresenter mapPresenter)
     {
+        GameObject res = Resources.Load("Object/Enemy") as GameObject;
         for (int x = 0; x < num; x++)
         {
-            GameObject obj = Object.Instantiate(Resources.Load("Object/Enemy")) as GameObject;
             List<int> pos = mapPresenter.GetPopPoint();
             int posX = pos[0];
             int posZ = pos[1];
-            obj.transform.position = new Vector3(posX, 0, posZ);
+            GameObject obj = Object.Instantiate(res, new Vector3(posX, 0, posZ), Quaternion.identity) as GameObject;
             obj.layer = 9;
 
             EnemyPresenter enemyPresenter = obj.GetComponent<EnemyPresenter>();
-            enemyPresenter.Initialize(EnemyData.GetRandom(), pos, uniqueKey);
+            enemyPresenter.Initialize(EnemyData.GetRandom(), pos, guid);
             
-            enemyListPresenter[uniqueKey] = enemyPresenter;
-            enemyListObject[uniqueKey] = obj;
-            uniqueKey++;
+            enemyListPresenter[guid] = enemyPresenter;
+            enemyListObject[guid] = obj;
+            guid++;
 
             //mapに配置
             mapPresenter.SetUserModel(posX, posZ, enemyPresenter.status);
@@ -46,18 +46,20 @@ public class EnemyListPresenter : MonoBehaviour
     {
         if (pos != null)
         {
+            GameObject res = Resources.Load("Object/Enemy") as GameObject;
             for (int x = 0; x < 1; x++)
             {
-                GameObject obj = Object.Instantiate(Resources.Load("Object/Enemy")) as GameObject;
-                obj.transform.position = new Vector3(pos[0], 0, pos[1]);
+                int posX = pos[0];
+                int posZ = pos[1];
+                GameObject obj = Object.Instantiate(res, new Vector3(posX, 0, posZ), Quaternion.identity) as GameObject;
                 obj.layer = 9;
 
                 EnemyPresenter enemyPresenter = obj.GetComponent<EnemyPresenter>();
-                enemyPresenter.Initialize(EnemyData.GetRandom(), pos, uniqueKey);
+                enemyPresenter.Initialize(EnemyData.GetRandom(), pos, guid);
                                 
-                enemyListPresenter[uniqueKey] = enemyPresenter;
-                enemyListObject[uniqueKey] = obj;
-                uniqueKey++;
+                enemyListPresenter[guid] = enemyPresenter;
+                enemyListObject[guid] = obj;
+                guid++;
                 
                 //mapに配置
                 mapPresenter.SetUserModel(pos[0], pos[1], enemyPresenter.status);
@@ -136,16 +138,16 @@ public class EnemyListPresenter : MonoBehaviour
         }
     }
     
-	public void Delete(int id)
+	public void Delete(int guid)
 	{
         EnemyPresenter enemyPresenter = enemyListPresenter.FirstOrDefault(enemy =>
-            enemy.Key == id).Value;
+            enemy.Key == guid).Value;
         if (enemyPresenter != null)
         {
-            Debug.Log("Attack:" + enemyPresenter.status.id);
+            Debug.Log("Attack:" + enemyPresenter.status.guid);
             enemyPresenter.status.hp = 0;
-            Destroy(enemyListObject[id]);
-            enemyListPresenter.Remove(id);
+            Destroy(enemyListObject[guid]);
+            enemyListPresenter.Remove(guid);
         }
         Debug.Log(enemyListPresenter.Count);
 	}

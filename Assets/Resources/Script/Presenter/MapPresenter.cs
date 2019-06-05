@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Xml.Linq;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -207,11 +208,13 @@ public class MapPresenter : MonoBehaviour {
     {
         if (user != null)
         {
+            map[x, z].guid = user.guid;
             map[x, z].charaId = user.id;
             map[x, z].charaType = user.type;
         }
         else
         {            
+            map[x, z].guid = 0;
             map[x, z].charaId = 0;
             map[x, z].charaType = TileModel.CharaType.None;
         }
