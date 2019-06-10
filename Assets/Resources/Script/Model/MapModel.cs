@@ -27,6 +27,8 @@ public class TileModel
     /// 2=水
     /// 3=階段
     public TileType tileType = 0;
+
+    public int floorId = 0;
     
     public int guid;
     

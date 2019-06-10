@@ -25,12 +25,16 @@ public class UserModel
         hitRate = model.hitRate;
         avoidRate = model.avoidRate;
         jump = model.jump;
+        floorId = model.floorId;
     }
     public int guid = 0;
     //id
     public int id = 0;
     //type 1=player 2=enemy
     public TileModel.CharaType type = 0;
+    //全体マップの分割番部屋番号
+    public int floorId = 0;
+    
     //座標
     public Vector3 position = new Vector3(0, 0, 0);
     //向き(デフォルト下向き)

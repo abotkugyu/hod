@@ -23,7 +23,13 @@ public class EnemyListPresenter : MonoBehaviour
             obj.layer = 9;
 
             EnemyPresenter enemyPresenter = obj.GetComponent<EnemyPresenter>();
-            enemyPresenter.Initialize(EnemyData.GetRandom(), pos, guid);
+            enemyPresenter.Initialize(EnemyData.GetRandom(), guid);
+
+            enemyPresenter.SetMapData(
+                mapPresenter.map[posX, posZ].floorId,
+                new Vector3(posX, 0, posZ),
+                new Vector3(0, 0, -1)
+                );
             
             enemyListPresenter[guid] = enemyPresenter;
             enemyListObject[guid] = obj;
@@ -55,7 +61,13 @@ public class EnemyListPresenter : MonoBehaviour
                 obj.layer = 9;
 
                 EnemyPresenter enemyPresenter = obj.GetComponent<EnemyPresenter>();
-                enemyPresenter.Initialize(EnemyData.GetRandom(), pos, guid);
+                enemyPresenter.Initialize(EnemyData.GetRandom(), guid);
+                
+                enemyPresenter.SetMapData(
+                    mapPresenter.map[posX, posZ].floorId,
+                    new Vector3(posX, 0, posZ),
+                    new Vector3(0, 0, -1)
+                );
                                 
                 enemyListPresenter[guid] = enemyPresenter;
                 enemyListObject[guid] = obj;
@@ -87,22 +99,29 @@ public class EnemyListPresenter : MonoBehaviour
     //全ての敵に行動させる
     public void AllAction(MapPresenter mapPresenter)
     {
+        //Dictionary<int, EnemyPresenter> plauerInSideFloorEnemy = enemyListPresenter.Select(enemy =>
+        //    enemy.Value.status.floorId == 0).ToDictionary(enemy => );
+        
+        Dictionary<int, EnemyPresenter> plauerInSideFloorEnemy = new Dictionary<int, EnemyPresenter>();
+        Dictionary<int, EnemyPresenter> plauerOutSideFloorEnemy  = new Dictionary<int, EnemyPresenter>();
+
         foreach (KeyValuePair<int, EnemyPresenter> enemy in enemyListPresenter)
         {
             EnemyPresenter enemyPresenter = enemy.Value;
-            int action_type = enemyPresenter.GetAction();
+            int actionType = enemyPresenter.GetAction();
             //とりあえず1を移動
-            if (action_type == 1)
+            if (actionType == 1)
             {
+                
                 float x = Mathf.Sign(Random.Range(-1.0f, 1.0f)) * 200;
                 float z = Mathf.Sign(Random.Range(-1.0f, 1.0f)) * 200;
-                int n_x = (x != 0 ? (int)Mathf.Sign(x) : 0);
-                int n_z = (z != 0 ? (int)Mathf.Sign(z) : 0);
+                int nX = (x != 0 ? (int)Mathf.Sign(x) : 0);
+                int nZ = (z != 0 ? (int)Mathf.Sign(z) : 0);
                 
                 int beforePositionX = (int) enemyPresenter.status.position.x;
                 int beforePositionZ = (int) enemyPresenter.status.position.z;
-                int afterPositionX = beforePositionX + n_x;
-                int afterPositionZ = beforePositionZ + n_z;
+                int afterPositionX = beforePositionX + nX;
+                int afterPositionZ = beforePositionZ + nZ;
                 if (mapPresenter.IsCanMove(afterPositionX, afterPositionZ, TileModel.CharaType.Enemy))
                 {
                     
@@ -116,9 +135,12 @@ public class EnemyListPresenter : MonoBehaviour
                     mapPresenter.SetUserModel(afterPositionX, afterPositionZ, enemyPresenter.status);
                     
                     //StartMoveしてからSetPositionをする。
-                    enemyPresenter.SetPosition(new Vector3(afterPositionX, 0, afterPositionZ));
-                    enemyPresenter.SetDirection(new Vector3(n_x, 0, n_z));
-
+                    
+                    enemyPresenter.SetMapData(
+                        mapPresenter.map[afterPositionX, afterPositionZ].floorId,
+                        new Vector3(afterPositionX, 0, afterPositionZ),
+                        new Vector3(nX, 0, nZ)
+                    );
                 }else{
                     //移動先がなければ行動済みにする。
                     enemyPresenter.SetIsAction(true);

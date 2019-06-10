@@ -24,21 +24,25 @@ public class MapPresenter : MonoBehaviour {
             }
         }
 
-        List<int> map_x = GenerateMap ();
-        List<List<int>> map_y = new List<List<int>>();
-        int count_x = 0;
-        for (int x = 0; x < map_x.Count; x++)
+        //横軸をGenerateMapで分割
+        List<int> mapX = GenerateMap ();
+        List<List<int>> mapY = new List<List<int>>();
+        int countX = 0;
+        int floorId = 1;
+        for (int x = 0; x < mapX.Count; x++)
         {
-            List<int> list_y = GenerateMap ();
-            map_y.Add(list_y);
-            int count_y = 0;
-
-            for (int y = 0; y < list_y.Count; y++){
+            
+            //縦軸をGenerateMapで分割
+            List<int> listY = GenerateMap ();
+            mapY.Add(listY);
+            int countY = 0;
+            for (int y = 0; y < listY.Count; y++){
                 //int[,] floor = 
-                GenerateFloor(map_x[x],list_y[y], count_x, count_y);
-                count_y += list_y[y];
+                GenerateFloor(mapX[x],listY[y], countX, countY, floorId);
+                countY += listY[y];
+                floorId++;
             }
-            count_x += map_x[x];
+            countX += mapX[x];
             //map_y[x];
             //map_list[x,0] = 1;
         }
@@ -61,32 +65,33 @@ public class MapPresenter : MonoBehaviour {
         }
     }
 
-    int[,] GenerateFloor(int x, int y, int seq_x, int seq_y)
+    int[,] GenerateFloor(int x, int y, int seqX, int seqY, int floorId)
     {
         //maxだと部屋同士でくっつくので-1
         int[,] result = new int[x, y];
-        int floor_x = Random.Range(5, x-2);
-        int floor_y = Random.Range(5, y-2);
-        int start_x = Random.Range(1, x-floor_x-1);
-        int start_y = Random.Range(1, y-floor_y-1);
+        int floorX = Random.Range(5, x-2);
+        int floorY = Random.Range(5, y-2);
+        int startX = Random.Range(1, x-floorX-1);
+        int startY = Random.Range(1, y-floorY-1);
         for (int l = 0; l < x; l++)
         {
             for (int m = 0; m < y; m++)
             {
-                if (l >= start_x && l <= start_x + floor_x && m >= start_y && m <= start_y + floor_y)
+                if (l >= startX && l <= startX + floorX && m >= startY && m <= startY + floorY)
                 {
                     //床
                     GameObject original = Object.Instantiate(Resources.Load("Object/Tile")) as GameObject;
-                    original.transform.Translate(seq_x + l, 0, seq_y + m);
-                    map[l + seq_x, m + seq_y].tileType = TileModel.TileType.Floor;
-                    popPoint.Add((l + seq_x)+","+(m + seq_y));
+                    original.transform.Translate(seqX + l, 0, seqY + m);
+                    map[l + seqX, m + seqY].tileType = TileModel.TileType.Floor;
+                    map[l + seqX, m + seqY].floorId = floorId;
+                    popPoint.Add((l + seqX)+","+(m + seqY));
                     result[l, m] = 1;
                 }else{
-                    //壁
-                    
+                    //壁                    
                     GameObject original = Object.Instantiate(Resources.Load("Object/Block")) as GameObject;
-                    original.transform.Translate(seq_x + l, 0, seq_y + m);
-                    map[l + seq_x, m + seq_y].tileType = TileModel.TileType.Wall;
+                    original.transform.Translate(seqX + l, 0, seqY + m);
+                    map[l + seqX, m + seqY].tileType = TileModel.TileType.Wall;
+                    map[l + seqX, m + seqY].floorId = floorId;
                     result[l, m] = 0;
                 }
             }
@@ -99,14 +104,17 @@ public class MapPresenter : MonoBehaviour {
 	}
 
     List<int> SplitMap(List<int> data){
-		Random.Range (0, 2);
+		//Random.Range (0, 2);
 		//show_list_log (data);
+		
+		//全体のサイズを繰り返し分割していく
+		//100→50,50→25,25,50
 		for (int x = 0; x < data.Count; x++) {
-			int is_split = Random.Range (0, 10);
 			if (data [x] < 20) {
 				continue;
 			}
-			if (is_split <= 8) {
+            int isSplit = Random.Range (0, 10);
+			if (isSplit <= 8) {
 				int ins = data [x] / 2;
 				data [x] = data [x] / 2;
 				data.Insert (x, ins);
@@ -229,7 +237,8 @@ public class MapPresenter : MonoBehaviour {
             {
                 string m1 = map[x, z].tileType.ToString().Substring(0, 1);
                 string m2 = map[x, z].charaType.ToString().Substring(0, 1);
-                m += m1+m2 +",";
+                string m3 = map[x, z].floorId.ToString();
+                m += m1+m2+m3+",";
             }
             Debug.Log(m);
         }

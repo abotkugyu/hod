@@ -20,15 +20,10 @@ public class EnemyPresenter : MonoBehaviour {
         }
     }
         
-    public void Initialize(UserModel model, List<int> pos, int guid)
+    public void Initialize(UserModel model, int guid)
     {                
         //絶対にnewしないと参照が変になる。
         status = new UserModel(model) {guid = guid, isAction = false};
-
-        int posX = pos[0];
-        int posZ = pos[1];
-        SetPosition(new Vector3(posX, 0, posZ));
-        SetDirection(new Vector3(0, 0, -1));
     }
 
         
@@ -87,7 +82,29 @@ public class EnemyPresenter : MonoBehaviour {
 
         status.direction = new Vector3(position.x, position.y, position.z);
     }
-    //向き設定
+
+    public void SetFloorId(int floorId)
+    {
+        status.floorId = floorId;
+    }
+    
+    /// <summary>
+    /// SetFloorId
+    /// SetPosition
+    /// SetFloorId
+    /// を内包している
+    /// </summary>
+    /// <param name="floorId"></param>
+    /// <param name="position"></param>
+    /// <param name="direction"></param>
+    public void SetMapData(int floorId, Vector3 position, Vector3 direction)
+    {
+        SetFloorId(floorId);
+        SetPosition(position);
+        SetDirection(direction);
+    }
+    
+    //行動済み設定
     public void SetIsAction(bool isAction)
     {
         status.isAction = isAction;
