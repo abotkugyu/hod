@@ -9,6 +9,9 @@ public class UserModel
     public UserModel(UserModel model)
     {
         id = model.id;
+        maxHp = model.hp;
+        maxMp = model.mp;
+        maxEp = model.ep;
         hp = model.hp;
         ep = model.ep;
         mp = model.mp;
@@ -39,6 +42,9 @@ public class UserModel
     public Vector3 position = new Vector3(0, 0, 0);
     //向き(デフォルト下向き)
     public Vector3 direction = new Vector3(0, 0, -1);
+    public int maxHp = 50;
+    public int maxMp = 40;
+    public int maxEp = 30;
     public int hp = 50;
     public int mp = 40;
     public int ep = 30;
@@ -55,9 +61,9 @@ public class UserModel
     //名前
     public string name;
     //攻撃力
-    public int attack = 100;
+    public int attack = 110;
     //防御力
-    public int defence = 100;
+    public int defence = 50;
     //命中力
     public int hitRate;
     //回避力
