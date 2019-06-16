@@ -30,9 +30,15 @@ public class UserModel
         jump = model.jump;
         floorId = model.floorId;
     }
+    
     public int guid = 0;
     //id
     public int id = 0;
+
+    public int level = 1;
+
+    public int exp = 0;
+    
     //type 1=player 2=enemy
     public TileModel.CharaType type = 0;
     //全体マップの分割番部屋番号

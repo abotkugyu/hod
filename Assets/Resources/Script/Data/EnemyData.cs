@@ -6,12 +6,12 @@ using Random = UnityEngine.Random;
 
 public static class EnemyData{
 
-    private static EnemyModelJson master;
+    private static JsonModel master;
 
     public static void Load()
     {
         TextAsset masterJson = Resources.Load<TextAsset>("Master/Enemy");
-        master = JsonUtility.FromJson<EnemyModelJson>(masterJson.ToString());
+        master = JsonUtility.FromJson<JsonModel>(masterJson.ToString());
         Debug.Log(String.Format("Load Success Enemy Data : {0}",master.list[0].name));
     }    
 
@@ -19,9 +19,8 @@ public static class EnemyData{
     {
         return master.list[Random.Range(0, master.list.Length-1)];
     }
-}
-
-public class EnemyModelJson
-{
-    public UserModel[] list;
+    class JsonModel
+    {
+        public UserModel[] list;
+    }
 }
