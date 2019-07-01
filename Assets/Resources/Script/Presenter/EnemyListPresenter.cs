@@ -97,13 +97,32 @@ public class EnemyListPresenter : MonoBehaviour
     }
 
     //全ての敵に行動させる
-    public void AllAction(MapPresenter mapPresenter)
+    public void AllAction(MapPresenter mapPresenter, PlayerPresenter playerPresenter)
     {
-        //Dictionary<int, EnemyPresenter> plauerInSideFloorEnemy = enemyListPresenter.Select(enemy =>
-        //    enemy.Value.status.floorId == 0).ToDictionary(enemy => );
+        // Dictionary<int, EnemyPresenter> plauerInSideFloorEnemy = enemyListPresenter.Select(enemy =>
+        // enemy.Value.status.floorId == 0).ToDictionary(enemy => );
         
         Dictionary<int, EnemyPresenter> plauerInSideFloorEnemy = new Dictionary<int, EnemyPresenter>();
         Dictionary<int, EnemyPresenter> plauerOutSideFloorEnemy  = new Dictionary<int, EnemyPresenter>();
+
+        //プレイヤーと同じフロアにいるかで分ける
+        foreach (KeyValuePair<int, EnemyPresenter> enemy in enemyListPresenter)
+        {
+            if (enemy.Value.status.floorId == playerPresenter.status.floorId)
+            {
+                plauerInSideFloorEnemy.Add(enemy.Key, enemy.Value);
+            }
+            else
+            {
+                plauerOutSideFloorEnemy.Add(enemy.Key, enemy.Value);
+            }
+        }
+
+        //プレイヤーに近い順に並べて行動させるようにソートする。
+        foreach (KeyValuePair<int, EnemyPresenter> enemy in plauerInSideFloorEnemy)
+        {
+            //GetFirstPositionAStar(enemy.Value.status.position, playerPresenter.status.position, mapPresenter);
+        }        
 
         foreach (KeyValuePair<int, EnemyPresenter> enemy in enemyListPresenter)
         {
@@ -112,7 +131,6 @@ public class EnemyListPresenter : MonoBehaviour
             //とりあえず1を移動
             if (actionType == 1)
             {
-                
                 float x = Mathf.Sign(Random.Range(-1.0f, 1.0f)) * 200;
                 float z = Mathf.Sign(Random.Range(-1.0f, 1.0f)) * 200;
                 int nX = (x != 0 ? (int)Mathf.Sign(x) : 0);
@@ -150,6 +168,92 @@ public class EnemyListPresenter : MonoBehaviour
             }
         }
     }
+
+    private List<Vector3> directions = new List<Vector3>
+    {
+        new Vector3(-1, 0, -1),
+        new Vector3(-1, 0, 0),
+        new Vector3(-1, 0, 1),
+        new Vector3(0, 0, -1),
+//        new List<Vector3> {0, 0, 0},
+        new Vector3(0, 0, 1),
+        new Vector3(1, 0, -1),
+        new Vector3(1, 0, 0),
+        new Vector3(1, 0, 1)
+    };
+
+    private class AStarCost
+    {
+        public Vector3 position = new Vector3(0,0,0);
+        public int status = 0; // 0=none,1=open,2=close
+        public int cost = 0;
+        public int estimateCost = 0;
+        public int score = 0;
+
+    }
+    
+    private Vector3 GetFirstPositionAStar(Vector3 from, Vector3 to, MapPresenter mapPresenter)
+    {
+        AStarCost nowNode = new AStarCost();       
+        
+        nowNode.position = from;
+        
+        var ecX = (int)to.x - (int)from.x;
+        var ecY = (int)to.y - (int)from.y;
+        
+        nowNode.cost = ecX > ecY ? ecX : ecY;
+        nowNode.estimateCost = 0;
+        nowNode.score = nowNode.cost + nowNode.estimateCost;
+
+        AStarCost aStarCost = GetPositionAStar(nowNode, to, new List<AStarCost>(), new List<AStarCost>(), mapPresenter);
+
+        return aStarCost.position;
+    }
+
+    private AStarCost GetPositionAStar(AStarCost aStar, Vector3 to, List<AStarCost> routeAStarList, List<AStarCost> cacheAStarCostList, MapPresenter mapPresenter)
+    {
+        aStar.status = 2;
+        cacheAStarCostList.Add(aStar);
+        foreach (Vector3 direction in directions)
+        {
+            AStarCost nowNode = new AStarCost
+            {
+                position = aStar.position + direction,
+                estimateCost = aStar.estimateCost + 1, 
+                status = 1
+            };
+
+            var ecX = (int)to.x - (int)nowNode.position.x;
+            var ecY = (int)to.y - (int)nowNode.position.y;
+            
+            nowNode.cost = ecX > ecY ? ecX : ecY;
+            nowNode.score = nowNode.cost + nowNode.estimateCost;
+            
+            var cache = cacheAStarCostList.FirstOrDefault(aster => aster.position == to);
+            if (cache == null)
+            {
+                if (mapPresenter.IsCanMove((int) nowNode.position.x, (int) nowNode.position.z, TileModel.CharaType.Player))
+                {
+                    routeAStarList.Add(nowNode);
+                    GetPositionAStar(nowNode, to, routeAStarList, cacheAStarCostList, mapPresenter);
+                }
+                else
+                {
+                    //移動できない場所だったらcloseしてcacheに入れる
+                    nowNode.status = 2;
+                    cacheAStarCostList.Add(nowNode);
+                    return new AStarCost();
+                }
+            }
+            else
+            {
+                //cacheにある
+                return new AStarCost();
+            }
+        }
+        return new AStarCost();
+    }
+
 
     //敵の行動フラグをリセットする
     public void TurnReset()
