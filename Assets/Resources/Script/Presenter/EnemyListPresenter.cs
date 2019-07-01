@@ -8,7 +8,7 @@ public class EnemyListPresenter : MonoBehaviour
 {
     public Dictionary<int, GameObject> enemyListObject = new Dictionary<int, GameObject>();
     public Dictionary<int, EnemyPresenter> enemyListPresenter = new Dictionary<int, EnemyPresenter>();
-    public int guid = 1;
+    public int serialGuid = 1;
     public int num = 1;
 
     public void Generate(MapPresenter mapPresenter)
@@ -23,7 +23,7 @@ public class EnemyListPresenter : MonoBehaviour
             obj.layer = 9;
 
             EnemyPresenter enemyPresenter = obj.GetComponent<EnemyPresenter>();
-            enemyPresenter.Initialize(EnemyData.GetRandom(), guid);
+            enemyPresenter.Initialize(EnemyData.GetRandom(), serialGuid);
 
             enemyPresenter.SetMapData(
                 mapPresenter.map[posX, posZ].floorId,
@@ -31,9 +31,9 @@ public class EnemyListPresenter : MonoBehaviour
                 new Vector3(0, 0, -1)
                 );
             
-            enemyListPresenter[guid] = enemyPresenter;
-            enemyListObject[guid] = obj;
-            guid++;
+            enemyListPresenter[serialGuid] = enemyPresenter;
+            enemyListObject[serialGuid] = obj;
+            serialGuid++;
 
             //mapに配置
             mapPresenter.SetUserModel(posX, posZ, enemyPresenter.status);
@@ -61,7 +61,7 @@ public class EnemyListPresenter : MonoBehaviour
                 obj.layer = 9;
 
                 EnemyPresenter enemyPresenter = obj.GetComponent<EnemyPresenter>();
-                enemyPresenter.Initialize(EnemyData.GetRandom(), guid);
+                enemyPresenter.Initialize(EnemyData.GetRandom(), serialGuid);
                 
                 enemyPresenter.SetMapData(
                     mapPresenter.map[posX, posZ].floorId,
@@ -69,9 +69,9 @@ public class EnemyListPresenter : MonoBehaviour
                     new Vector3(0, 0, -1)
                 );
                                 
-                enemyListPresenter[guid] = enemyPresenter;
-                enemyListObject[guid] = obj;
-                guid++;
+                enemyListPresenter[serialGuid] = enemyPresenter;
+                enemyListObject[serialGuid] = obj;
+                serialGuid++;
                 
                 //mapに配置
                 mapPresenter.SetUserModel(pos[0], pos[1], enemyPresenter.status);
@@ -143,8 +143,8 @@ public class EnemyListPresenter : MonoBehaviour
                 if (mapPresenter.IsCanMove(afterPositionX, afterPositionZ, TileModel.CharaType.Enemy))
                 {
                     
-                    Debug.Log(mapPresenter.map[afterPositionX, afterPositionZ].tileType);
-                    Debug.Log(enemyPresenter.status.position.x + ":"+ enemyPresenter.status.position.z + "," + enemyPresenter.enemyView.trans.position.x + ":" + enemyPresenter.enemyView.trans.position.z);
+                    //Debug.Log(mapPresenter.map[afterPositionX, afterPositionZ].tileType);
+                    //Debug.Log(enemyPresenter.status.position.x + ":"+ enemyPresenter.status.position.z + "," + enemyPresenter.enemyView.trans.position.x + ":" + enemyPresenter.enemyView.trans.position.z);
                     
                     enemyPresenter.Move(x, z);
                     
@@ -264,28 +264,31 @@ public class EnemyListPresenter : MonoBehaviour
         }
     }
     
-	public void Delete(int guid)
+	public void Delete(EnemyPresenter enemyPresenter)
 	{
-        EnemyPresenter enemyPresenter = enemyListPresenter.FirstOrDefault(enemy =>
-            enemy.Key == guid).Value;
+        int guid = enemyPresenter.status.guid;
         if (enemyPresenter != null)
         {
-            Debug.Log("Attack:" + enemyPresenter.status.guid);
-            enemyPresenter.status.hp = 0;
             Destroy(enemyListObject[guid]);
             enemyListPresenter.Remove(guid);
         }
         Debug.Log(enemyListPresenter.Count);
 	}
+		
+    public EnemyPresenter GetEnemy(int guid)
+    {
+        return enemyListPresenter.FirstOrDefault(enemy =>
+            enemy.Key == guid).Value;
+    }
 	
     public void ShowLog()
     {
 
         foreach (KeyValuePair<int, EnemyPresenter> enemy in enemyListPresenter)
         {
-            Debug.Log(enemy.Key);
+            //Debug.Log(enemy.Key);
             EnemyPresenter enemyPresenter = enemy.Value;
-            Debug.Log(enemyPresenter.status.position.x + ":"+ enemyPresenter.status.position.z + "," + enemyPresenter.enemyView.trans.position.x + ":" + enemyPresenter.enemyView.trans.position.z);
+            //Debug.Log(enemyPresenter.status.position.x + ":"+ enemyPresenter.status.position.z + "," + enemyPresenter.enemyView.trans.position.x + ":" + enemyPresenter.enemyView.trans.position.z);
         }
     }
 

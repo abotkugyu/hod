@@ -8,25 +8,18 @@ public class HudView : MonoBehaviour {
     public Slider hp;
     public Slider mp;
     public Slider ep;
-    // Use this for initialization
-    void Start()
-    {
-        hp = (GameObject.Find("HealthSlider")).GetComponent<Slider>();
-        mp = (GameObject.Find("MagicSlider")).GetComponent<Slider>();
-        ep = (GameObject.Find("EnergySlider")).GetComponent<Slider>();
-    }
 
-    public void update_health(int value)
+    public void updateHealth(int value)
     {
         hp.value = value;
     }
 
-    public void update_magic(int value)
+    public void updateMagic(int value)
     {
         mp.value = value;
     }
 
-    public void update_energy(int value)
+    public void updateEnergy(int value)
     {
         ep.value = value;
     }

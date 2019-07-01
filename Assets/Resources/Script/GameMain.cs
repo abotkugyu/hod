@@ -25,6 +25,7 @@ public class GameMain : MonoBehaviour {
 	void Start () {
         ItemData.Load();
         EnemyData.Load();
+        PlayerData.Load();
         
         playerPresenter.Initialize();
         playerPresenter.status.id = 1;

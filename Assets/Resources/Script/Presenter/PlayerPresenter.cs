@@ -50,8 +50,18 @@ public class PlayerPresenter : MonoBehaviour {
         if (pos.x < 0 || pos.z < 0){
             return;
         }
-        if (m.map[(int)pos.x, (int)pos.z].charaType == TileModel.CharaType.Enemy){
-            e.Delete(m.map[(int) pos.x, (int) pos.z].guid);
+        if (m.map[(int)pos.x, (int)pos.z].charaType == TileModel.CharaType.Enemy)
+        {
+            EnemyPresenter enemyPresenter = e.GetEnemy(m.map[(int) pos.x, (int) pos.z].guid);
+            int damage = CalcAction.CalcAttack(status, enemyPresenter.status);
+            
+            Debug.Log("Attack Damage : "+ damage);            
+            enemyPresenter.CalcHp(damage);
+            Debug.Log("After Hp : "+ enemyPresenter.status.hp);       
+            if (enemyPresenter.status.hp <= 0)
+            {
+                e.Delete(enemyPresenter);
+            }
         }
         status.isAction = true;
 

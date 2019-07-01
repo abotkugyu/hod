@@ -271,7 +271,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b72a17d9be7194a26b1eadd8850f4b3d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hp: {fileID: 0}
+  hp: {fileID: 8724697754432601636}
   mp: {fileID: 0}
   ep: {fileID: 0}
 --- !u!1 &6196727310292641022
@@ -3680,6 +3680,7 @@ MonoBehaviour:
   enemy: {fileID: 6467109358188098035}
   animator: {fileID: 6408088587074692119}
   trans: {fileID: 5591257067595796299}
+  hud: {fileID: 5108957542556927714}
 --- !u!114 &7645106507357048429
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3696,6 +3697,7 @@ MonoBehaviour:
     guid: 0
     id: 0
     type: 0
+    floorId: 0
     position: {x: 0, y: 0, z: 0}
     direction: {x: 0, y: 0, z: -1}
     hp: 50

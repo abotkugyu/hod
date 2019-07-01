@@ -118,4 +118,13 @@ public class EnemyPresenter : MonoBehaviour {
             // 処理
         }
     }
+
+    public void CalcHp(int damage)
+    {
+        status.hp -= damage;
+        
+        float per = (float)status.hp / (float)status.maxHp;
+        Debug.Log("Per : " + per);
+        enemyView.UpdateHud((int)(per * 100));
+    }
 }
