@@ -1810,8 +1810,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc6e889e379ec46a0bbf1d7723825e8d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxMapX: 30
-  maxMapY: 30
+  maxMapX: 98
+  maxMapY: 98
   popPoint: []
 --- !u!4 &1829130557
 Transform:

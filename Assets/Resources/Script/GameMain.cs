@@ -177,7 +177,7 @@ public class GameMain : MonoBehaviour {
                     if (playerPresenter.status.isAction)
                     {
                         enemiesListPresenter.TurnReset();
-                        enemiesListPresenter.AllAction(mapPresenter);
+                        enemiesListPresenter.AllAction(mapPresenter, playerPresenter);
                         gameStatus.turn = 2;
                     }
                 }
