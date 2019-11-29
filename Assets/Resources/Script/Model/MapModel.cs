@@ -22,28 +22,22 @@ public class TileModel
         Support
     }
     
-    /// 0=壁
-    /// 1=床
-    /// 2=水
-    /// 3=階段
+    /// 0:壁 1:床 2:水 3:階段
     public TileType tileType = 0;
 
     public int floorId = 0;
     
     public int guid;
     
-    /// charactor_id (objects instance id)
+    /// characterId (objects instance id)
     public int charaId;
     
     /// 現在のタイルにいるキャラクター
-    /// 0=none
-    /// 1=player
-    /// 2=enemy
-    /// 3=support
+    /// 0:none 1:player 2:enemy 3:support
     public CharaType charaType = 0;
     
     /// <summary>
-    /// item_id (objects instance id)
+    /// itemId (objects instance id)
     /// </summary>
     public int itemGuid;
     
@@ -53,7 +47,7 @@ public class TileModel
     /// 高さ
     public int height = 0;
     
-    /// 罠 0=none 1~=any
+    /// 罠 0:none 1~:any
     public int trapType = 0;
     
     /// 罠が見えているか

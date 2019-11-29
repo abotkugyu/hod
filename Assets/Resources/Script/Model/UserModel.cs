@@ -39,7 +39,7 @@ public class UserModel
 
     public int exp = 0;
     
-    //type 1=player 2=enemy
+    //type 1:player 2:enemy
     public TileModel.CharaType type = 0;
     //全体マップの分割番部屋番号
     public int floorId = 0;
@@ -80,4 +80,6 @@ public class UserModel
     public int jump;
     //行動したか
     public bool isAction = false;
+
+    private UserEquipmentModel equipment;
 }
