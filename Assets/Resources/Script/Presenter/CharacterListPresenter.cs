@@ -1,48 +1,44 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.WSA;
 
-//敵情報管理
-public class EnemyListPresenter : MonoBehaviour
-{
-    public Dictionary<int, GameObject> enemyListObject = new Dictionary<int, GameObject>();
-    public Dictionary<int, EnemyPresenter> enemyListPresenter = new Dictionary<int, EnemyPresenter>();
+public class CharacterListPresenter : MonoBehaviour {
+
+    public Dictionary<int, GameObject> characterListObject = new Dictionary<int, GameObject>();
+    public Dictionary<int, CharacterPresenter> characterListPresenter = new Dictionary<int, CharacterPresenter>();
     public int serialGuid = 1;
-    public int num = 1;
 
-    public void Generate(MapPresenter mapPresenter)
-    {
-        GameObject res = Resources.Load("Object/Enemy") as GameObject;
-        for (int x = 0; x < num; x++)
-        {
-            List<int> pos = mapPresenter.GetPopPoint();
-            int posX = pos[0];
-            int posZ = pos[1];
-            GameObject obj = Object.Instantiate(res, new Vector3(posX, 0, posZ), Quaternion.identity) as GameObject;
-            obj.layer = 9;
+    public void Generate(MapPresenter mapPresenter, UserModel model)
+    {        
+        GameObject res = Resources.Load("Object/"+model.modelName) as GameObject;
+        List<int> pos = mapPresenter.GetPopPoint();
+        int posX = pos[0];
+        int posZ = pos[1];
+        GameObject obj = Object.Instantiate(res, new Vector3(posX, 0, posZ), Quaternion.identity) as GameObject;
+        obj.layer = 9;
 
-            EnemyPresenter enemyPresenter = obj.GetComponent<EnemyPresenter>();
-            enemyPresenter.Initialize(EnemyData.GetRandom(), serialGuid);
+        CharacterPresenter characterPresenter = obj.GetComponent<CharacterPresenter>();
+        characterPresenter.Initialize(model, serialGuid);
 
-            enemyPresenter.SetMapData(
-                mapPresenter.map[posX, posZ].floorId,
-                new Vector3(posX, 0, posZ),
-                new Vector3(0, 0, -1)
-                );
-            
-            enemyListPresenter[serialGuid] = enemyPresenter;
-            enemyListObject[serialGuid] = obj;
-            serialGuid++;
+        characterPresenter.SetMapData(
+            mapPresenter.map[posX, posZ].floorId,
+            new Vector3(posX, 0, posZ),
+            new Vector3(0, 0, -1)
+            );
+        
+        characterListPresenter[serialGuid] = characterPresenter;
+        characterListObject[serialGuid] = obj;
+        serialGuid++;
 
-            //mapに配置
-            mapPresenter.SetUserModel(posX, posZ, enemyPresenter.status);
-    
-            Debug.Log(enemyPresenter.status.position.x + ":"+ enemyPresenter.status.position.z + "," + enemyPresenter.enemyView.trans.position.x + ":" + enemyPresenter.enemyView.trans.position.z);
-        }
-        Debug.Log("***********");
+        //mapに配置
+        mapPresenter.SetUserModel(posX, posZ, characterPresenter.status);
+
+        Debug.Log(characterPresenter.status.position.x + ":"+ characterPresenter.status.position.z + "," + characterPresenter.characterView.trans.position.x + ":" + characterPresenter.characterView.trans.position.z);
     }
     
+    /*
     /// <summary>
     /// 階段場所直接指定
     /// </summary>
@@ -60,32 +56,33 @@ public class EnemyListPresenter : MonoBehaviour
                 GameObject obj = Object.Instantiate(res, new Vector3(posX, 0, posZ), Quaternion.identity) as GameObject;
                 obj.layer = 9;
 
-                EnemyPresenter enemyPresenter = obj.GetComponent<EnemyPresenter>();
-                enemyPresenter.Initialize(EnemyData.GetRandom(), serialGuid);
+                CharacterPresenter characterPresenter = obj.GetComponent<CharacterPresenter>();
+                characterPresenter.Initialize(EnemyData.GetRandom(), serialGuid);
                 
-                enemyPresenter.SetMapData(
+                characterPresenter.SetMapData(
                     mapPresenter.map[posX, posZ].floorId,
                     new Vector3(posX, 0, posZ),
                     new Vector3(0, 0, -1)
                 );
                                 
-                enemyListPresenter[serialGuid] = enemyPresenter;
-                enemyListObject[serialGuid] = obj;
+                characterListPresenter[serialGuid] = characterPresenter;
+                characterListObject[serialGuid] = obj;
                 serialGuid++;
                 
                 //mapに配置
-                mapPresenter.SetUserModel(pos[0], pos[1], enemyPresenter.status);
+                mapPresenter.SetUserModel(pos[0], pos[1], characterPresenter.status);
             }
         }
     }
+    */
 
     //敵が全部動いたかどうか
     public bool IsAllAction()
     {
         bool is_end = true;
-        foreach (KeyValuePair<int, EnemyPresenter> enemy in enemyListPresenter)
+        foreach (KeyValuePair<int, CharacterPresenter> enemy in characterListPresenter.Where(presenter => presenter.Value.status.type == TileModel.CharaType.Enemy))
         {
-            EnemyPresenter enemyPresenter = enemy.Value;
+            CharacterPresenter enemyPresenter = enemy.Value;
             if (enemyPresenter.status.isAction == false && enemyPresenter.isMove == true)
             {
                 is_end = !is_end;
@@ -97,18 +94,21 @@ public class EnemyListPresenter : MonoBehaviour
     }
 
     //全ての敵に行動させる
-    public void AllAction(MapPresenter mapPresenter, PlayerPresenter playerPresenter)
+    public void AllAction(MapPresenter mapPresenter)
     {
         // Dictionary<int, EnemyPresenter> plauerInSideFloorEnemy = enemyListPresenter.Select(enemy =>
         // enemy.Value.status.floorId == 0).ToDictionary(enemy => );
         
-        Dictionary<int, EnemyPresenter> plauerInSideFloorEnemy = new Dictionary<int, EnemyPresenter>();
-        Dictionary<int, EnemyPresenter> plauerOutSideFloorEnemy  = new Dictionary<int, EnemyPresenter>();
+        Dictionary<int, CharacterPresenter> plauerInSideFloorEnemy = new Dictionary<int, CharacterPresenter>();
+        Dictionary<int, CharacterPresenter> plauerOutSideFloorEnemy  = new Dictionary<int, CharacterPresenter>();
+
+        /// TODO全プレイヤーで検索する
+        CharacterPresenter player = characterListPresenter.FirstOrDefault(presenter => presenter.Value.status.type == TileModel.CharaType.Player).Value;
 
         //プレイヤーと同じフロアにいるかで分ける
-        foreach (KeyValuePair<int, EnemyPresenter> enemy in enemyListPresenter)
+        foreach (KeyValuePair<int, CharacterPresenter> enemy in characterListPresenter.Where(presenter => presenter.Value.status.type == TileModel.CharaType.Enemy))
         {
-            if (enemy.Value.status.floorId == playerPresenter.status.floorId)
+            if (enemy.Value.status.floorId == player.status.floorId)
             {
                 plauerInSideFloorEnemy.Add(enemy.Key, enemy.Value);
             }
@@ -119,15 +119,15 @@ public class EnemyListPresenter : MonoBehaviour
         }
 
         //プレイヤーに近い順に並べて行動させるようにソートする。
-        foreach (KeyValuePair<int, EnemyPresenter> enemy in plauerInSideFloorEnemy)
+        foreach (KeyValuePair<int, CharacterPresenter> enemy in plauerInSideFloorEnemy)
         {
             //GetFirstPositionAStar(enemy.Value.status.position, playerPresenter.status.position, mapPresenter);
         }        
 
-        foreach (KeyValuePair<int, EnemyPresenter> enemy in enemyListPresenter)
+        foreach (KeyValuePair<int, CharacterPresenter> enemy in characterListPresenter.Where(presenter => presenter.Value.status.type == TileModel.CharaType.Enemy))
         {
-            EnemyPresenter enemyPresenter = enemy.Value;
-            int actionType = enemyPresenter.GetAction();
+            CharacterPresenter characterPresenter = enemy.Value;
+            int actionType = characterPresenter.GetAction();
             //とりあえず1を移動
             if (actionType == 1)
             {
@@ -136,8 +136,8 @@ public class EnemyListPresenter : MonoBehaviour
                 int nX = (x != 0 ? (int)Mathf.Sign(x) : 0);
                 int nZ = (z != 0 ? (int)Mathf.Sign(z) : 0);
                 
-                int beforePositionX = (int) enemyPresenter.status.position.x;
-                int beforePositionZ = (int) enemyPresenter.status.position.z;
+                int beforePositionX = (int) characterPresenter.status.position.x;
+                int beforePositionZ = (int) characterPresenter.status.position.z;
                 int afterPositionX = beforePositionX + nX;
                 int afterPositionZ = beforePositionZ + nZ;
                 if (mapPresenter.IsCanMove(afterPositionX, afterPositionZ, TileModel.CharaType.Enemy))
@@ -146,25 +146,25 @@ public class EnemyListPresenter : MonoBehaviour
                     //Debug.Log(mapPresenter.map[afterPositionX, afterPositionZ].tileType);
                     //Debug.Log(enemyPresenter.status.position.x + ":"+ enemyPresenter.status.position.z + "," + enemyPresenter.enemyView.trans.position.x + ":" + enemyPresenter.enemyView.trans.position.z);
                     
-                    enemyPresenter.Move(x, z);
+                    characterPresenter.Move(x, z);
                     
                     //移動元と移動先にキャラクター情報を設定
                     mapPresenter.SetUserModel(beforePositionX, beforePositionZ, null);
-                    mapPresenter.SetUserModel(afterPositionX, afterPositionZ, enemyPresenter.status);
+                    mapPresenter.SetUserModel(afterPositionX, afterPositionZ, characterPresenter.status);
                     
                     //StartMoveしてからSetPositionをする。
                     
-                    enemyPresenter.SetMapData(
+                    characterPresenter.SetMapData(
                         mapPresenter.map[afterPositionX, afterPositionZ].floorId,
                         new Vector3(afterPositionX, 0, afterPositionZ),
                         new Vector3(nX, 0, nZ)
                     );
                 }else{
                     //移動先がなければ行動済みにする。
-                    enemyPresenter.SetIsAction(true);
+                    characterPresenter.SetIsAction(true);
                 }
             }else{
-                enemyPresenter.SetIsAction(true);
+                characterPresenter.SetIsAction(true);
             }
         }
     }
@@ -258,39 +258,38 @@ public class EnemyListPresenter : MonoBehaviour
     //敵の行動フラグをリセットする
     public void TurnReset()
     {    
-        foreach (KeyValuePair<int, EnemyPresenter> enemy in enemyListPresenter)
+        foreach (KeyValuePair<int, CharacterPresenter> enemy in characterListPresenter.Where(presenter => presenter.Value.status.type == TileModel.CharaType.Enemy))
         {
             enemy.Value.SetIsAction(false);
         }
     }
     
-	public void Delete(EnemyPresenter enemyPresenter)
+	public void Delete(CharacterPresenter characterPresenter)
 	{
-        int guid = enemyPresenter.status.guid;
-        if (enemyPresenter != null)
+        int guid = characterPresenter.status.guid;
+        if (characterPresenter != null)
         {
-            Destroy(enemyListObject[guid]);
-            enemyListPresenter.Remove(guid);
+            Destroy(characterListObject[guid]);
+            characterListPresenter.Remove(guid);
         }
-        Debug.Log(enemyListPresenter.Count);
+        Debug.Log(characterListPresenter.Count);
 	}
 		
-    public EnemyPresenter GetEnemy(int guid)
+    public CharacterPresenter GetCharacter(int guid)
     {
-        return enemyListPresenter.FirstOrDefault(enemy =>
+        return characterListPresenter.FirstOrDefault(enemy =>
             enemy.Key == guid).Value;
     }
 	
     public void ShowLog()
     {
 
-        foreach (KeyValuePair<int, EnemyPresenter> enemy in enemyListPresenter)
+        foreach (KeyValuePair<int, CharacterPresenter> character in characterListPresenter)
         {
             //Debug.Log(enemy.Key);
-            EnemyPresenter enemyPresenter = enemy.Value;
+            CharacterPresenter characterPresenter = character.Value;
             //Debug.Log(enemyPresenter.status.position.x + ":"+ enemyPresenter.status.position.z + "," + enemyPresenter.enemyView.trans.position.x + ":" + enemyPresenter.enemyView.trans.position.z);
         }
     }
 
-    
 }

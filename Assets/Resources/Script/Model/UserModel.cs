@@ -29,6 +29,8 @@ public class UserModel
         avoidRate = model.avoidRate;
         jump = model.jump;
         floorId = model.floorId;
+        modelName = model.modelName;
+        isOwn = model.isOwn;
     }
     
     public int guid = 0;
@@ -66,6 +68,8 @@ public class UserModel
     public int blood;
     //名前
     public string name;
+    //モデル名
+    public string modelName;
     //攻撃力
     public int attack = 110;
     //防御力
@@ -80,6 +84,8 @@ public class UserModel
     public int jump;
     //行動したか
     public bool isAction = false;
+    // 操作キャラか
+    public bool isOwn = false;
 
     private UserEquipmentModel equipment;
 }

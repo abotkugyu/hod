@@ -1,34 +1,43 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class PlayerPresenter : MonoBehaviour {
+public class CharacterPresenter : MonoBehaviour {
 
     // Use this for initialization
     public UserModel status;
     
+    [SerializeField]
+    public CharacterView characterView;
     public float speed = 4.0f;
     public bool isMove = false;
-    public Vector3 targetPosition;
-    
-    [SerializeField]
-    public PlayerView playerView;
-    
+    public Vector3 targetPosition;        
     public List<ItemModel> itemModels;
-
+   
     void Update () {
-        if (isMove && status.isAction == false){
+        if (status.isOwn)
+        {
+            if (isMove && status.isAction == false)
+            {
+                Moving();
+            }
+        }
+        else if (isMove)
+        {            
             Moving();
         }
+        
     }
     
-    public void Initialize()
+    public void Initialize(UserModel model, int guid)
     {
-        playerView.Initialize();
+        //絶対にnewしないと参照が変になる。
+        status = new UserModel(model) {guid = guid, isAction = false};
+        characterView.Initialize();
         DummyItem();
     }
-    
+        
     public void DummyItem()
     {        
         itemModels.Add(new ItemModel(ItemData.GetRandom()));
@@ -38,13 +47,12 @@ public class PlayerPresenter : MonoBehaviour {
     {        
         int posx = pos[0];
         int posz = pos[1];
-        playerView.player.transform.position = new Vector3(posx, 0, posz);
         SetPosition(new Vector3(posx, 0, posz));
         SetDirection(new Vector3(0, 0, -1));
     }
-
+    
     //攻撃処理
-    public void Attack(MapPresenter m, EnemyListPresenter e)
+    public void Attack(MapPresenter m, CharacterListPresenter e)
     {
         Vector3 pos = status.position + status.direction;
         if (pos.x < 0 || pos.z < 0){
@@ -52,7 +60,11 @@ public class PlayerPresenter : MonoBehaviour {
         }
         if (m.map[(int)pos.x, (int)pos.z].charaType == TileModel.CharaType.Enemy)
         {
-            EnemyPresenter enemyPresenter = e.GetEnemy(m.map[(int) pos.x, (int) pos.z].guid);
+            CharacterPresenter enemyPresenter = 
+                e.characterListPresenter
+                    .Where(presenter => presenter.Value.status.type == TileModel.CharaType.Enemy)
+                    .FirstOrDefault(presenter => presenter.Key == m.map[(int) pos.x, (int) pos.z].guid).Value;
+            
             int damage = CalcAction.CalcAttack(status, enemyPresenter.status);
             
             Debug.Log("Attack Damage : "+ damage);            
@@ -63,9 +75,9 @@ public class PlayerPresenter : MonoBehaviour {
                 e.Delete(enemyPresenter);
             }
         }
-        status.isAction = true;
+        SetIsAction(true);
 
-        playerView.Attack();
+        characterView.Attack();
     }
 
     /// <summary>
@@ -79,18 +91,18 @@ public class PlayerPresenter : MonoBehaviour {
     /// <param name="z"></param>
 	public void Move (float x,float z) {
         isMove = true;
-		Rigidbody transform = playerView.GetTransForm();
+		Rigidbody transform = characterView.GetTransForm();
 		Vector3 nowPosition = transform.position;
 
         targetPosition.x = x/200 + nowPosition.x;
         targetPosition.z = z/200 + nowPosition.z;
         
-        playerView.Run(true);
+        characterView.Run(true);
 
 	}
 
     void Moving(){
-        Rigidbody transform = playerView.GetTransForm();
+        Rigidbody transform = characterView.GetTransForm();
         Vector3 nowPosition = transform.position;
 
         float step = 0.04f;//speed * Time.deltaTime;
@@ -99,8 +111,8 @@ public class PlayerPresenter : MonoBehaviour {
         {
             transform.velocity = Vector3.zero;
             isMove = false;
-            status.isAction = true;
-            playerView.Run(false);
+            SetIsAction(true);
+            characterView.Run(false);            
         }
     }
 
@@ -108,6 +120,7 @@ public class PlayerPresenter : MonoBehaviour {
     public void SetPosition(Vector3 position)
     {
         status.position = position;
+        characterView.SetPosition(position);
     }
 
     /// <summary>
@@ -123,7 +136,7 @@ public class PlayerPresenter : MonoBehaviour {
 
         float angle = Mathf.LerpAngle(nowDirection, targetDirection, Time.time);
         
-        playerView.SetAngles(new Vector3(0, angle, 0));
+        characterView.SetAngles(new Vector3(0, angle, 0));
 
         status.direction = new Vector3(position.x, position.y, position.z);
     }
@@ -138,5 +151,54 @@ public class PlayerPresenter : MonoBehaviour {
             
         itemModels.Add(itemModel);
         return true;
+    }
+    
+    
+    void OnWillRenderObject()
+    {
+        //カメラに表示されている時のみ
+        if (Camera.current.name != "SceneCamera" && Camera.current.name != "Preview Camera")
+        {
+            // 処理
+        }
+    }
+    public void CalcHp(int damage)
+    {
+        status.hp -= damage;
+        
+        float per = (float)status.hp / (float)status.maxHp;
+        Debug.Log("Per : " + per);
+        characterView.UpdateHud((int)(per * 100));
+    }
+    public void SetFloorId(int floorId)
+    {
+        status.floorId = floorId;
+    }
+    
+    /// <summary>
+    /// SetFloorId
+    /// SetPosition
+    /// SetFloorId
+    /// を内包している
+    /// </summary>
+    /// <param name="floorId"></param>
+    /// <param name="position"></param>
+    /// <param name="direction"></param>
+    public void SetMapData(int floorId, Vector3 position, Vector3 direction)
+    {
+        SetFloorId(floorId);
+        SetPosition(position);
+        SetDirection(direction);
+    }
+                
+    public int GetAction()
+    {
+        return Random.Range(1, 2);
+    }
+    
+    //行動済み設定
+    public void SetIsAction(bool isAction)
+    {
+        status.isAction = isAction;
     }
 }

@@ -19,6 +19,16 @@ public static class EnemyData{
     {
         return master.list[Random.Range(0, master.list.Length-1)];
     }
+    
+    public static List<UserModel> GetRandoms(int n)
+    {
+        List<UserModel> models = new List<UserModel>();
+        for (int i = 0; i < n; i++)
+        {
+            models.Add(master.list[Random.Range(0, master.list.Length-1)]);
+        }
+        return models;
+    }
     class JsonModel
     {
         public UserModel[] list;

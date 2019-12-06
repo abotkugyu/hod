@@ -3606,8 +3606,8 @@ GameObject:
   - component: {fileID: 6461309788293729827}
   - component: {fileID: 6408088587074692119}
   - component: {fileID: 5591257067595796299}
-  - component: {fileID: 3437581482206605863}
-  - component: {fileID: 7645106507357048429}
+  - component: {fileID: -8288969387316066563}
+  - component: {fileID: -4488186388013751364}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Untagged
@@ -3669,7 +3669,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &3437581482206605863
+--- !u!114 &-8288969387316066563
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -3678,23 +3678,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 6467109358188098035}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bc585d7b2b974c7789a47a4ecbdaef45, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  enemy: {fileID: 6467109358188098035}
-  animator: {fileID: 6408088587074692119}
-  trans: {fileID: 5591257067595796299}
-  hud: {fileID: 5108957542556927714}
---- !u!114 &7645106507357048429
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6467109358188098035}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 52304851a88184eba812b5b0dff5c6d3, type: 3}
+  m_Script: {fileID: 11500000, guid: 8b9cc88fb0b74282ae7084e1aa02bd61, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   status:
@@ -3705,30 +3689,48 @@ MonoBehaviour:
     type: 0
     floorId: 0
     position: {x: 0, y: 0, z: 0}
-    direction: {x: 0, y: 0, z: -1}
+    direction: {x: 0, y: 0, z: 0}
     maxHp: 0
     maxMp: 0
     maxEp: 0
-    hp: 50
-    mp: 40
-    ep: 30
+    hp: 0
+    mp: 0
+    ep: 0
     speed: 0
     speedPriority: 0
     ability: 0
     actionPattern: 
     blood: 0
     name: 
-    attack: 100
-    defence: 100
+    modelName: 
+    attack: 0
+    defence: 0
     hitRate: 0
     avoidRate: 0
     element: 0
     jump: 0
     isAction: 0
+  characterView: {fileID: -4488186388013751364}
   speed: 4
   isMove: 0
   targetPosition: {x: 0, y: 0, z: 0}
-  enemyView: {fileID: 3437581482206605863}
+  itemModels: []
+--- !u!114 &-4488186388013751364
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6467109358188098035}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 503805adcd1ee4b5a9d8e1a5a173eef5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  model: {fileID: 6467109358188098035}
+  animator: {fileID: 6408088587074692119}
+  trans: {fileID: 5591257067595796299}
+  hud: {fileID: 5108957542556927714}
 --- !u!1 &6467118430529356069
 GameObject:
   m_ObjectHideFlags: 0
