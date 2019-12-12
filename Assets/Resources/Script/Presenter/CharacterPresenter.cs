@@ -52,27 +52,28 @@ public class CharacterPresenter : MonoBehaviour {
     }
     
     //攻撃処理
-    public void Attack(MapPresenter m, CharacterListPresenter e)
+    public void Attack(MapPresenter m, CharacterListPresenter characterListPresenter)
     {
         Vector3 pos = status.position + status.direction;
         if (pos.x < 0 || pos.z < 0){
             return;
         }
-        if (m.map[(int)pos.x, (int)pos.z].charaType == TileModel.CharaType.Enemy)
+
+        if (m.map[(int) pos.x, (int) pos.z].charaType == TileModel.CharaType.Player ||
+            m.map[(int)pos.x, (int)pos.z].charaType == TileModel.CharaType.Enemy)
         {
-            CharacterPresenter enemyPresenter = 
-                e.characterListPresenter
-                    .Where(presenter => presenter.Value.status.type == TileModel.CharaType.Enemy)
+            CharacterPresenter characterPresenter = 
+                characterListPresenter.characterListPresenter
                     .FirstOrDefault(presenter => presenter.Key == m.map[(int) pos.x, (int) pos.z].guid).Value;
             
-            int damage = CalcAction.CalcAttack(status, enemyPresenter.status);
+            int damage = CalcAction.CalcAttack(status, characterPresenter.status);
             
             Debug.Log("Attack Damage : "+ damage);            
-            enemyPresenter.CalcHp(damage);
-            Debug.Log("After Hp : "+ enemyPresenter.status.hp);       
-            if (enemyPresenter.status.hp <= 0)
+            characterPresenter.CalcHp(damage);
+            Debug.Log("After Hp : "+ characterPresenter.status.hp);       
+            if (characterPresenter.status.hp <= 0)
             {
-                e.Delete(enemyPresenter);
+                characterListPresenter.Delete(characterPresenter);
             }
         }
         SetIsAction(true);
@@ -98,7 +99,6 @@ public class CharacterPresenter : MonoBehaviour {
         targetPosition.z = z/200 + nowPosition.z;
         
         characterView.Run(true);
-
 	}
 
     void Moving(){
@@ -115,7 +115,17 @@ public class CharacterPresenter : MonoBehaviour {
             characterView.Run(false);            
         }
     }
+    public void CalcMove (float x,float z, MapPresenter mapPresenter) {
+        isMove = true;
+        Rigidbody transform = characterView.GetTransForm();
+        Vector3 nowPosition = transform.position;
 
+        targetPosition.x = x/200 + nowPosition.x;
+        targetPosition.z = z/200 + nowPosition.z;
+        
+        characterView.Run(true);
+    }
+    
     /// user.status.position に座標保存
     public void SetPosition(Vector3 position)
     {

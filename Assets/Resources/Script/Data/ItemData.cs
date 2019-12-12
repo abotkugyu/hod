@@ -14,7 +14,16 @@ public static class ItemData{
         master = JsonUtility.FromJson<JsonModel>(masterJson.ToString());
         Debug.Log(String.Format("Load Success Item Data : {0}", master.list[0].name));
     }
-
+    public static List<ItemModel> GetRandoms(int n)
+    {
+        List<ItemModel> models = new List<ItemModel>();
+        for (int i = 0; i < n; i++)
+        {
+            models.Add(master.list[Random.Range(0, master.list.Length-1)]);
+        }
+        return models;
+    }
+    
     public static ItemModel GetRandom()
     {
         return master.list[Random.Range(0, master.list.Length-1)];

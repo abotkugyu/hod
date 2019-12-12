@@ -42,7 +42,7 @@ public class TileModel
     public int itemGuid;
     
     /// 現在のタイルにあるアイテム
-    public int itemType = 0;
+    public int itemId = 0;
     
     /// 高さ
     public int height = 0;

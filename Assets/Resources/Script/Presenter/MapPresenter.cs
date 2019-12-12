@@ -150,7 +150,7 @@ public class MapPresenter : MonoBehaviour {
     }
     
     /// <summary>
-    /// 移動できるかどうかs
+    /// 移動できるかどうか
     /// </summary>
     /// <param name="x"></param>
     /// <param name="z"></param>
@@ -225,6 +225,20 @@ public class MapPresenter : MonoBehaviour {
             map[x, z].guid = 0;
             map[x, z].charaId = 0;
             map[x, z].charaType = TileModel.CharaType.None;
+        }
+    }
+    
+    public void SetItemModel(int x, int z, ItemModel item)
+    {
+        if (item != null)
+        {
+            map[x, z].guid = item.guid;
+            map[x, z].itemId = item.id;
+        }
+        else
+        {            
+            map[x, z].guid = 0;
+            map[x, z].itemId = 0;
         }
     }
 

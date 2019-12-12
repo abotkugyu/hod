@@ -1,1 +1,1 @@
-{"list":[{"id":1,"type":6,"name":"おにぎり","value":50},{"id":2,"type":6,"name":"パン","value":50},{"id":3,"type":6,"name":"アメ","value":10},{"id":4,"type":6,"name":"ラーメン","value":60},{"id":5,"type":6,"name":"枝豆","value":5}]}
+{"list":[{"id":1,"type":6,"name":"おにぎり","value":50,"modelName":"Item"},{"id":2,"type":6,"name":"パン","value":50,"modelName":"Item"},{"id":3,"type":6,"name":"アメ","value":10,"modelName":"Item"},{"id":4,"type":6,"name":"ラーメン","value":60,"modelName":"Item"},{"id":5,"type":6,"name":"枝豆","value":5,"modelName":"Item"}]}

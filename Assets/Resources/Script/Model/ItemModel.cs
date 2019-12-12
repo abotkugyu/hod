@@ -16,6 +16,7 @@ public class ItemModel
         value = model.value;
         remainCount = model.remainCount;
         useCount = model.useCount;
+        modelName = model.modelName;
     }
 
     public ItemModel(int id, string name)
@@ -41,5 +42,11 @@ public class ItemModel
     public int useCount = 0;    //使用回数
     /// remain_count : 残り回数
     public int remainCount = 0; //残り回数
+    /// model_name
+    public string modelName = ""; //モデル名
+    
+    public int floorId = 0;    
+    //向き(デフォルト下向き)
+    public Vector3 direction = new Vector3(0, 0, -1);
    
 }
