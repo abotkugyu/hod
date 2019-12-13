@@ -43,7 +43,7 @@ public class GameMain : MonoBehaviour {
         gameStatus = new GameStatusModel();
         
         //item 配置
-        List<ItemModel> items = ItemData.GetRandoms(10);
+        List<ItemModel> items = ItemData.GetRandoms(30);
         items.ForEach(item => itemsListPresenter.Generate(mapPresenter, item));
         
         //階段配置
@@ -84,79 +84,21 @@ public class GameMain : MonoBehaviour {
                 {
                     mapPresenter.ShowMapInfo();
                 }
-                
+                               
+                // アイテムメニュー開いているか
                 if (!menuPresenter.itemMenuPresenter.GetIsShowItemMenu())
                 {
-                    //攻撃
-                    if (Input.GetKeyDown(KeyCode.X) && characterPresenter.status.isAction == false && !characterPresenter.isMove)
-                    {
-                        characterPresenter.Attack(mapPresenter, characterListPresenter);
-                    }
-                    
-                    bool is_lshift = Input.GetKey(KeyCode.LeftShift);
+                    DefaultAction(characterPresenter);
+                }
+                else
+                {
+                    ItemMenuAction(characterPresenter);
+                }
 
-                    InputAxis axis = GetInputAxis();
-                    
-                    if (!characterPresenter.isMove && is_lshift)
-                    {
-                        characterPresenter.SetDirection(new Vector3(axis.I.x, 0, axis.I.y));
-                    }
-                    
-                    
-                    if (axis.F.x != 0 || axis.F.y != 0)
-                    {
-                        int beforePositionX = (int) characterPresenter.status.position.x;
-                        int beforePositionZ = (int) characterPresenter.status.position.z;
-                        int afterPositionX = beforePositionX + axis.I.x;
-                        int afterPositionZ = beforePositionZ + axis.I.y;
-                        if (mapPresenter.IsCanMove(afterPositionX, afterPositionZ, TileModel.CharaType.Player))
-                        {
-                            if (!characterPresenter.isMove && characterPresenter.status.isAction == false)
-                            {
-                                if (!is_lshift)
-                                {
-                                    characterPresenter.Move(axis.F.x, axis.F.y);
-                                                                                      
-                                    //移動元と移動先にキャラクター情報を設定
-                                    mapPresenter.SetUserModel(beforePositionX, beforePositionZ, null);
-                                    mapPresenter.SetUserModel(afterPositionX, afterPositionZ, characterPresenter.status);                       
-                                    //アイテムがあれば取得
-                                    if (mapPresenter.map[afterPositionX, afterPositionZ].itemId != 0)
-                                    {                                        
-                                        ItemPresenter itemPresenter = itemsListPresenter.Find(mapPresenter.map[afterPositionX, afterPositionZ].itemGuid);
-
-                                        if (characterPresenter.SetItem(itemPresenter.status))
-                                        {
-                                            itemsListPresenter.Delete(itemPresenter);
-                                        }                                      
-                                    }
-                                    
-                                    //階段あれば移動
-                                    if(mapPresenter.map[afterPositionX, afterPositionZ]
-                                           .tileType == TileModel.TileType.Stairs)
-                                    {
-                                        mapPresenter.Regenerate();
-                                    }
-                                                                       
-                                    characterPresenter.SetPosition(new Vector3(afterPositionX, 0, afterPositionZ));
-                                    characterPresenter.SetDirection(new Vector3(axis.I.x, 0, axis.I.y));
-                                }
-                            }
-                        }
-                        else
-                        {
-                            if (!characterPresenter.isMove){
-                                characterPresenter.SetDirection(new Vector3(axis.I.x, 0, axis.I.y));
-                            }
-                        }
-                    
-                    }
-
-                    //自分が動いたら敵のターンにする
-                    if (characterPresenter.status.isAction)
-                    {
-                        SetTurn(2);
-                    }
+                //自分が動いたら敵のターンにする
+                if (characterPresenter.status.isAction)
+                {
+                    SetTurn(2);
                 }
             }
             else if (gameStatus.turn == 2)
@@ -183,6 +125,80 @@ public class GameMain : MonoBehaviour {
         {            
             gameStatus.turn = turn;
         }
+    }
+
+    private void DefaultAction(CharacterPresenter characterPresenter)
+    {
+        InputAxis axis = GetInputAxis();
+        bool isShift = Input.GetKey(KeyCode.LeftShift);
+        //攻撃
+        if (Input.GetKeyDown(KeyCode.X) && characterPresenter.status.isAction == false && !characterPresenter.isMove)
+        {
+            characterPresenter.Attack(mapPresenter, characterListPresenter);
+            return;
+        }                    
+                   
+        if (axis.F.x != 0 || axis.F.y != 0)
+        {        
+            // 向き変更
+            if (!characterPresenter.isMove)
+            {
+                characterPresenter.SetDirection(new Vector3(axis.I.x, 0, axis.I.y));
+                // shiftが押されていたら方向転換だけ
+                if (isShift)
+                {
+                    return;
+                }
+            }
+
+            int beforePositionX = (int) characterPresenter.status.position.x;
+            int beforePositionZ = (int) characterPresenter.status.position.z;
+            int afterPositionX = beforePositionX + axis.I.x;
+            int afterPositionZ = beforePositionZ + axis.I.y;
+            if (mapPresenter.IsCanMove(afterPositionX, afterPositionZ, TileModel.CharaType.Player))
+            {
+                if (!characterPresenter.isMove && characterPresenter.status.isAction == false)
+                {
+                    if (!isShift)
+                    {
+                        characterPresenter.Move(axis.F.x, axis.F.y);
+                                                                                              
+                        //アイテムがあれば取得
+                        if (mapPresenter.map[afterPositionX, afterPositionZ].itemGuid != 0)
+                        {                                        
+                            ItemPresenter itemPresenter = itemsListPresenter.Find(mapPresenter.map[afterPositionX, afterPositionZ].itemGuid);
+
+                            if (itemPresenter != null && characterPresenter.SetItem(itemPresenter.status))
+                            {
+                                itemsListPresenter.Delete(itemPresenter);
+                            }                                      
+                        }
+                        
+                        //階段あれば移動
+                        if(mapPresenter.map[afterPositionX, afterPositionZ]
+                               .tileType == TileModel.TileType.Stairs)
+                        {
+                            mapPresenter.Regenerate();
+                        }
+                        
+                        //移動元と移動先にキャラクター情報を設定
+                        mapPresenter.SetUserModel(beforePositionX, beforePositionZ, null);
+                        mapPresenter.SetUserModel(afterPositionX, afterPositionZ, characterPresenter.status);   
+                                                           
+                        characterPresenter.SetPosition(new Vector3(afterPositionX, 0, afterPositionZ));
+                    }
+                }
+            }
+        }
+    }
+    private void ItemMenuAction(CharacterPresenter characterPresenter)
+    {        
+/*        InputAxis axis = GetInputAxis();
+        
+        if (axis.F.y != 0)
+        {
+            
+        }        */
     }
 
     private InputAxis GetInputAxis()

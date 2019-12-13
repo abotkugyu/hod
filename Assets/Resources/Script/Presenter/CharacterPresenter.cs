@@ -40,7 +40,7 @@ public class CharacterPresenter : MonoBehaviour {
         
     public void DummyItem()
     {        
-        itemModels.Add(new ItemModel(ItemData.GetRandom()));
+        //itemModels.Add(new ItemModel(ItemData.GetRandom()));
     }
     
     public void DummyInitialize(List<int> pos)

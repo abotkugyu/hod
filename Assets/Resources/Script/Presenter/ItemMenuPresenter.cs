@@ -6,15 +6,16 @@ public class ItemMenuPresenter : MonoBehaviour {
 	
 	public ItemMenuView itemMenuView;
 	public List<ItemModel> itemsModels;
+	private int selectedId = 0;
 	
 	public void Initialize(List<ItemModel> models)
 	{
 		itemsModels = models;
 	}
 	
-	public void ShowItemMenu(bool is_show)
+	public void ShowItemMenu(bool isOpen)
 	{
-		if (is_show)
+		if (isOpen)
 		{
 			Refresh();
 			itemMenuView.show();

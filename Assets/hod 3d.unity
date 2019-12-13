@@ -1200,8 +1200,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7768d74fd63444eda5bb33cdb4873c54, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  item_objects: []
-  num: 100
+  serialGuid: 1
 --- !u!4 &1376324037
 Transform:
   m_ObjectHideFlags: 0

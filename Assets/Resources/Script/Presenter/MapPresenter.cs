@@ -50,9 +50,8 @@ public class MapPresenter : MonoBehaviour {
 
     public void Regenerate()
     {
-
         Scene loadScene = SceneManager.GetActiveScene();
-        SceneManager.LoadScene(loadScene.name);        
+        SceneManager.LoadScene(loadScene.name);
     }
 
     void GenerateWall (int[,] data){
@@ -232,12 +231,12 @@ public class MapPresenter : MonoBehaviour {
     {
         if (item != null)
         {
-            map[x, z].guid = item.guid;
+            map[x, z].itemGuid = item.guid;
             map[x, z].itemId = item.id;
         }
         else
         {            
-            map[x, z].guid = 0;
+            map[x, z].itemGuid = 0;
             map[x, z].itemId = 0;
         }
     }

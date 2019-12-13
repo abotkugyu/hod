@@ -8,7 +8,6 @@ public class ItemModel
 {
     public ItemModel(ItemModel model)
     {
-        guid = model.guid;
         id = model.id;
         name = model.name;
         type  = model.type;

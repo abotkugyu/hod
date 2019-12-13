@@ -46,8 +46,7 @@ public class ItemMenuView : MonoBehaviour {
 			
 			ItemCellView itemCellView = itemCell.GetComponent<ItemCellView>();
 			itemCellView.Name.text = itemModels[i].name;
-		}
-		
+		}		
 	}
 }
 

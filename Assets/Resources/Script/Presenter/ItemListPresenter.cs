@@ -40,8 +40,7 @@ public class ItemListPresenter : MonoBehaviour
     
     public ItemPresenter Find(int guid)
     {
-        return itemListPresenter.FirstOrDefault(item =>
-            item.Key == guid).Value;
+        return itemListPresenter.TryGetValue(guid, out var val) ? val : null;
     }
         
     public void Delete(ItemPresenter itemPresenter)

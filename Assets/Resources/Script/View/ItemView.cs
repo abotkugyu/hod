@@ -10,8 +10,6 @@ public class ItemView : MonoBehaviour {
     Animator animator;
     [SerializeField]
     public Rigidbody trans;
-    [SerializeField]
-    public GameObject hud;
     
     public void Initialize()
     {
@@ -45,12 +43,6 @@ public class ItemView : MonoBehaviour {
     public Rigidbody GetTransForm()
     {
         return trans;
-    }
-        
-    public void UpdateHud(int per)
-    {
-        HudView hudView = hud.GetComponent<HudView>();
-        hudView.updateHealth(per);
-    }
+    }        
 }
 
