@@ -17,6 +17,7 @@ public class ItemMenuPresenter : MonoBehaviour {
 	{
 		if (isOpen)
 		{
+			selectedId = 1;
 			Refresh();
 			itemMenuView.show();
 		}
@@ -42,19 +43,27 @@ public class ItemMenuPresenter : MonoBehaviour {
 		{
 			if (Input.GetKeyDown(KeyCode.DownArrow))
 			{
-				if (itemsModels.Count == selectedId)
+				if (itemsModels.Count <= selectedId)
 				{
 					selectedId = 1;
 				}
-				itemMenuView.SetCursor(++selectedId);
+				else
+				{
+					selectedId++;
+				}
+				itemMenuView.SetCursor(selectedId);
 			}
 			else if (Input.GetKeyDown(KeyCode.UpArrow))
 			{
-				if (itemsModels.Count == 1)
+				if (selectedId == 1)
 				{
 					selectedId = itemsModels.Count;
 				}
-				itemMenuView.SetCursor(--selectedId);
+				else
+				{
+					selectedId--;
+				}
+				itemMenuView.SetCursor(selectedId);
 			}
 		}
 	}

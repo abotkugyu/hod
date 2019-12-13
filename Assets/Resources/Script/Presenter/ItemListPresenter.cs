@@ -19,6 +19,7 @@ public class ItemListPresenter : MonoBehaviour
         int posX = pos[0];
         int posZ = pos[1];
         GameObject obj = Object.Instantiate(res, new Vector3(posX, 0, posZ), Quaternion.identity) as GameObject;
+        obj.name = "Item;" + serialGuid;
         obj.layer = 9;
         
         // item model作成
@@ -36,6 +37,7 @@ public class ItemListPresenter : MonoBehaviour
         
         mapPresenter.SetItemModel(posX, posZ, itemPresenter.status);                        
         
+        Debug.Log("position:"+pos[0]+":"+pos[1]);
     }
     
     public ItemPresenter Find(int guid)
@@ -49,7 +51,12 @@ public class ItemListPresenter : MonoBehaviour
         if (itemPresenter != null)
         {
             Destroy(itemListObject[guid]);
+            itemListObject.Remove(guid);
             itemListPresenter.Remove(guid);
+        }
+        else
+        {
+            Debug.Log("Cant Delete:"+guid);            
         }
         Debug.Log(itemListPresenter.Count);
     }

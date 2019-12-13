@@ -139,7 +139,9 @@ public class MapPresenter : MonoBehaviour {
             string[] pos = popPoint[pos_s].Split(',');
             int x = int.Parse(pos[0]);
             int z = int.Parse(pos[1]);
-			if (map[x,z].tileType == TileModel.TileType.Floor && map[x,z].charaType == TileModel.CharaType.None)
+			if (map[x,z].tileType == TileModel.TileType.Floor && 
+                map[x,z].charaType == TileModel.CharaType.None &&
+                map[x,z].itemGuid == 0)
             {
                 return new List<int>{x, z};
             }

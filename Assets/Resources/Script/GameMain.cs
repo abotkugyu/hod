@@ -38,8 +38,7 @@ public class GameMain : MonoBehaviour {
         UserModel player = PlayerData.GetRandom();
         player.isOwn = true;
         characterListPresenter.Generate(mapPresenter, player);
-        
-        
+                
         gameStatus = new GameStatusModel();
         
         //item 配置
@@ -171,7 +170,13 @@ public class GameMain : MonoBehaviour {
                             if (itemPresenter != null && characterPresenter.SetItem(itemPresenter.status))
                             {
                                 itemsListPresenter.Delete(itemPresenter);
-                            }                                      
+                                
+                                mapPresenter.SetItemModel(afterPositionX, afterPositionZ, null);  
+                            }
+                            else
+                            {                                
+                                Debug.Log("Cant Delete:null"); 
+                            }                                
                         }
                         
                         //階段あれば移動

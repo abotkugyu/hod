@@ -36,6 +36,7 @@ public class ItemMenuView : MonoBehaviour {
 
 	public void Refresh(List<ItemModel> itemModels)
 	{
+		Destroy(cursor);
 		itemCellViewList.ForEach(Destroy);
 		itemCellViewList.Clear();
 		GameObject res1 = Resources.Load("Object/ItemWindow/ItemCell") as GameObject;
