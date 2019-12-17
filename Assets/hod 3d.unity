@@ -172,6 +172,16 @@ PrefabInstance:
       propertyPath: m_RootOrder
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 114442329095637132, guid: 4f7d638767ded4f3ca0dc942d6634895,
+        type: 3}
+      propertyPath: maxMapX
+      value: 1000
+      objectReference: {fileID: 0}
+    - target: {fileID: 114442329095637132, guid: 4f7d638767ded4f3ca0dc942d6634895,
+        type: 3}
+      propertyPath: maxMapY
+      value: 1000
+      objectReference: {fileID: 0}
     - target: {fileID: 114858658576021038, guid: 4f7d638767ded4f3ca0dc942d6634895,
         type: 3}
       propertyPath: mapPresenter
@@ -207,7 +217,8 @@ PrefabInstance:
       propertyPath: characterListPresenter
       value: 
       objectReference: {fileID: 1871325297}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 114442329095637132, guid: 4f7d638767ded4f3ca0dc942d6634895, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 4f7d638767ded4f3ca0dc942d6634895, type: 3}
 --- !u!1001 &543682041
 PrefabInstance:
@@ -755,8 +766,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc6e889e379ec46a0bbf1d7723825e8d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxMapX: 20
-  maxMapY: 20
+  maxMapX: 100
+  maxMapY: 100
   popPoint: []
 --- !u!4 &1829130557
 Transform:

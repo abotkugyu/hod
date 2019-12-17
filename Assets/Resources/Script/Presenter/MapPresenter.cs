@@ -10,12 +10,11 @@ using UnityEngine.SceneManagement;
 //100*100を50,25...と分割していき確率で部屋を作る
 public class MapPresenter : MonoBehaviour {
 
-	public int maxMapX = 100;
-    public int maxMapY = 100;
+	public int maxMapX = 1000;
+    public int maxMapY = 1000;
         
     public Dictionary<Vector2Int, TileModel> map = new Dictionary<Vector2Int, TileModel>();
 
-    public IEnumerable<TileModel> a;
     //public TileModel[,] map;
     public List<string> popPoint = new List<string>();
 
@@ -28,7 +27,7 @@ public class MapPresenter : MonoBehaviour {
                 map[new Vector2Int(x,z)] = new TileModel();
             }
         }
-
+        
         //横軸をGenerateMapで分割
         List<int> mapX = GenerateMap ();
         List<List<int>> mapY = new List<List<int>>();
@@ -81,22 +80,22 @@ public class MapPresenter : MonoBehaviour {
         {
             for (int m = 0; m < y; m++)
             {
-                var vector2Int = new Vector2Int(l + seqX, m + seqY);
+                var t = GetTileModel(new Vector2Int(l + seqX, m + seqY));
                 if (l >= startX && l <= startX + floorX && m >= startY && m <= startY + floorY)
                 {
                     //床
                     GameObject original = Object.Instantiate(Resources.Load("Object/Tile")) as GameObject;
                     original.transform.Translate(seqX + l, 0, seqY + m);
-                    map[vector2Int].tileType = TileModel.TileType.Floor;
-                    map[vector2Int].floorId = floorId;
+                    t.tileType = TileModel.TileType.Floor;
+                    t.floorId = floorId;
                     popPoint.Add((l + seqX)+","+(m + seqY));
                     result[l, m] = 1;
                 }else{
                     //壁                    
                     GameObject original = Object.Instantiate(Resources.Load("Object/Block")) as GameObject;
                     original.transform.Translate(seqX + l, 0, seqY + m);
-                    map[vector2Int].tileType = TileModel.TileType.Wall;
-                    map[vector2Int].floorId = floorId;
+                    t.tileType = TileModel.TileType.Wall;
+                    t.floorId = floorId;
                     result[l, m] = 0;
                 }
             }
@@ -145,10 +144,10 @@ public class MapPresenter : MonoBehaviour {
             string[] pos = popPoint[pos_s].Split(',');
             int x = int.Parse(pos[0]);
             int z = int.Parse(pos[1]);
-            var vector2Int = new Vector2Int(x, z);
-			if (map[vector2Int].tileType == TileModel.TileType.Floor && 
-                map[vector2Int].charaType == TileModel.CharaType.None &&
-                map[vector2Int].itemGuid == 0)
+            var t = GetTileModel(new Vector2Int(x, z));
+			if (t.tileType == TileModel.TileType.Floor && 
+                t.charaType == TileModel.CharaType.None &&
+                t.itemGuid == 0)
             {
                 return new List<int>{x, z};
             }
@@ -169,18 +168,18 @@ public class MapPresenter : MonoBehaviour {
         //移動先が0以上
         if (x > 0 && z > 0)
         {            
-            var vector2Int = new Vector2Int(x, z);
+            var t = GetTileModel(new Vector2Int(x, z));
             if (type == TileModel.CharaType.Player)
             {
                 if (
-                    (map[vector2Int].tileType == TileModel.TileType.Floor || map[vector2Int].tileType == TileModel.TileType.Stairs) && 
-                    map[vector2Int].charaType == TileModel.CharaType.None)
+                    (t.tileType == TileModel.TileType.Floor || t.tileType == TileModel.TileType.Stairs) && 
+                    t.charaType == TileModel.CharaType.None)
                 {
                     return true;
                 }
             }else if (type == TileModel.CharaType.Enemy)
             {
-                if (map[vector2Int].tileType == TileModel.TileType.Floor && map[vector2Int].charaType == TileModel.CharaType.None)
+                if (t.tileType == TileModel.TileType.Floor && t.charaType == TileModel.CharaType.None)
                 {
                     return true;
                 }
@@ -215,7 +214,7 @@ public class MapPresenter : MonoBehaviour {
             resPosition.Add(pos[0] + direction[0]);
             resPosition.Add(pos[1] + direction[1]);
             var vector2Int = new Vector2Int(resPosition[0], resPosition[1]);
-            if (map[vector2Int].tileType == TileModel.TileType.Floor && map[vector2Int].charaType == 0)
+            if (GetTileModel(vector2Int).tileType == TileModel.TileType.Floor && GetTileModel(vector2Int).charaType == 0)
             {
                 return resPosition;
             }
@@ -226,33 +225,33 @@ public class MapPresenter : MonoBehaviour {
     
     public void SetUserModel(int x, int z, UserModel user)
     {
-        var vector2Int = new Vector2Int(x, z);
+        var t = GetTileModel(new Vector2Int(x, z));
         if (user != null)
         {
-            map[vector2Int].guid = user.guid;
-            map[vector2Int].charaId = user.id;
-            map[vector2Int].charaType = user.type;
+            t.guid = user.guid;
+            t.charaId = user.id;
+            t.charaType = user.type;
         }
         else
         {            
-            map[vector2Int].guid = 0;
-            map[vector2Int].charaId = 0;
-            map[vector2Int].charaType = TileModel.CharaType.None;
+            t.guid = 0;
+            t.charaId = 0;
+            t.charaType = TileModel.CharaType.None;
         }
     }
     
     public void SetItemModel(int x, int z, ItemModel item)
     {
-        var vector2Int = new Vector2Int(x, z);
+        var t = GetTileModel(new Vector2Int(x, z));
         if (item != null)
         {
-            map[vector2Int].itemGuid = item.guid;
-            map[vector2Int].itemId = item.id;
+            t.itemGuid = item.guid;
+            t.itemId = item.id;
         }
         else
         {            
-            map[vector2Int].itemGuid = 0;
-            map[vector2Int].itemId = 0;
+            t.itemGuid = 0;
+            t.itemId = 0;
         }
     }
 
@@ -263,10 +262,10 @@ public class MapPresenter : MonoBehaviour {
             string m = "";
             for (int x = 0; x < maxMapX; x++)
             {
-                var vector2Int = new Vector2Int(x, z);
-                string m1 = map[vector2Int].tileType.ToString().Substring(0, 1);
-                string m2 = map[vector2Int].charaType.ToString().Substring(0, 1);
-                string m3 = map[vector2Int].floorId.ToString();
+                var t = GetTileModel(new Vector2Int(x, z));
+                string m1 = t.tileType.ToString().Substring(0, 1);
+                string m2 = t.charaType.ToString().Substring(0, 1);
+                string m3 = t.floorId.ToString();
                 m += m1+m2+m3+",";
             }
             Debug.Log(m);
@@ -276,10 +275,6 @@ public class MapPresenter : MonoBehaviour {
     public TileModel GetTileModel(Vector2Int pos)
     {
         return map[pos];
-    }
-    public TileModel GetTileModel(float x, float y)
-    {
-        return map[new Vector2Int((int)x,(int)y)];
     }
     public TileModel GetTileModel(int x, int y)
     {
