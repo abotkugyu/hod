@@ -59,12 +59,13 @@ public class CharacterPresenter : MonoBehaviour {
             return;
         }
 
-        if (m.map[(int) pos.x, (int) pos.z].charaType == TileModel.CharaType.Player ||
-            m.map[(int)pos.x, (int)pos.z].charaType == TileModel.CharaType.Enemy)
+        var vector2Int = new Vector2Int((int) pos.x, (int) pos.z);
+        if (m.GetTileModel(vector2Int).charaType == TileModel.CharaType.Player ||
+            m.GetTileModel(vector2Int).charaType == TileModel.CharaType.Enemy)
         {
             CharacterPresenter characterPresenter = 
                 characterListPresenter.characterListPresenter
-                    .FirstOrDefault(presenter => presenter.Key == m.map[(int) pos.x, (int) pos.z].guid).Value;
+                    .FirstOrDefault(presenter => presenter.Key == m.GetTileModel(vector2Int).guid).Value;
             
             int damage = CalcAction.CalcAttack(status, characterPresenter.status);
             

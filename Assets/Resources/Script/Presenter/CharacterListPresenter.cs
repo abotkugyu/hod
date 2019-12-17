@@ -23,7 +23,7 @@ public class CharacterListPresenter : MonoBehaviour {
         characterPresenter.Initialize(model, serialGuid);
 
         characterPresenter.SetMapData(
-            mapPresenter.map[posX, posZ].floorId,
+            mapPresenter.GetTileModel(posX, posZ).floorId,
             new Vector3(posX, 0, posZ),
             new Vector3(0, 0, -1)
             );
@@ -38,44 +38,6 @@ public class CharacterListPresenter : MonoBehaviour {
         Debug.Log(characterPresenter.status.position.x + ":"+ characterPresenter.status.position.z + "," + characterPresenter.characterView.trans.position.x + ":" + characterPresenter.characterView.trans.position.z);
     }
     
-    /*
-    /// <summary>
-    /// 階段場所直接指定
-    /// </summary>
-    /// <param name="mapPresenter"></param>
-    /// <param name="pos"></param>
-    public void DummyGenerate(MapPresenter mapPresenter, List<int> pos)
-    {
-        if (pos != null)
-        {
-            GameObject res = Resources.Load("Object/Enemy") as GameObject;
-            for (int x = 0; x < 1; x++)
-            {
-                int posX = pos[0];
-                int posZ = pos[1];
-                GameObject obj = Object.Instantiate(res, new Vector3(posX, 0, posZ), Quaternion.identity) as GameObject;
-                obj.layer = 9;
-
-                CharacterPresenter characterPresenter = obj.GetComponent<CharacterPresenter>();
-                characterPresenter.Initialize(EnemyData.GetRandom(), serialGuid);
-                
-                characterPresenter.SetMapData(
-                    mapPresenter.map[posX, posZ].floorId,
-                    new Vector3(posX, 0, posZ),
-                    new Vector3(0, 0, -1)
-                );
-                                
-                characterListPresenter[serialGuid] = characterPresenter;
-                characterListObject[serialGuid] = obj;
-                serialGuid++;
-                
-                //mapに配置
-                mapPresenter.SetUserModel(pos[0], pos[1], characterPresenter.status);
-            }
-        }
-    }
-    */
-
     //敵が全部動いたかどうか
     public bool IsAllAction()
     {
@@ -155,7 +117,7 @@ public class CharacterListPresenter : MonoBehaviour {
                     //StartMoveしてからSetPositionをする。
                     
                     characterPresenter.SetMapData(
-                        mapPresenter.map[afterPositionX, afterPositionZ].floorId,
+                        mapPresenter.GetTileModel(afterPositionX, afterPositionZ).floorId,
                         new Vector3(afterPositionX, 0, afterPositionZ),
                         new Vector3(nX, 0, nZ)
                     );
@@ -163,7 +125,9 @@ public class CharacterListPresenter : MonoBehaviour {
                     //移動先がなければ行動済みにする。
                     characterPresenter.SetIsAction(true);
                 }
-            }else{
+            }else
+            {
+                //GetNearCharacterPosition(GameConfig.SearchType.Around8, TileModel.CharaType.Player, mapPresenter.map);
                 characterPresenter.SetIsAction(true);
             }
         }
@@ -292,4 +256,20 @@ public class CharacterListPresenter : MonoBehaviour {
         }
     }
 
+    public CharacterPresenter GetOwnCharacterPresenter()
+    {
+        return characterListPresenter.FirstOrDefault(presenter => presenter.Value.status.isOwn).Value;
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="search">サーチ範囲 1=周囲8マス</param>
+    public void GetNearCharacterPosition(GameConfig.SearchType searchType, TileModel.CharaType type, TileModel[,] map)
+    {
+        if (searchType == GameConfig.SearchType.Around8)
+        {
+            
+        }
+    }
 }

@@ -22,7 +22,7 @@ public class StairsListPresenter : MonoBehaviour
 
             stairsList.Add(obj);
             //mapに配置
-            mapPresenter.map[posx, posz].tileType = TileModel.TileType.Stairs;
+            mapPresenter.GetTileModel(posx, posz).tileType = TileModel.TileType.Stairs;
         }
     }
 
@@ -44,7 +44,7 @@ public class StairsListPresenter : MonoBehaviour
 
                 stairsList.Add(obj);
                 //mapに配置
-                mapPresenter.map[pos[0], pos[1]].tileType = TileModel.TileType.Stairs;
+                mapPresenter.GetTileModel(pos[0], pos[1]).tileType = TileModel.TileType.Stairs;
             }
         }
     }

@@ -17,6 +17,8 @@ public class GameMain : MonoBehaviour {
     
     public CharacterListPresenter characterListPresenter;
     
+    public HudPresenter hudPresenter;
+    
     [SerializeField]    
     public StairsListPresenter stairsListPresenter;
     [SerializeField]    
@@ -55,9 +57,13 @@ public class GameMain : MonoBehaviour {
         List<int> pos = mapPresenter.GetPopPoint();
         stairsListPresenter.DummyGenerate(mapPresenter, mapPresenter.CanSetObject(pos));
 
-        menuPresenter.itemMenuPresenter.Initialize(characterListPresenter.characterListPresenter.FirstOrDefault(presenter => presenter.Value.status.isOwn).Value.itemModels);
-                
-        //dummy エネミー配置
+        menuPresenter.itemMenuPresenter.Initialize(characterListPresenter.GetOwnCharacterPresenter().itemModels);
+
+        //Create Hud
+        GameObject res = Resources.Load("Object/Hud") as GameObject;
+        GameObject obj = UnityEngine.Object.Instantiate(res, new Vector3(0, 0, 0), Quaternion.identity) as GameObject;
+        hudPresenter = obj.GetComponent<HudPresenter>();
+        hudPresenter.UpdateHud(characterListPresenter.GetOwnCharacterPresenter().status);
 
     }
 	
@@ -65,7 +71,7 @@ public class GameMain : MonoBehaviour {
     // Update is called once per frame
 	void Update ()
     {
-        var characterPresenter = characterListPresenter.characterListPresenter.FirstOrDefault(presenter => presenter.Value.status.isOwn).Value;
+        var characterPresenter = characterListPresenter.GetOwnCharacterPresenter();
 		//var conf = ConfigProvider.Api;
         //rest_map=1,dungen_map=2
         if (phase == 1) {
@@ -97,6 +103,7 @@ public class GameMain : MonoBehaviour {
                 //自分が動いたら敵のターンにする
                 if (characterPresenter.status.isAction)
                 {
+                    hudPresenter.UpdateHud(characterPresenter.status);
                     SetTurn(2);
                 }
             }
@@ -163,9 +170,9 @@ public class GameMain : MonoBehaviour {
                         characterPresenter.Move(axis.F.x, axis.F.y);
                                                                                               
                         //アイテムがあれば取得
-                        if (mapPresenter.map[afterPositionX, afterPositionZ].itemGuid != 0)
+                        if (mapPresenter.GetTileModel(afterPositionX, afterPositionZ).itemGuid != 0)
                         {                                        
-                            ItemPresenter itemPresenter = itemsListPresenter.Find(mapPresenter.map[afterPositionX, afterPositionZ].itemGuid);
+                            ItemPresenter itemPresenter = itemsListPresenter.Find(mapPresenter.GetTileModel(afterPositionX, afterPositionZ).itemGuid);
 
                             if (itemPresenter != null && characterPresenter.SetItem(itemPresenter.status))
                             {
@@ -180,7 +187,7 @@ public class GameMain : MonoBehaviour {
                         }
                         
                         //階段あれば移動
-                        if(mapPresenter.map[afterPositionX, afterPositionZ]
+                        if(mapPresenter.GetTileModel(afterPositionX, afterPositionZ)
                                .tileType == TileModel.TileType.Stairs)
                         {
                             mapPresenter.Regenerate();
@@ -198,12 +205,35 @@ public class GameMain : MonoBehaviour {
     }
     private void ItemMenuAction(CharacterPresenter characterPresenter)
     {        
-/*        InputAxis axis = GetInputAxis();
-        
-        if (axis.F.y != 0)
+        if (Input.GetKeyDown(KeyCode.DownArrow))
         {
-            
-        }        */
+            menuPresenter.itemMenuPresenter.ChangeSelectedItem(1);
+        }
+        else if (Input.GetKeyDown(KeyCode.UpArrow))
+        {
+            menuPresenter.itemMenuPresenter.ChangeSelectedItem(-1);
+        }
+        else if (Input.GetKeyDown(KeyCode.X))
+        {
+            if (characterPresenter.itemModels.Count > 0)
+            {
+                ItemModel item = menuPresenter.itemMenuPresenter.GetSelectedItemModel();
+
+                // アイテム使用、削除            
+                characterPresenter.status.hp -= 10;
+                characterPresenter.characterView.UpdateHud(characterPresenter.status.hp);
+                characterPresenter.itemModels.Remove(
+                    characterPresenter.itemModels.FirstOrDefault(i => i.guid == item.guid));
+
+                ItemPresenter itemPresenter = itemsListPresenter.Find(item.guid);
+                if (itemPresenter != null && characterPresenter.SetItem(itemPresenter.status))
+                {
+                    itemsListPresenter.Delete(itemPresenter);
+                }
+
+                menuPresenter.itemMenuPresenter.ShowItemMenu(false);
+            }
+        }        
     }
 
     private InputAxis GetInputAxis()

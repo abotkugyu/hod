@@ -26,7 +26,7 @@ public class ItemListPresenter : MonoBehaviour
         ItemPresenter itemPresenter = obj.GetComponent<ItemPresenter>();      
         itemPresenter.Initialize(model, serialGuid);
         itemPresenter.SetMapData(
-            mapPresenter.map[posX, posZ].floorId,
+            mapPresenter.GetTileModel(posX, posZ).floorId,
             new Vector3(posX, 0, posZ),
             new Vector3(0, 0, -1)
         );     

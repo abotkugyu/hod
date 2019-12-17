@@ -6,7 +6,7 @@ public class ItemMenuPresenter : MonoBehaviour {
 	
 	public ItemMenuView itemMenuView;
 	public List<ItemModel> itemsModels;
-	private int selectedId = 1;
+	public int selectedId { get; private set; } = 1;
 	
 	public void Initialize(List<ItemModel> models)
 	{
@@ -37,34 +37,36 @@ public class ItemMenuPresenter : MonoBehaviour {
 		return itemMenuView.is_visible();
 	}
 
-	void Update ()
+	public ItemModel GetSelectedItemModel()
 	{
-		if (GetIsShowItemMenu())
+		return itemsModels[selectedId-1];
+	}
+
+	public void ChangeSelectedItem(int seq)
+	{
+		if (seq == 1)
 		{
-			if (Input.GetKeyDown(KeyCode.DownArrow))
+			if (itemsModels.Count <= selectedId)
 			{
-				if (itemsModels.Count <= selectedId)
-				{
-					selectedId = 1;
-				}
-				else
-				{
-					selectedId++;
-				}
-				itemMenuView.SetCursor(selectedId);
+				selectedId = 1;
 			}
-			else if (Input.GetKeyDown(KeyCode.UpArrow))
+			else
 			{
-				if (selectedId == 1)
-				{
-					selectedId = itemsModels.Count;
-				}
-				else
-				{
-					selectedId--;
-				}
-				itemMenuView.SetCursor(selectedId);
+				selectedId++;
 			}
+			itemMenuView.SetCursor(selectedId);
+		}
+		else if (seq == -1)
+		{
+			if (selectedId == 1)
+			{
+				selectedId = itemsModels.Count;
+			}
+			else
+			{
+				selectedId--;
+			}
+			itemMenuView.SetCursor(selectedId);
 		}
 	}
 }
