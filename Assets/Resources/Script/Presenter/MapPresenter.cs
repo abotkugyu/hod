@@ -10,16 +10,17 @@ using UnityEngine.SceneManagement;
 //100*100を50,25...と分割していき確率で部屋を作る
 public class MapPresenter : MonoBehaviour {
 
-	public int maxMapX = 1000;
-    public int maxMapY = 1000;
+	public int maxMapX = 100;
+    public int maxMapY = 100;
         
     public Dictionary<Vector2Int, TileModel> map = new Dictionary<Vector2Int, TileModel>();
 
     //public TileModel[,] map;
     public List<string> popPoint = new List<string>();
 
-    public void Generate() {
-        //map = new TileModel[maxMapX, maxMapY];
+    private void Initialize()
+    {
+        //map初期化
         for (int x = 0; x < maxMapX; x++)
         {
             for (int z = 0; z < maxMapY; z++)
@@ -27,6 +28,10 @@ public class MapPresenter : MonoBehaviour {
                 map[new Vector2Int(x,z)] = new TileModel();
             }
         }
+    }
+    public void Generate()
+    {
+        Initialize();
         
         //横軸をGenerateMapで分割
         List<int> mapX = GenerateMap ();
@@ -52,6 +57,85 @@ public class MapPresenter : MonoBehaviour {
         }
 	}
 
+    List<int> GenerateMap(){
+        return SplitMap(new List<int>{maxMapX});
+    }
+
+    List<int> SplitMap(List<int> data){
+        //Random.Range (0, 2);
+        //show_list_log (data);
+		
+        //全体のサイズを繰り返し分割していく
+        //100→50,50→25,25,50
+        for (int x = 0; x < data.Count; x++) {
+            if (data [x] < 20) {
+                continue;
+            }
+            int isSplit = Random.Range (0, 10);
+            if (isSplit <= 8) {
+                int ins = data [x] / 2;
+                data [x] = data [x] / 2;
+                data.Insert (x, ins);
+                x--;
+                continue;
+            } 
+        }
+        //show_list_log (data);
+        return data;
+    }
+    int[,] GenerateFloor(int x, int y, int seqX, int seqY, int floorId)
+    {
+        //maxだと部屋同士でくっつくので-1
+        int[,] result = new int[x, y];
+        //作成する部屋の大きさ
+        int floorX = Random.Range(5, x-2);
+        int floorY = Random.Range(5, y-2);
+        //部屋の外側含めた部屋の左上値
+        int startX = Random.Range(1, x-floorX-1);
+        int startY = Random.Range(1, y-floorY-1);
+                
+        //部屋の辺に沿った座標縦横
+        int pathX = Random.Range(startX, floorX);
+        int pathY = Random.Range(startY, floorY);
+        for (int l = 0; l < x; l++)
+        {
+            for (int m = 0; m < y; m++)
+            {
+                var t = GetTileModel(new Vector2Int(l + seqX, m + seqY));
+                if (l >= startX && l <= startX + floorX && m >= startY && m <= startY + floorY)
+                {
+                    //床
+                    GameObject original = Object.Instantiate(Resources.Load("Object/Tile")) as GameObject;
+                    original.transform.Translate(seqX + l, 0, seqY + m);
+                    t.tileType = TileModel.TileType.Floor;
+                    t.floorId = floorId;
+                    popPoint.Add((l + seqX)+","+(m + seqY));
+                    result[l, m] = 1;
+                }
+                else if (pathX == l || pathY == m)
+                {
+                    //通路(部屋から縦に伸ばす)
+                    GameObject original = Object.Instantiate(Resources.Load("Object/Tile")) as GameObject;
+                    original.transform.Translate(seqX + l, 0, seqY + m);
+                    t.tileType = TileModel.TileType.Floor;
+                    t.floorId = floorId;
+                    popPoint.Add((l + seqX)+","+(m + seqY));
+                    result[l, m] = 1;
+                    
+                } else{
+                    //壁                    
+                    GameObject original = Object.Instantiate(Resources.Load("Object/Block")) as GameObject;
+                    original.transform.Translate(seqX + l, 0, seqY + m);
+                    t.tileType = TileModel.TileType.Wall;
+                    t.floorId = floorId;
+                    result[l, m] = 0;
+                }
+            }
+        }
+        
+        return result;
+    }
+
     public void Regenerate()
     {
         Scene loadScene = SceneManager.GetActiveScene();
@@ -67,68 +151,6 @@ public class MapPresenter : MonoBehaviour {
             }
         }
     }
-
-    int[,] GenerateFloor(int x, int y, int seqX, int seqY, int floorId)
-    {
-        //maxだと部屋同士でくっつくので-1
-        int[,] result = new int[x, y];
-        int floorX = Random.Range(5, x-2);
-        int floorY = Random.Range(5, y-2);
-        int startX = Random.Range(1, x-floorX-1);
-        int startY = Random.Range(1, y-floorY-1);
-        for (int l = 0; l < x; l++)
-        {
-            for (int m = 0; m < y; m++)
-            {
-                var t = GetTileModel(new Vector2Int(l + seqX, m + seqY));
-                if (l >= startX && l <= startX + floorX && m >= startY && m <= startY + floorY)
-                {
-                    //床
-                    GameObject original = Object.Instantiate(Resources.Load("Object/Tile")) as GameObject;
-                    original.transform.Translate(seqX + l, 0, seqY + m);
-                    t.tileType = TileModel.TileType.Floor;
-                    t.floorId = floorId;
-                    popPoint.Add((l + seqX)+","+(m + seqY));
-                    result[l, m] = 1;
-                }else{
-                    //壁                    
-                    GameObject original = Object.Instantiate(Resources.Load("Object/Block")) as GameObject;
-                    original.transform.Translate(seqX + l, 0, seqY + m);
-                    t.tileType = TileModel.TileType.Wall;
-                    t.floorId = floorId;
-                    result[l, m] = 0;
-                }
-            }
-        }
-        return result;
-    }
-
-    List<int> GenerateMap(){
-        return SplitMap(new List<int>{maxMapX});
-	}
-
-    List<int> SplitMap(List<int> data){
-		//Random.Range (0, 2);
-		//show_list_log (data);
-		
-		//全体のサイズを繰り返し分割していく
-		//100→50,50→25,25,50
-		for (int x = 0; x < data.Count; x++) {
-			if (data [x] < 20) {
-				continue;
-			}
-            int isSplit = Random.Range (0, 10);
-			if (isSplit <= 8) {
-				int ins = data [x] / 2;
-				data [x] = data [x] / 2;
-				data.Insert (x, ins);
-				x--;
-				continue;
-			} 
-		}
-		//show_list_log (data);
-        return data;
-	}
 
 	void ShowListLog(List<int> data){
 		string log = "";
