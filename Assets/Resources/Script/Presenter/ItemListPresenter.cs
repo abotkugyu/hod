@@ -14,7 +14,7 @@ public class ItemListPresenter : MonoBehaviour
     public void Generate(MapPresenter mapPresenter, ItemModel model)
     { 
         // item object作成
-        GameObject res = Resources.Load("Object/"+model.modelName) as GameObject;
+        GameObject res = Resources.Load("Object/"+model.modelName.Replace('_','/')) as GameObject;
         List<int> pos = mapPresenter.GetPopPoint();
         int posX = pos[0];
         int posZ = pos[1];
