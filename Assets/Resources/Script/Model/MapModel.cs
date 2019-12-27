@@ -8,10 +8,11 @@ public class TileModel
 {
     public enum TileType
     {
-        Wall,        
+        Wall,
         Floor,
         Water,
-        Stairs
+        Stairs,
+        Path
     }
     
     public enum CharaType
@@ -53,4 +54,24 @@ public class TileModel
     /// 罠が見えているか
     public int isVisibleTrap = 0;
 
+}
+
+
+public class FloorModel
+{
+    public enum FloorType
+    {
+        Default,
+    }
+
+    public FloorModel(int floorId, Vector2Int floorSize, Vector2Int roomSize)
+    {
+        this.floorId = floorId;
+        this.floorSize = floorSize;
+        this.roomSize = roomSize;
+    }
+
+    public int floorId;
+    public Vector2Int floorSize;
+    public Vector2Int roomSize;
 }
