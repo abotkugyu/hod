@@ -16,7 +16,7 @@ public class MapPresenter : MonoBehaviour {
     public Dictionary<Vector2Int, TileModel> map = new Dictionary<Vector2Int, TileModel>();
     public Dictionary<Vector2Int, FloorModel> floorList = new Dictionary<Vector2Int, FloorModel>();
 
-    public List<string> popPoint = new List<string>();
+    public List<Vector2Int> popPoint = new List<Vector2Int>();
 
     private void Initialize()
     {
@@ -42,9 +42,13 @@ public class MapPresenter : MonoBehaviour {
             //縦軸をGenerateMapで分割
             List<int> mapY = GenerateMap (maxMapY);
             int countY = 0;
-            for (int y = 0; y < mapY.Count; y++){                
+            for (int y = 0; y < mapY.Count; y++){
                 //部屋作成
-                GenerateRoom(new Vector2Int(mapX[x],mapY[y]), new Vector2Int(countX, countY), floorId);
+                Vector2Int floorSize = new Vector2Int(mapX[x], mapY[y]);
+                Vector2Int floorPoint = new Vector2Int(countX, countY);
+                floorList[new Vector2Int(x,y)] = GenerateRoom(floorId, floorSize, floorPoint);
+
+                //ConnectPath(new Vector2Int(x,y));
                 floorId++;
                 
                 //次の部屋のy軸記憶
@@ -81,49 +85,86 @@ public class MapPresenter : MonoBehaviour {
     /// 四角いエリアにroomを生成
     /// </summary>
     /// <param name="floorSize">floorの縦幅</param>
-    /// <param name="floorIndex">開始縦横座標</param>
+    /// <param name="floorPoint">開始縦横座標</param>
     /// <param name="floorId"></param>
     /// <returns></returns>
-    int[,] GenerateRoom(Vector2Int floorSize, Vector2Int floorIndex, int floorId)
+    FloorModel GenerateRoom(int floorId, Vector2Int floorSize, Vector2Int floorPoint)
     {
-        //maxだと部屋同士でくっつくので-1
-        int[,] result = new int[floorSize.x, floorSize.y];
         //roomの部屋の大きさ
         Vector2Int roomSize = new Vector2Int(Random.Range(5, floorSize.x-2), Random.Range(5, floorSize.y-2));
         //roomの開始xy座標
-        Vector2Int roomIndex = new Vector2Int(Random.Range(1, floorSize.x-roomSize.x-1),Random.Range(1, floorSize.y-roomSize.y-1));
+        Vector2Int roomPoint = new Vector2Int(Random.Range(1, floorSize.x-roomSize.x-1),Random.Range(1, floorSize.y-roomSize.y-1));
                               
-        //floor情報記憶
-        floorList[new Vector2Int(floorSize.x,floorSize.y)] = new FloorModel(floorId, new Vector2Int(floorSize.x, floorSize.y), new Vector2Int(roomSize.x, roomSize.y));
-        
         //通路に使う座標を辺からランダムで取得
-        int pathX = Random.Range(roomIndex.x, roomSize.x);
-        int pathY = Random.Range(roomIndex.y, roomSize.y);
+        int pathX = Random.Range(roomPoint.x, roomSize.x);
+        int pathY = Random.Range(roomPoint.y, roomSize.y);
+        
         for (int x = 0; x < floorSize.x; x++)
         {
             for (int y = 0; y < floorSize.y; y++)
             {
-                if (x >= roomIndex.x && x <= roomIndex.x + roomSize.x && y >= roomIndex.y && y <= roomIndex.y + roomSize.y)
+                var pos = new Vector2Int(x + floorPoint.x, y + floorPoint.y);
+                if (x >= roomPoint.x && x <= roomPoint.x + roomSize.x && y >= roomPoint.y && y <= roomPoint.y + roomSize.y)
                 {
-                    GenerateTile(TileModel.TileType.Floor, new Vector2Int(x + floorIndex.x,y + floorIndex.y), floorId);
-                    popPoint.Add((x + floorIndex.x)+","+(y + floorIndex.y));
-                    result[x, y] = 1;
+                    GenerateTile(TileModel.TileType.Floor, pos, floorId);
+                    popPoint.Add(pos);
                 }
                 else if (pathX == x || pathY == y)
                 {                    
-                    GenerateTile(TileModel.TileType.Floor, new Vector2Int(x + floorIndex.x,y + floorIndex.y), floorId);
-                    popPoint.Add((x + floorIndex.x)+","+(y + floorIndex.y));
-                    result[x, y] = 1;
-                    
-                } else
+                    GenerateTile(TileModel.TileType.Floor, pos, floorId);                    
+                }
+                else
                 {
-                    GenerateTile(TileModel.TileType.Wall, new Vector2Int(x + floorIndex.x,y + floorIndex.y), floorId);
-                    result[x, y] = 0;
+                    GenerateTile(TileModel.TileType.Wall, pos, floorId);
                 }
             }
         }
         
-        return result;
+        return new FloorModel(floorId, floorSize, floorPoint, roomSize, new Vector2Int(floorPoint.x + roomPoint.x, floorPoint.y + roomPoint.y));
+    }
+
+    /// <summary>
+    /// 通路をつなぐ
+    /// </summary>
+    /// <param name="floorIndex"></param>
+    private void ConnectPath(Vector2Int floorIndex)
+    {
+        // 上下検索
+        for (var x = 0; x < floorList[floorIndex].roomSize.x; x++)
+        {
+            var up = new Vector2Int(floorList[floorIndex].floorPoint.x + x, floorList[floorIndex].floorPoint.y - 1);
+            if (map.ContainsKey(up) &&
+                map[up].tileType == TileModel.TileType.Floor)
+            {
+                
+            }
+
+            var down = new Vector2Int(
+                floorList[floorIndex].floorPoint.x + x,
+                floorList[floorIndex].floorPoint.y + floorList[floorIndex].floorSize.y + 1);
+            if (map.ContainsKey(down) && map[down].tileType == TileModel.TileType.Floor)
+            {
+                
+            }
+        }
+        
+        // 左右検索
+        for (var y = 0; y < floorList[floorIndex].roomSize.y; y++)
+        {
+            var left = new Vector2Int(floorList[floorIndex].floorPoint.x -1, floorList[floorIndex].floorPoint.y + y);
+            if (map.ContainsKey(left) && map[left].tileType == TileModel.TileType.Floor)
+            {
+                
+            }
+
+            var right = new Vector2Int(
+                floorList[floorIndex].floorPoint.x + floorList[floorIndex].floorSize.x + 1,
+                floorList[floorIndex].floorPoint.y + y);
+            if (map.ContainsKey(right) && map[right].tileType == TileModel.TileType.Floor)
+            {
+                
+            }
+        }
     }
 
     public void GenerateTile(TileModel.TileType tileType, Vector2Int position, int floorId)
@@ -161,27 +202,25 @@ public class MapPresenter : MonoBehaviour {
 	void ShowListLog(List<int> data){
 		string log = "";
 		for (int x = 0; x < data.Count; x++) {
-			log += data[x].ToString ()+",";
+			log += data[x]+",";
 		}
 	}
 
-    public List<int> GetPopPoint()
+    public Vector2Int GetPopPoint()
     {
         for (int l = 0; l < 1000; l++){
             int pos_s = Random.Range(0, popPoint.Count - 1);
-            string[] pos = popPoint[pos_s].Split(',');
-            int x = int.Parse(pos[0]);
-            int z = int.Parse(pos[1]);
-            var t = GetTileModel(new Vector2Int(x, z));
+            var pos = popPoint[pos_s];
+            var t = GetTileModel(pos);
 			if (t.tileType == TileModel.TileType.Floor && 
                 t.charaType == TileModel.CharaType.None &&
                 t.itemGuid == 0)
             {
-                return new List<int>{x, z};
+                return pos;
             }
         }
         //全部map埋まってたりしたら諦める。
-        return new List<int> { 0, 0 };
+        return new Vector2Int( 0, 0 );
     }
     
     /// <summary>
@@ -221,34 +260,31 @@ public class MapPresenter : MonoBehaviour {
     /// 八方向List<int>を返す
     /// </summary>
     /// <returns></returns>
-    public List<int> CanSetObject(List<int> pos)
+    public Vector2Int CanSetObject(Vector2Int pos)
     {
-        List<List<int>> directions = new List<List<int>>
+        List<Vector2Int> directions = new List<Vector2Int>
         {
-            new List<int> {-1, -1},
-            new List<int> {-1, 0},
-            new List<int> {-1, 1},
-            new List<int> {0, -1},
-            new List<int> {0, 0},
-            new List<int> {0, 1},
-            new List<int> {1, -1},
-            new List<int> {1, 0},
-            new List<int> {1, 1},
+            new Vector2Int (-1, -1),
+            new Vector2Int (-1, 0),
+            new Vector2Int (-1, 1),
+            new Vector2Int (0, -1),
+            new Vector2Int (0, 1),
+            new Vector2Int (1, -1),
+            new Vector2Int (1, 0),
+            new Vector2Int (1, 1),
         };
 
-        foreach (List<int> direction in directions)
+        foreach (Vector2Int direction in directions)
         {
-            List<int> resPosition = new List<int>();
-            resPosition.Add(pos[0] + direction[0]);
-            resPosition.Add(pos[1] + direction[1]);
-            var vector2Int = new Vector2Int(resPosition[0], resPosition[1]);
+            Vector2Int resPosition = new Vector2Int(pos[0] + direction[0], pos[1] + direction[1]);
+            var vector2Int = new Vector2Int(resPosition.x, resPosition.y);
             if (GetTileModel(vector2Int).tileType == TileModel.TileType.Floor && GetTileModel(vector2Int).charaType == 0)
             {
                 return resPosition;
             }
         }
 
-        return null;
+        return new Vector2Int (0, 0);
     }
     
     public void SetUserModel(int x, int z, UserModel user)

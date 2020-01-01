@@ -13,18 +13,16 @@ public class CharacterListPresenter : MonoBehaviour {
     public void Generate(MapPresenter mapPresenter, UserModel model)
     {        
         GameObject res = Resources.Load("Object/"+model.modelName.Replace('_','/')) as GameObject;
-        List<int> pos = mapPresenter.GetPopPoint();
-        int posX = pos[0];
-        int posZ = pos[1];
-        GameObject obj = Object.Instantiate(res, new Vector3(posX, 0, posZ), Quaternion.identity) as GameObject;
+        Vector2Int pos = mapPresenter.GetPopPoint();
+        GameObject obj = Object.Instantiate(res, new Vector3(pos.x, 0, pos.y), Quaternion.identity) as GameObject;
         obj.layer = 9;
 
         CharacterPresenter characterPresenter = obj.GetComponent<CharacterPresenter>();
         characterPresenter.Initialize(model, serialGuid);
 
         characterPresenter.SetMapData(
-            mapPresenter.GetTileModel(posX, posZ).floorId,
-            new Vector3(posX, 0, posZ),
+            mapPresenter.GetTileModel(pos.x, pos.y).floorId,
+            new Vector3(pos.x, 0, pos.y),
             new Vector3(0, 0, -1)
             );
         
@@ -33,7 +31,7 @@ public class CharacterListPresenter : MonoBehaviour {
         serialGuid++;
 
         //mapに配置
-        mapPresenter.SetUserModel(posX, posZ, characterPresenter.status);
+        mapPresenter.SetUserModel(pos.x, pos.y, characterPresenter.status);
 
         Debug.Log(characterPresenter.status.position.x + ":"+ characterPresenter.status.position.z + "," + characterPresenter.characterView.trans.position.x + ":" + characterPresenter.characterView.trans.position.z);
     }

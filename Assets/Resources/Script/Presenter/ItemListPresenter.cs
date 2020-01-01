@@ -15,10 +15,8 @@ public class ItemListPresenter : MonoBehaviour
     { 
         // item object作成
         GameObject res = Resources.Load("Object/"+model.modelName.Replace('_','/')) as GameObject;
-        List<int> pos = mapPresenter.GetPopPoint();
-        int posX = pos[0];
-        int posZ = pos[1];
-        GameObject obj = Object.Instantiate(res, new Vector3(posX, 0, posZ), Quaternion.identity) as GameObject;
+        Vector2Int pos = mapPresenter.GetPopPoint();
+        GameObject obj = Object.Instantiate(res, new Vector3(pos.x, 0, pos.y), Quaternion.identity) as GameObject;
         obj.name = "Item;" + serialGuid;
         obj.layer = 9;
         
@@ -26,8 +24,8 @@ public class ItemListPresenter : MonoBehaviour
         ItemPresenter itemPresenter = obj.GetComponent<ItemPresenter>();      
         itemPresenter.Initialize(model, serialGuid);
         itemPresenter.SetMapData(
-            mapPresenter.GetTileModel(posX, posZ).floorId,
-            new Vector3(posX, 0, posZ),
+            mapPresenter.GetTileModel(pos.x, pos.y).floorId,
+            new Vector3(pos.x, 0, pos.y),
             new Vector3(0, 0, -1)
         );     
                     
@@ -35,9 +33,9 @@ public class ItemListPresenter : MonoBehaviour
         itemListObject[serialGuid] = obj;
         serialGuid++;
         
-        mapPresenter.SetItemModel(posX, posZ, itemPresenter.status);                        
+        mapPresenter.SetItemModel(pos.x, pos.y, itemPresenter.status);                        
         
-        Debug.Log("position:"+pos[0]+":"+pos[1]);
+        Debug.Log("position:"+pos.x+":"+pos.y);
     }
     
     public ItemPresenter Find(int guid)

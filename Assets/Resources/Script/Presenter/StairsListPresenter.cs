@@ -14,15 +14,14 @@ public class StairsListPresenter : MonoBehaviour
         for (int x = 0; x < num; x++)
         {
             GameObject obj = Object.Instantiate(Resources.Load("Object/Stairs")) as GameObject;
-            List<int> pos = mapPresenter.GetPopPoint();
-            int posx = pos[0];
-            int posz = pos[1];
-            obj.transform.position = new Vector3(posx, 0, posz);
+            Vector2Int pos = mapPresenter.GetPopPoint();
+
+            obj.transform.position = new Vector3(pos.x, 0, pos.y);
             obj.layer = 9;
 
             stairsList.Add(obj);
             //mapに配置
-            mapPresenter.GetTileModel(posx, posz).tileType = TileModel.TileType.Stairs;
+            mapPresenter.GetTileModel(pos.x, pos.y).tileType = TileModel.TileType.Stairs;
         }
     }
 
@@ -31,7 +30,7 @@ public class StairsListPresenter : MonoBehaviour
     /// </summary>
     /// <param name="mapPresenter"></param>
     /// <param name="pos"></param>
-    public void DummyGenerate(MapPresenter mapPresenter, List<int> pos)
+    public void DummyGenerate(MapPresenter mapPresenter, Vector2Int pos)
     {
         if (pos != null)
         {
@@ -39,12 +38,12 @@ public class StairsListPresenter : MonoBehaviour
             {
                 GameObject obj = Object.Instantiate(Resources.Load("Object/Stairs")) as GameObject;
 
-                obj.transform.position = new Vector3(pos[0], 0, pos[1]);
+                obj.transform.position = new Vector3(pos.x, 0, pos.y);
                 obj.layer = 9;
 
                 stairsList.Add(obj);
                 //mapに配置
-                mapPresenter.GetTileModel(pos[0], pos[1]).tileType = TileModel.TileType.Stairs;
+                mapPresenter.GetTileModel(pos.x, pos.y).tileType = TileModel.TileType.Stairs;
             }
         }
     }

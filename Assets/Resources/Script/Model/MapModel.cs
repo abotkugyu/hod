@@ -64,14 +64,18 @@ public class FloorModel
         Default,
     }
 
-    public FloorModel(int floorId, Vector2Int floorSize, Vector2Int roomSize)
+    public FloorModel(int floorId, Vector2Int floorSize, Vector2Int floorPoint, Vector2Int roomSize ,Vector2Int roomPoint)
     {
         this.floorId = floorId;
         this.floorSize = floorSize;
         this.roomSize = roomSize;
+        this.floorPoint = floorPoint;;
+        this.roomPoint = roomPoint;
     }
 
     public int floorId;
     public Vector2Int floorSize;
     public Vector2Int roomSize;
+    public Vector2Int floorPoint;
+    public Vector2Int roomPoint;
 }

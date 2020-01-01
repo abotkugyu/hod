@@ -54,7 +54,7 @@ public class GameMain : MonoBehaviour {
         //enemiesListPresenter.DummyGenerate(mapPresenter, mapPresenter.CanSetObject(pos));
         
         //dummy 階段配置
-        List<int> pos = mapPresenter.GetPopPoint();
+        Vector2Int pos = mapPresenter.GetPopPoint();
         stairsListPresenter.DummyGenerate(mapPresenter, mapPresenter.CanSetObject(pos));
 
         menuPresenter.itemMenuPresenter.Initialize(characterListPresenter.GetOwnCharacterPresenter().itemModels);
