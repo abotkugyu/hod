@@ -64,13 +64,18 @@ public class FloorModel
         Default,
     }
 
-    public FloorModel(int floorId, Vector2Int floorSize, Vector2Int floorPoint, Vector2Int roomSize ,Vector2Int roomPoint)
+    public FloorModel(int floorId, Vector2Int floorSize, Vector2Int floorPoint, Vector2Int roomSize ,Vector2Int roomPoint,
+        Vector2Int pathUp, Vector2Int pathDown, Vector2Int pathLeft,  Vector2Int pathRight)
     {
         this.floorId = floorId;
         this.floorSize = floorSize;
         this.roomSize = roomSize;
-        this.floorPoint = floorPoint;;
+        this.floorPoint = floorPoint;
         this.roomPoint = roomPoint;
+        this.pathUp = pathUp;
+        this.pathDown = pathDown;
+        this.pathLeft = pathLeft;
+        this.pathRight = pathRight;
     }
 
     public int floorId;
@@ -78,4 +83,9 @@ public class FloorModel
     public Vector2Int roomSize;
     public Vector2Int floorPoint;
     public Vector2Int roomPoint;
+    
+    public Vector2Int pathUp;
+    public Vector2Int pathDown;
+    public Vector2Int pathLeft;
+    public Vector2Int pathRight;
 }

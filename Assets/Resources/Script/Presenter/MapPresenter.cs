@@ -12,9 +12,20 @@ public class MapPresenter : MonoBehaviour {
 
 	public int maxMapX = 100;
     public int maxMapY = 100;
+    public class IsPath
+    {
+        public bool left { get; set; } = true;
+        public bool right { get; set; } = true;
+        public bool up { get; set; } = true;
+        public bool down { get; set; } = true;
         
+        public IsPath() {}
+        public IsPath(bool left, bool right, bool up, bool down) { this.down = down; this.up = up; this.right = right; this.left = left; }
+    }
+
     public Dictionary<Vector2Int, TileModel> map = new Dictionary<Vector2Int, TileModel>();
     public Dictionary<Vector2Int, FloorModel> floorList = new Dictionary<Vector2Int, FloorModel>();
+    public Dictionary<Vector2Int, GameObject> mapListObject = new Dictionary<Vector2Int, GameObject>();
 
     public List<Vector2Int> popPoint = new List<Vector2Int>();
 
@@ -33,22 +44,44 @@ public class MapPresenter : MonoBehaviour {
     {
         Initialize();
         
-        //横軸をGenerateMapで分割
+        // mapModel生成
+        // 横軸をGenerateMapで分割
         List<int> mapX = GenerateMap (maxMapX);
         int countX = 0;
         int floorId = 1;
+        int maxSplitY = 0;
         for (int x = 0; x < mapX.Count; x++)
         {
             //縦軸をGenerateMapで分割
             List<int> mapY = GenerateMap (maxMapY);
+            maxSplitY = mapY.Count > maxSplitY ? mapY.Count : maxSplitY;
             int countY = 0;
             for (int y = 0; y < mapY.Count; y++){
-                //部屋作成
+                //部屋サイズ
                 Vector2Int floorSize = new Vector2Int(mapX[x], mapY[y]);
                 Vector2Int floorPoint = new Vector2Int(countX, countY);
-                floorList[new Vector2Int(x,y)] = GenerateRoom(floorId, floorSize, floorPoint);
-
-                //ConnectPath(new Vector2Int(x,y));
+                
+                //通路を作るかどうか
+                var isPath = new IsPath();
+                if (x == 0)
+                {
+                    isPath.left = false;
+                }
+                if (x == mapX.Count - 1)
+                {
+                    isPath.right = false;
+                }
+                if (y == 0)
+                {
+                    isPath.up = false;
+                }
+                if (y == mapY.Count - 1)
+                {
+                    isPath.down = false;
+                }
+                
+                //部屋作成
+                floorList[new Vector2Int(x,y)] = GenerateRoom(floorId, floorSize, floorPoint, isPath);
                 floorId++;
                 
                 //次の部屋のy軸記憶
@@ -56,6 +89,28 @@ public class MapPresenter : MonoBehaviour {
             }
             //次の部屋のx軸記憶
             countX += mapX[x];
+        }
+        
+        // 通路繋ぐ
+        for (int x = 0; x < mapX.Count; x++)
+        {
+            //最大分割数を取得できないのでとりあえず10分割
+            for (int y = 0; y < maxSplitY; y++)
+            {
+                if (floorList.ContainsKey(new Vector2Int(x, y)))
+                {
+                    ConnectPath(new Vector2Int(x, y));
+                }
+            }
+        }
+
+        // mapオブジェクト生成
+        for (int x = 0; x < maxMapX; x++)
+        {
+            for (int z = 0; z < maxMapY; z++)
+            {
+                GenerateTileObject(new Vector2Int(x,z));
+            }
         }
 	}
 
@@ -88,98 +143,217 @@ public class MapPresenter : MonoBehaviour {
     /// <param name="floorPoint">開始縦横座標</param>
     /// <param name="floorId"></param>
     /// <returns></returns>
-    FloorModel GenerateRoom(int floorId, Vector2Int floorSize, Vector2Int floorPoint)
+    FloorModel GenerateRoom(int floorId, Vector2Int floorSize, Vector2Int floorPoint, IsPath isPath)
     {
         //roomの部屋の大きさ
         Vector2Int roomSize = new Vector2Int(Random.Range(5, floorSize.x-2), Random.Range(5, floorSize.y-2));
         //roomの開始xy座標
-        Vector2Int roomPoint = new Vector2Int(Random.Range(1, floorSize.x-roomSize.x-1),Random.Range(1, floorSize.y-roomSize.y-1));
+        Vector2Int roomPoint = new Vector2Int(Random.Range(1, floorSize.x-roomSize.x-1) + floorPoint.x,Random.Range(1, floorSize.y-roomSize.y-1) + floorPoint.y);
                               
         //通路に使う座標を辺からランダムで取得
-        int pathX = Random.Range(roomPoint.x, roomSize.x);
-        int pathY = Random.Range(roomPoint.y, roomSize.y);
-        
-        for (int x = 0; x < floorSize.x; x++)
+        Vector2Int pathUp = new Vector2Int(Random.Range(roomPoint.x, roomPoint.x + roomSize.x), roomPoint.y);
+        if (!isPath.up)
         {
-            for (int y = 0; y < floorSize.y; y++)
+            pathUp = new Vector2Int(-1,-1);
+        }
+        Vector2Int pathDown = new Vector2Int(Random.Range(roomPoint.x, roomPoint.x + roomSize.x), roomPoint.y + roomSize.y);
+        if (!isPath.down)
+        {
+            pathDown = new Vector2Int(-1,-1);
+        }
+        Vector2Int pathLeft = new Vector2Int(roomPoint.x,Random.Range(roomPoint.y, roomPoint.y + roomSize.y));
+        if (!isPath.left)
+        {
+            pathLeft = new Vector2Int(-1,-1);
+        }
+        Vector2Int pathRight = new Vector2Int(roomPoint.x + roomSize.x,Random.Range(roomPoint.y, roomPoint.y + roomSize.y));
+        if (!isPath.right)
+        {
+            pathRight = new Vector2Int(-1,-1);
+        }
+        
+        for (int x = floorPoint.x; x < floorPoint.x + floorSize.x; x++)
+        {
+            for (int y = floorPoint.y; y < floorPoint.y + floorSize.y; y++)
             {
-                var pos = new Vector2Int(x + floorPoint.x, y + floorPoint.y);
+                var pos = new Vector2Int(x, y);
                 if (x >= roomPoint.x && x <= roomPoint.x + roomSize.x && y >= roomPoint.y && y <= roomPoint.y + roomSize.y)
                 {
-                    GenerateTile(TileModel.TileType.Floor, pos, floorId);
+                    SetTileModel(TileModel.TileType.Floor, pos, floorId);
                     popPoint.Add(pos);
                 }
-                else if (pathX == x || pathY == y)
-                {                    
-                    GenerateTile(TileModel.TileType.Floor, pos, floorId);                    
+                else if (pathUp.x == x && y < roomPoint.y && isPath.up)
+                {
+                    // 上通路
+                    SetTileModel(TileModel.TileType.Floor, pos, floorId);
+                }
+                else if(pathDown.x == x &&  y > roomPoint.y + roomSize.y && isPath.down)
+                {
+                    // 下通路        
+                    SetTileModel(TileModel.TileType.Floor, pos, floorId);                    
+                }
+                else if(pathLeft.y == y &&  x < roomPoint.x && isPath.left)
+                {   
+                    // 左通路   
+                    SetTileModel(TileModel.TileType.Floor, pos, floorId);                    
+                }
+                else if(pathRight.y == y &&  x > roomPoint.x + roomSize.x && isPath.right)
+                {
+                    // 右通路   
+                    SetTileModel(TileModel.TileType.Floor, pos, floorId);                    
                 }
                 else
                 {
-                    GenerateTile(TileModel.TileType.Wall, pos, floorId);
+                    SetTileModel(TileModel.TileType.Wall, pos, floorId);
                 }
             }
         }
         
-        return new FloorModel(floorId, floorSize, floorPoint, roomSize, new Vector2Int(floorPoint.x + roomPoint.x, floorPoint.y + roomPoint.y));
+        return new FloorModel(floorId, floorSize, floorPoint, roomSize, roomPoint,
+            pathUp, pathDown, pathLeft, pathRight);
     }
 
     /// <summary>
     /// 通路をつなぐ
+    /// 検索範囲をfloorの上下通路の場合は左右に、floorの左右通路の場合は上下に、
+    /// 端から広げていき一番近いfloorTileまでつなげる
     /// </summary>
     /// <param name="floorIndex"></param>
     private void ConnectPath(Vector2Int floorIndex)
     {
         // 上下検索
-        for (var x = 0; x < floorList[floorIndex].roomSize.x; x++)
+        for (var x = 1 ; x < maxMapX / 2; x++)
         {
-            var up = new Vector2Int(floorList[floorIndex].floorPoint.x + x, floorList[floorIndex].floorPoint.y - 1);
-            if (map.ContainsKey(up) &&
-                map[up].tileType == TileModel.TileType.Floor)
+            var searchPathLeft =  new Vector2Int(floorList[floorIndex].pathUp.x - x, floorList[floorIndex].floorPoint.y - 1);
+            var searchPathRight =  new Vector2Int(floorList[floorIndex].pathUp.x + x, floorList[floorIndex].floorPoint.y - 1);
+            if (map.ContainsKey(searchPathLeft))
             {
-                
+                if (map[searchPathLeft].tileType == TileModel.TileType.Floor)
+                {
+                    for (var l = 1; l <= x; l++ )
+                    {
+                        SetTileModel(TileModel.TileType.Floor, new Vector2Int(floorList[floorIndex].pathUp.x - l, floorList[floorIndex].floorPoint.y), floorList[floorIndex].floorId); 
+                    }
+                    break;
+                }
             }
-
-            var down = new Vector2Int(
-                floorList[floorIndex].floorPoint.x + x,
-                floorList[floorIndex].floorPoint.y + floorList[floorIndex].floorSize.y + 1);
-            if (map.ContainsKey(down) && map[down].tileType == TileModel.TileType.Floor)
+            if (map.ContainsKey(searchPathRight))
             {
-                
+                if (map[searchPathRight].tileType == TileModel.TileType.Floor)
+                {
+                    for (var l = 1; l <= x; l++ )
+                    {
+                        SetTileModel(TileModel.TileType.Floor, new Vector2Int(floorList[floorIndex].pathUp.x + l, floorList[floorIndex].floorPoint.y), floorList[floorIndex].floorId); 
+                    }
+                    break;
+                }
             }
         }
-        
-        // 左右検索
-        for (var y = 0; y < floorList[floorIndex].roomSize.y; y++)
-        {
-            var left = new Vector2Int(floorList[floorIndex].floorPoint.x -1, floorList[floorIndex].floorPoint.y + y);
-            if (map.ContainsKey(left) && map[left].tileType == TileModel.TileType.Floor)
-            {
-                
-            }
 
-            var right = new Vector2Int(
-                floorList[floorIndex].floorPoint.x + floorList[floorIndex].floorSize.x + 1,
-                floorList[floorIndex].floorPoint.y + y);
-            if (map.ContainsKey(right) && map[right].tileType == TileModel.TileType.Floor)
+        for (var x = 1; x < maxMapX / 2; x++)
+        {
+            var searchPathLeft =  new Vector2Int(floorList[floorIndex].pathDown.x - x, floorList[floorIndex].floorPoint.y + floorList[floorIndex].floorSize.y + 1);
+            var searchPathRight =  new Vector2Int(floorList[floorIndex].pathDown.x + x, floorList[floorIndex].floorPoint.y + floorList[floorIndex].floorSize.y + 1);
+            if (map.ContainsKey(searchPathLeft))
             {
+                if (map[searchPathLeft].tileType == TileModel.TileType.Floor)
+                {
+                    for (var l = 1; l <= x; l++ )
+                    {
+                        SetTileModel(TileModel.TileType.Floor, new Vector2Int(floorList[floorIndex].pathDown.x - l, floorList[floorIndex].floorPoint.y + floorList[floorIndex].floorSize.y), floorList[floorIndex].floorId); 
+                    }
+                    break;
+                }
+            }
+            if (map.ContainsKey(searchPathRight))
+            {
+                if (map[searchPathRight].tileType == TileModel.TileType.Floor)
+                {
+                    for (var l = 1; l <= x; l++ )
+                    {
+                        SetTileModel(TileModel.TileType.Floor, new Vector2Int(floorList[floorIndex].pathDown.x + l, floorList[floorIndex].floorPoint.y + floorList[floorIndex].floorSize.y), floorList[floorIndex].floorId); 
+                    }
+                    break;
+                }
+            }
+        }
                 
+        // 左右検索
+        for (var y = 1 ; y < maxMapY / 2; y++)
+        {
+            var searchPathUp =  new Vector2Int(floorList[floorIndex].floorPoint.x - 1, floorList[floorIndex].pathLeft.y - y);
+            var searchPathDown =  new Vector2Int(floorList[floorIndex].floorPoint.x - 1, floorList[floorIndex].pathLeft.y + y);
+            if (map.ContainsKey(searchPathUp))
+            {
+                if (map[searchPathUp].tileType == TileModel.TileType.Floor)
+                {
+                    for (var l = 1; l <= y; l++ )
+                    {
+                        SetTileModel(TileModel.TileType.Floor, new Vector2Int(floorList[floorIndex].floorPoint.x, floorList[floorIndex].pathLeft.y - l), floorList[floorIndex].floorId); 
+                    }
+                    break;
+                }
+            }
+            if (map.ContainsKey(searchPathDown))
+            {
+                if (map[searchPathDown].tileType == TileModel.TileType.Floor)
+                {
+                    for (var l = 1; l <= y; l++ )
+                    {
+                        SetTileModel(TileModel.TileType.Floor, new Vector2Int(floorList[floorIndex].floorPoint.x, floorList[floorIndex].pathLeft.y + l), floorList[floorIndex].floorId); 
+                    }
+                    break;
+                }
+            }
+        }
+
+        for (var y = 1 ; y < maxMapY / 2; y++)
+        {
+            var searchPathUp =  new Vector2Int(floorList[floorIndex].floorPoint.x + floorList[floorIndex].floorSize.x + 1, floorList[floorIndex].pathRight.y - y);
+            var searchPathDown =  new Vector2Int(floorList[floorIndex].floorPoint.x + floorList[floorIndex].floorSize.x + 1, floorList[floorIndex].pathRight.y + y);
+            if (map.ContainsKey(searchPathUp))
+            {
+                if (map[searchPathUp].tileType == TileModel.TileType.Floor)
+                {
+                    for (var l = 1; l <= y; l++ )
+                    {
+                        SetTileModel(TileModel.TileType.Floor, new Vector2Int(floorList[floorIndex].floorPoint.x + floorList[floorIndex].floorSize.x, floorList[floorIndex].pathRight.y - l), floorList[floorIndex].floorId); 
+                    }
+                    break;
+                }
+            }
+            if (map.ContainsKey(searchPathDown))
+            {
+                if (map[searchPathDown].tileType == TileModel.TileType.Floor)
+                {
+                    for (var l = 1; l <= y; l++ )
+                    {
+                        SetTileModel(TileModel.TileType.Floor, new Vector2Int(floorList[floorIndex].floorPoint.x + floorList[floorIndex].floorSize.x, floorList[floorIndex].pathRight.y + l), floorList[floorIndex].floorId); 
+                    }
+                    break;
+                }
             }
         }
     }
-
-    public void GenerateTile(TileModel.TileType tileType, Vector2Int position, int floorId)
+    public void SetTileModel(TileModel.TileType tileType, Vector2Int position, int floorId)
     {        
-        var t = GetTileModel(new Vector2Int(position.x, position.y));
+        var t = GetTileModel(position);
         t.tileType = tileType;
-        t.floorId = floorId;
-        if (tileType == TileModel.TileType.Floor)
+        t.floorId = floorId;    
+    }
+    public void GenerateTileObject(Vector2Int position)
+    {
+        var t = GetTileModel(position);
+        if (t.tileType == TileModel.TileType.Floor)
         {
             GameObject original = Object.Instantiate(Resources.Load("Object/Tile")) as GameObject;            
             original.transform.Translate(position.x, 0, position.y);
-        } else if (tileType == TileModel.TileType.Wall)
+            mapListObject[position] = original;
+        } else if (t.tileType == TileModel.TileType.Wall)
         {
             GameObject original = Object.Instantiate(Resources.Load("Object/Block")) as GameObject;            
             original.transform.Translate(position.x, 0, position.y);
+            mapListObject[position] = original;
         }        
     }
 
