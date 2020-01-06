@@ -400,17 +400,61 @@ public class MapPresenter : MonoBehaviour {
     /// <summary>
     /// 移動できるかどうか
     /// </summary>
-    /// <param name="x"></param>
-    /// <param name="z"></param>
+    /// <param name="axis"></param>
     /// <param name="type"></param>
     /// <returns></returns>
-    public bool IsCanMove(int x, int z, TileModel.CharaType type)
+    public bool IsCanMove(Vector2Int axis, CharacterPresenter characterPresenter)
     {
+        Vector2Int beforePosition = new Vector2Int((int) characterPresenter.status.position.x, (int) characterPresenter.status.position.z);
+        Vector2Int afterPosition = new Vector2Int(beforePosition.x + axis.x, beforePosition.y + axis.y);
+        
         //移動先が0以上
-        if (x > 0 && z > 0)
+        if (afterPosition.x > 0 && afterPosition.y > 0)
         {            
-            var t = GetTileModel(new Vector2Int(x, z));
-            if (type == TileModel.CharaType.Player)
+            var t = GetTileModel(new Vector2Int(afterPosition.x, afterPosition.y));
+            
+            // 斜め移動の際は壁がないことを確認
+            if (axis.x != 0 && axis.y != 0)
+            {
+                if (axis.x == -1 && axis.y == -1)
+                {
+                    if (GetTileModel(beforePosition + Vector2Int.down).tileType == TileModel.TileType.Wall ||
+                        GetTileModel(beforePosition + Vector2Int.left).tileType == TileModel.TileType.Wall
+                        )
+                    {
+                        return false;
+                    }                    
+                }
+                if (axis.x == 1 && axis.y == -1)
+                {
+                    if (GetTileModel(beforePosition + Vector2Int.down).tileType == TileModel.TileType.Wall ||
+                        GetTileModel(beforePosition + Vector2Int.right).tileType == TileModel.TileType.Wall
+                    )
+                    {
+                        return false;
+                    }                    
+                }
+                if (axis.x == -1 && axis.y == 1)
+                {
+                    if (GetTileModel(beforePosition + Vector2Int.up).tileType == TileModel.TileType.Wall ||
+                        GetTileModel(beforePosition + Vector2Int.left).tileType == TileModel.TileType.Wall
+                    )
+                    {
+                        return false;
+                    }                    
+                }
+                if (axis.x == 1 && axis.y == 1)
+                {
+                    if (GetTileModel(beforePosition + Vector2Int.up).tileType == TileModel.TileType.Wall ||
+                        GetTileModel(beforePosition + Vector2Int.right).tileType == TileModel.TileType.Wall
+                    )
+                    {
+                        return false;
+                    }                    
+                }
+            }
+            
+            if (characterPresenter.status.type == TileModel.CharaType.Player)
             {
                 if (
                     (t.tileType == TileModel.TileType.Floor || t.tileType == TileModel.TileType.Stairs) && 
@@ -418,7 +462,7 @@ public class MapPresenter : MonoBehaviour {
                 {
                     return true;
                 }
-            }else if (type == TileModel.CharaType.Enemy)
+            }else if (characterPresenter.status.type == TileModel.CharaType.Enemy)
             {
                 if (t.tileType == TileModel.TileType.Floor && t.charaType == TileModel.CharaType.None)
                 {
@@ -461,9 +505,9 @@ public class MapPresenter : MonoBehaviour {
         return new Vector2Int (0, 0);
     }
     
-    public void SetUserModel(int x, int z, UserModel user)
+    public void SetUserModel(Vector2Int pos, UserModel user)
     {
-        var t = GetTileModel(new Vector2Int(x, z));
+        var t = GetTileModel(pos);
         if (user != null)
         {
             t.guid = user.guid;

@@ -31,7 +31,7 @@ public class CharacterListPresenter : MonoBehaviour {
         serialGuid++;
 
         //mapに配置
-        mapPresenter.SetUserModel(pos.x, pos.y, characterPresenter.status);
+        mapPresenter.SetUserModel(pos, characterPresenter.status);
 
         Debug.Log(characterPresenter.status.position.x + ":"+ characterPresenter.status.position.z + "," + characterPresenter.characterView.trans.position.x + ":" + characterPresenter.characterView.trans.position.z);
     }
@@ -95,29 +95,26 @@ public class CharacterListPresenter : MonoBehaviour {
                 float z = Mathf.Sign(Random.Range(-1.0f, 1.0f)) * 200;
                 int nX = (x != 0 ? (int)Mathf.Sign(x) : 0);
                 int nZ = (z != 0 ? (int)Mathf.Sign(z) : 0);
+
+                InputAxis axis = new InputAxis(nX, nZ, x, z);
                 
-                int beforePositionX = (int) characterPresenter.status.position.x;
-                int beforePositionZ = (int) characterPresenter.status.position.z;
-                int afterPositionX = beforePositionX + nX;
-                int afterPositionZ = beforePositionZ + nZ;
-                if (mapPresenter.IsCanMove(afterPositionX, afterPositionZ, TileModel.CharaType.Enemy))
+                Vector2Int beforePosition = new Vector2Int((int) characterPresenter.status.position.x, (int) characterPresenter.status.position.z);
+                Vector2Int afterPosition = new Vector2Int(beforePosition.x + axis.I.x, beforePosition.y + axis.I.y);
+                if (mapPresenter.IsCanMove(axis.I, characterPresenter))
                 {
-                    
-                    //Debug.Log(mapPresenter.map[afterPositionX, afterPositionZ].tileType);
-                    //Debug.Log(enemyPresenter.status.position.x + ":"+ enemyPresenter.status.position.z + "," + enemyPresenter.enemyView.trans.position.x + ":" + enemyPresenter.enemyView.trans.position.z);
-                    
+
                     characterPresenter.Move(x, z);
                     
                     //移動元と移動先にキャラクター情報を設定
-                    mapPresenter.SetUserModel(beforePositionX, beforePositionZ, null);
-                    mapPresenter.SetUserModel(afterPositionX, afterPositionZ, characterPresenter.status);
+                    mapPresenter.SetUserModel(beforePosition, null);
+                    mapPresenter.SetUserModel(afterPosition, characterPresenter.status);
                     
                     //StartMoveしてからSetPositionをする。
                     
                     characterPresenter.SetMapData(
-                        mapPresenter.GetTileModel(afterPositionX, afterPositionZ).floorId,
-                        new Vector3(afterPositionX, 0, afterPositionZ),
-                        new Vector3(nX, 0, nZ)
+                        mapPresenter.GetTileModel(afterPosition).floorId,
+                        new Vector3(afterPosition.x, 0, afterPosition.y),
+                        new Vector3(axis.I.x, 0, axis.I.y)
                     );
                 }else{
                     //移動先がなければ行動済みにする。
@@ -131,22 +128,22 @@ public class CharacterListPresenter : MonoBehaviour {
         }
     }
 
-    private List<Vector3> directions = new List<Vector3>
+    private List<Vector2Int> directions = new List<Vector2Int>
     {
-        new Vector3(-1, 0, -1),
-        new Vector3(-1, 0, 0),
-        new Vector3(-1, 0, 1),
-        new Vector3(0, 0, -1),
+        new Vector2Int(-1, -1),
+        new Vector2Int(-1, 0),
+        new Vector2Int(-1, 1),
+        new Vector2Int(0,  -1),
 //        new List<Vector3> {0, 0, 0},
-        new Vector3(0, 0, 1),
-        new Vector3(1, 0, -1),
-        new Vector3(1, 0, 0),
-        new Vector3(1, 0, 1)
+        new Vector2Int(0,  1),
+        new Vector2Int(1,  -1),
+        new Vector2Int(1,  0),
+        new Vector2Int(1,  1)
     };
 
     private class AStarCost
     {
-        public Vector3 position = new Vector3(0,0,0);
+        public Vector2Int position = new Vector2Int(0,0);
         public int status = 0; // 0=none,1=open,2=close
         public int cost = 0;
         public int estimateCost = 0;
@@ -154,7 +151,7 @@ public class CharacterListPresenter : MonoBehaviour {
 
     }
     
-    private Vector3 GetFirstPositionAStar(Vector3 from, Vector3 to, MapPresenter mapPresenter)
+    private Vector2Int GetFirstPositionAStar(Vector2Int from, Vector2Int to, MapPresenter mapPresenter, CharacterPresenter characterPresenter)
     {
         AStarCost nowNode = new AStarCost();       
         
@@ -167,16 +164,16 @@ public class CharacterListPresenter : MonoBehaviour {
         nowNode.estimateCost = 0;
         nowNode.score = nowNode.cost + nowNode.estimateCost;
 
-        AStarCost aStarCost = GetPositionAStar(nowNode, to, new List<AStarCost>(), new List<AStarCost>(), mapPresenter);
+        AStarCost aStarCost = GetPositionAStar(nowNode, to, new List<AStarCost>(), new List<AStarCost>(), mapPresenter, characterPresenter);
 
         return aStarCost.position;
     }
 
-    private AStarCost GetPositionAStar(AStarCost aStar, Vector3 to, List<AStarCost> routeAStarList, List<AStarCost> cacheAStarCostList, MapPresenter mapPresenter)
+    private AStarCost GetPositionAStar(AStarCost aStar, Vector2Int to, List<AStarCost> routeAStarList, List<AStarCost> cacheAStarCostList, MapPresenter mapPresenter, CharacterPresenter characterPresenter)
     {
         aStar.status = 2;
         cacheAStarCostList.Add(aStar);
-        foreach (Vector3 direction in directions)
+        foreach (Vector2Int direction in directions)
         {
             AStarCost nowNode = new AStarCost
             {
@@ -194,10 +191,10 @@ public class CharacterListPresenter : MonoBehaviour {
             var cache = cacheAStarCostList.FirstOrDefault(aster => aster.position == to);
             if (cache == null)
             {
-                if (mapPresenter.IsCanMove((int) nowNode.position.x, (int) nowNode.position.z, TileModel.CharaType.Player))
+                if (mapPresenter.IsCanMove(nowNode.position, characterPresenter))
                 {
                     routeAStarList.Add(nowNode);
-                    GetPositionAStar(nowNode, to, routeAStarList, cacheAStarCostList, mapPresenter);
+                    GetPositionAStar(nowNode, to, routeAStarList, cacheAStarCostList, mapPresenter, characterPresenter);
                 }
                 else
                 {

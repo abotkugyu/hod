@@ -157,11 +157,10 @@ public class GameMain : MonoBehaviour {
                 }
             }
 
-            int beforePositionX = (int) characterPresenter.status.position.x;
-            int beforePositionZ = (int) characterPresenter.status.position.z;
-            int afterPositionX = beforePositionX + axis.I.x;
-            int afterPositionZ = beforePositionZ + axis.I.y;
-            if (mapPresenter.IsCanMove(afterPositionX, afterPositionZ, TileModel.CharaType.Player))
+            Vector2Int beforePosition = new Vector2Int((int) characterPresenter.status.position.x, (int) characterPresenter.status.position.z);
+            Vector2Int afterPosition = new Vector2Int(beforePosition.x + axis.I.x, beforePosition.y + axis.I.y);
+            
+            if (mapPresenter.IsCanMove(axis.I, characterPresenter))
             {
                 if (!characterPresenter.isMove && characterPresenter.status.isAction == false)
                 {
@@ -170,15 +169,15 @@ public class GameMain : MonoBehaviour {
                         characterPresenter.Move(axis.F.x, axis.F.y);
                                                                                               
                         //アイテムがあれば取得
-                        if (mapPresenter.GetTileModel(afterPositionX, afterPositionZ).itemGuid != 0)
+                        if (mapPresenter.GetTileModel(afterPosition.x, afterPosition.y).itemGuid != 0)
                         {                                        
-                            ItemPresenter itemPresenter = itemsListPresenter.Find(mapPresenter.GetTileModel(afterPositionX, afterPositionZ).itemGuid);
+                            ItemPresenter itemPresenter = itemsListPresenter.Find(mapPresenter.GetTileModel(afterPosition.x, afterPosition.y).itemGuid);
 
                             if (itemPresenter != null && characterPresenter.SetItem(itemPresenter.status))
                             {
                                 itemsListPresenter.Delete(itemPresenter);
                                 
-                                mapPresenter.SetItemModel(afterPositionX, afterPositionZ, null);  
+                                mapPresenter.SetItemModel(afterPosition.x, afterPosition.y, null);  
                             }
                             else
                             {                                
@@ -187,17 +186,17 @@ public class GameMain : MonoBehaviour {
                         }
                         
                         //階段あれば移動
-                        if(mapPresenter.GetTileModel(afterPositionX, afterPositionZ)
+                        if(mapPresenter.GetTileModel(afterPosition)
                                .tileType == TileModel.TileType.Stairs)
                         {
                             mapPresenter.Regenerate();
                         }
                         
                         //移動元と移動先にキャラクター情報を設定
-                        mapPresenter.SetUserModel(beforePositionX, beforePositionZ, null);
-                        mapPresenter.SetUserModel(afterPositionX, afterPositionZ, characterPresenter.status);   
+                        mapPresenter.SetUserModel(beforePosition, null);
+                        mapPresenter.SetUserModel(afterPosition, characterPresenter.status);   
                                                            
-                        characterPresenter.SetPosition(new Vector3(afterPositionX, 0, afterPositionZ));
+                        characterPresenter.SetPosition(new Vector3(afterPosition.x, 0, afterPosition.y));
                     }
                 }
             }
