@@ -5,7 +5,7 @@ using System.Xml.Linq;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-
+using ExtensionMethods;  
 
 //100*100を50,25...と分割していき確率で部屋を作る
 public class MapPresenter : MonoBehaviour {
@@ -151,22 +151,22 @@ public class MapPresenter : MonoBehaviour {
         Vector2Int roomPoint = new Vector2Int(Random.Range(1, floorSize.x-roomSize.x-1) + floorPoint.x,Random.Range(1, floorSize.y-roomSize.y-1) + floorPoint.y);
                               
         //通路に使う座標を辺からランダムで取得
-        Vector2Int pathUp = new Vector2Int(Random.Range(roomPoint.x, roomPoint.x + roomSize.x), roomPoint.y);
+        Vector2Int pathUp = new Vector2Int(Random.Range(roomPoint.x, roomPoint.x + roomSize.x), floorPoint.y);
         if (!isPath.up)
         {
             pathUp = new Vector2Int(-1,-1);
         }
-        Vector2Int pathDown = new Vector2Int(Random.Range(roomPoint.x, roomPoint.x + roomSize.x), roomPoint.y + roomSize.y);
+        Vector2Int pathDown = new Vector2Int(Random.Range(roomPoint.x, roomPoint.x + roomSize.x), floorPoint.y + floorSize.y);
         if (!isPath.down)
         {
             pathDown = new Vector2Int(-1,-1);
         }
-        Vector2Int pathLeft = new Vector2Int(roomPoint.x,Random.Range(roomPoint.y, roomPoint.y + roomSize.y));
+        Vector2Int pathLeft = new Vector2Int(floorPoint.x,Random.Range(roomPoint.y, roomPoint.y + roomSize.y));
         if (!isPath.left)
         {
             pathLeft = new Vector2Int(-1,-1);
         }
-        Vector2Int pathRight = new Vector2Int(roomPoint.x + roomSize.x,Random.Range(roomPoint.y, roomPoint.y + roomSize.y));
+        Vector2Int pathRight = new Vector2Int(floorPoint.x + floorSize.x,Random.Range(roomPoint.y, roomPoint.y + roomSize.y));
         if (!isPath.right)
         {
             pathRight = new Vector2Int(-1,-1);
@@ -224,26 +224,15 @@ public class MapPresenter : MonoBehaviour {
         // 上下検索
         for (var x = 1 ; x < maxMapX / 2; x++)
         {
-            var searchPathLeft =  new Vector2Int(floorList[floorIndex].pathUp.x - x, floorList[floorIndex].floorPoint.y - 1);
-            var searchPathRight =  new Vector2Int(floorList[floorIndex].pathUp.x + x, floorList[floorIndex].floorPoint.y - 1);
-            if (map.ContainsKey(searchPathLeft))
+            foreach (var n in new[] {1,-1})
             {
-                if (map[searchPathLeft].tileType == TileModel.TileType.Floor)
+                var searchPath = floorList[floorIndex].pathUp.AddXY(x * n, -1);
+
+                if (map.ContainsKey(searchPath) && map[searchPath].tileType == TileModel.TileType.Floor)
                 {
-                    for (var l = 1; l <= x; l++ )
+                    for (var l = 0; l <= x; l++ )
                     {
-                        SetTileModel(TileModel.TileType.Floor, new Vector2Int(floorList[floorIndex].pathUp.x - l, floorList[floorIndex].floorPoint.y), floorList[floorIndex].floorId); 
-                    }
-                    break;
-                }
-            }
-            if (map.ContainsKey(searchPathRight))
-            {
-                if (map[searchPathRight].tileType == TileModel.TileType.Floor)
-                {
-                    for (var l = 1; l <= x; l++ )
-                    {
-                        SetTileModel(TileModel.TileType.Floor, new Vector2Int(floorList[floorIndex].pathUp.x + l, floorList[floorIndex].floorPoint.y), floorList[floorIndex].floorId); 
+                        SetTileModel(TileModel.TileType.Floor, floorList[floorIndex].pathUp.AddX(l * n), floorList[floorIndex].floorId); 
                     }
                     break;
                 }
@@ -252,26 +241,15 @@ public class MapPresenter : MonoBehaviour {
 
         for (var x = 1; x < maxMapX / 2; x++)
         {
-            var searchPathLeft =  new Vector2Int(floorList[floorIndex].pathDown.x - x, floorList[floorIndex].floorPoint.y + floorList[floorIndex].floorSize.y + 1);
-            var searchPathRight =  new Vector2Int(floorList[floorIndex].pathDown.x + x, floorList[floorIndex].floorPoint.y + floorList[floorIndex].floorSize.y + 1);
-            if (map.ContainsKey(searchPathLeft))
+            foreach (var n in new[] {1,-1})
             {
-                if (map[searchPathLeft].tileType == TileModel.TileType.Floor)
+                var searchPath = floorList[floorIndex].pathDown.AddXY(x * n, 1);
+
+                if (map.ContainsKey(searchPath) && map[searchPath].tileType == TileModel.TileType.Floor)
                 {
-                    for (var l = 1; l <= x; l++ )
+                    for (var l = 0; l <= x; l++ )
                     {
-                        SetTileModel(TileModel.TileType.Floor, new Vector2Int(floorList[floorIndex].pathDown.x - l, floorList[floorIndex].floorPoint.y + floorList[floorIndex].floorSize.y), floorList[floorIndex].floorId); 
-                    }
-                    break;
-                }
-            }
-            if (map.ContainsKey(searchPathRight))
-            {
-                if (map[searchPathRight].tileType == TileModel.TileType.Floor)
-                {
-                    for (var l = 1; l <= x; l++ )
-                    {
-                        SetTileModel(TileModel.TileType.Floor, new Vector2Int(floorList[floorIndex].pathDown.x + l, floorList[floorIndex].floorPoint.y + floorList[floorIndex].floorSize.y), floorList[floorIndex].floorId); 
+                        SetTileModel(TileModel.TileType.Floor, floorList[floorIndex].pathDown.AddX(l * n), floorList[floorIndex].floorId); 
                     }
                     break;
                 }
@@ -281,26 +259,15 @@ public class MapPresenter : MonoBehaviour {
         // 左右検索
         for (var y = 1 ; y < maxMapY / 2; y++)
         {
-            var searchPathUp =  new Vector2Int(floorList[floorIndex].floorPoint.x - 1, floorList[floorIndex].pathLeft.y - y);
-            var searchPathDown =  new Vector2Int(floorList[floorIndex].floorPoint.x - 1, floorList[floorIndex].pathLeft.y + y);
-            if (map.ContainsKey(searchPathUp))
+            foreach (var n in new[] {1,-1})
             {
-                if (map[searchPathUp].tileType == TileModel.TileType.Floor)
+                var searchPath = floorList[floorIndex].pathLeft.AddXY(-1, y * n);
+
+                if (map.ContainsKey(searchPath) && map[searchPath].tileType == TileModel.TileType.Floor)
                 {
-                    for (var l = 1; l <= y; l++ )
+                    for (var l = 0; l <= y; l++ )
                     {
-                        SetTileModel(TileModel.TileType.Floor, new Vector2Int(floorList[floorIndex].floorPoint.x, floorList[floorIndex].pathLeft.y - l), floorList[floorIndex].floorId); 
-                    }
-                    break;
-                }
-            }
-            if (map.ContainsKey(searchPathDown))
-            {
-                if (map[searchPathDown].tileType == TileModel.TileType.Floor)
-                {
-                    for (var l = 1; l <= y; l++ )
-                    {
-                        SetTileModel(TileModel.TileType.Floor, new Vector2Int(floorList[floorIndex].floorPoint.x, floorList[floorIndex].pathLeft.y + l), floorList[floorIndex].floorId); 
+                        SetTileModel(TileModel.TileType.Floor, floorList[floorIndex].pathLeft.AddY(l * n), floorList[floorIndex].floorId); 
                     }
                     break;
                 }
@@ -309,26 +276,15 @@ public class MapPresenter : MonoBehaviour {
 
         for (var y = 1 ; y < maxMapY / 2; y++)
         {
-            var searchPathUp =  new Vector2Int(floorList[floorIndex].floorPoint.x + floorList[floorIndex].floorSize.x + 1, floorList[floorIndex].pathRight.y - y);
-            var searchPathDown =  new Vector2Int(floorList[floorIndex].floorPoint.x + floorList[floorIndex].floorSize.x + 1, floorList[floorIndex].pathRight.y + y);
-            if (map.ContainsKey(searchPathUp))
+            foreach (var n in new[] {1, -1})
             {
-                if (map[searchPathUp].tileType == TileModel.TileType.Floor)
+                var searchPath = floorList[floorIndex].pathRight.AddXY(1, y * n);
+
+                if (map.ContainsKey(searchPath) && map[searchPath].tileType == TileModel.TileType.Floor)
                 {
-                    for (var l = 1; l <= y; l++ )
+                    for (var l = 0; l <= y; l++ )
                     {
-                        SetTileModel(TileModel.TileType.Floor, new Vector2Int(floorList[floorIndex].floorPoint.x + floorList[floorIndex].floorSize.x, floorList[floorIndex].pathRight.y - l), floorList[floorIndex].floorId); 
-                    }
-                    break;
-                }
-            }
-            if (map.ContainsKey(searchPathDown))
-            {
-                if (map[searchPathDown].tileType == TileModel.TileType.Floor)
-                {
-                    for (var l = 1; l <= y; l++ )
-                    {
-                        SetTileModel(TileModel.TileType.Floor, new Vector2Int(floorList[floorIndex].floorPoint.x + floorList[floorIndex].floorSize.x, floorList[floorIndex].pathRight.y + l), floorList[floorIndex].floorId); 
+                        SetTileModel(TileModel.TileType.Floor, floorList[floorIndex].pathRight.AddY(l * n), floorList[floorIndex].floorId); 
                     }
                     break;
                 }
