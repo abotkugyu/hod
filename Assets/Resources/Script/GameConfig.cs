@@ -18,4 +18,11 @@ public class GameConfig : MonoBehaviour {
         AroundMap = 6,
     }
 
+    public enum Around4Type
+    {
+        Up = 1,
+        Down = 2,
+        Left = 3,
+        Right = 4
+    }
 }

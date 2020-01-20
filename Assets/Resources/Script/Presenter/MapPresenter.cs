@@ -1,11 +1,14 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using ExtensionMethods;  
+using ExtensionMethods;
+using Object = UnityEngine.Object;
+using Random = UnityEngine.Random;
 
 //100*100を50,25...と分割していき確率で部屋を作る
 public class MapPresenter : MonoBehaviour {
@@ -62,26 +65,26 @@ public class MapPresenter : MonoBehaviour {
                 Vector2Int floorPoint = new Vector2Int(countX, countY);
                 
                 //通路を作るかどうか
-                var isPath = new IsPath();
+                var pathType = Enum.GetValues(typeof(GameConfig.Around4Type)).Cast<GameConfig.Around4Type>().ToList();
                 if (x == 0)
                 {
-                    isPath.left = false;
+                    pathType.RemoveAll(i => i == GameConfig.Around4Type.Left);
                 }
                 if (x == mapX.Count - 1)
                 {
-                    isPath.right = false;
+                    pathType.RemoveAll(i => i == GameConfig.Around4Type.Right);
                 }
                 if (y == 0)
                 {
-                    isPath.up = false;
+                    pathType.RemoveAll(i => i == GameConfig.Around4Type.Up);
                 }
                 if (y == mapY.Count - 1)
                 {
-                    isPath.down = false;
+                    pathType.RemoveAll(i => i == GameConfig.Around4Type.Down);
                 }
                 
                 //部屋作成
-                floorList[new Vector2Int(x,y)] = GenerateRoom(floorId, floorSize, floorPoint, isPath);
+                floorList[new Vector2Int(x,y)] = GenerateRoom(floorId, floorSize, floorPoint, pathType);
                 floorId++;
                 
                 //次の部屋のy軸記憶
@@ -143,34 +146,21 @@ public class MapPresenter : MonoBehaviour {
     /// <param name="floorPoint">開始縦横座標</param>
     /// <param name="floorId"></param>
     /// <returns></returns>
-    FloorModel GenerateRoom(int floorId, Vector2Int floorSize, Vector2Int floorPoint, IsPath isPath)
+    FloorModel GenerateRoom(int floorId, Vector2Int floorSize, Vector2Int floorPoint, List<GameConfig.Around4Type> pathType)
     {
         //roomの部屋の大きさ
         Vector2Int roomSize = new Vector2Int(Random.Range(5, floorSize.x-2), Random.Range(5, floorSize.y-2));
         //roomの開始xy座標
         Vector2Int roomPoint = new Vector2Int(Random.Range(1, floorSize.x-roomSize.x-1) + floorPoint.x,Random.Range(1, floorSize.y-roomSize.y-1) + floorPoint.y);
-                              
-        //通路に使う座標を辺からランダムで取得
+        
+        //通路座標
         Vector2Int pathUp = new Vector2Int(Random.Range(roomPoint.x, roomPoint.x + roomSize.x), floorPoint.y);
-        if (!isPath.up)
-        {
-            pathUp = new Vector2Int(-1,-1);
-        }
         Vector2Int pathDown = new Vector2Int(Random.Range(roomPoint.x, roomPoint.x + roomSize.x), floorPoint.y + floorSize.y);
-        if (!isPath.down)
-        {
-            pathDown = new Vector2Int(-1,-1);
-        }
         Vector2Int pathLeft = new Vector2Int(floorPoint.x,Random.Range(roomPoint.y, roomPoint.y + roomSize.y));
-        if (!isPath.left)
-        {
-            pathLeft = new Vector2Int(-1,-1);
-        }
         Vector2Int pathRight = new Vector2Int(floorPoint.x + floorSize.x,Random.Range(roomPoint.y, roomPoint.y + roomSize.y));
-        if (!isPath.right)
-        {
-            pathRight = new Vector2Int(-1,-1);
-        }
+                
+        //通路を何方向に出すかランダムで取得
+        var path = pathType.OrderBy(a => Guid.NewGuid ()).ToArray().Take(Random.Range(1, pathType.Count));
         
         for (int x = floorPoint.x; x < floorPoint.x + floorSize.x; x++)
         {
@@ -182,22 +172,22 @@ public class MapPresenter : MonoBehaviour {
                     SetTileModel(TileModel.TileType.Floor, pos, floorId);
                     popPoint.Add(pos);
                 }
-                else if (pathUp.x == x && y < roomPoint.y && isPath.up)
+                else if (pathUp.x == x && y < roomPoint.y && path.Any(i => i == GameConfig.Around4Type.Up))
                 {
                     // 上通路
                     SetTileModel(TileModel.TileType.Floor, pos, floorId);
                 }
-                else if(pathDown.x == x &&  y > roomPoint.y + roomSize.y && isPath.down)
+                else if(pathDown.x == x &&  y > roomPoint.y + roomSize.y && path.Any(i => i == GameConfig.Around4Type.Down))
                 {
                     // 下通路        
                     SetTileModel(TileModel.TileType.Floor, pos, floorId);                    
                 }
-                else if(pathLeft.y == y &&  x < roomPoint.x && isPath.left)
+                else if(pathLeft.y == y &&  x < roomPoint.x && path.Any(i => i == GameConfig.Around4Type.Left))
                 {   
                     // 左通路   
                     SetTileModel(TileModel.TileType.Floor, pos, floorId);                    
                 }
-                else if(pathRight.y == y &&  x > roomPoint.x + roomSize.x && isPath.right)
+                else if(pathRight.y == y &&  x > roomPoint.x + roomSize.x && path.Any(i => i == GameConfig.Around4Type.Right))
                 {
                     // 右通路   
                     SetTileModel(TileModel.TileType.Floor, pos, floorId);                    

@@ -1,4 +1,7 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace ExtensionMethods
@@ -19,5 +22,5 @@ namespace ExtensionMethods
         {
             return new Vector2Int(v2.x + x,v2.y + y);
         }
-    }   
+    }
 }
