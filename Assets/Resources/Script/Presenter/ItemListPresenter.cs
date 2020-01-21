@@ -34,8 +34,6 @@ public class ItemListPresenter : MonoBehaviour
         serialGuid++;
         
         mapPresenter.SetItemModel(pos.x, pos.y, itemPresenter.status);                        
-        
-        Debug.Log("position:"+pos.x+":"+pos.y);
     }
     
     public ItemPresenter Find(int guid)

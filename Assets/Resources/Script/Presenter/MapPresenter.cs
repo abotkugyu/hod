@@ -508,4 +508,13 @@ public class MapPresenter : MonoBehaviour {
     {
         return map[new Vector2Int(x,y)];
     }
+
+    public bool SearchCharaType(Vector2Int v2, TileModel.CharaType t)
+    {
+        if (map[v2].charaType == t)
+        {
+            return true;
+        }
+        return false;
+    }
 }

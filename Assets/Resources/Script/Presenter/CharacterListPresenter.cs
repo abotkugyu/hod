@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using ExtensionMethods;
 using UnityEngine;
 using UnityEngine.WSA;
 
@@ -78,32 +79,39 @@ public class CharacterListPresenter : MonoBehaviour {
             }
         }
 
-        //プレイヤーに近い順に並べて行動させるようにソートする。
+        // プレイヤーに近い順に並べて行動させるようにソートする。
         foreach (KeyValuePair<int, CharacterPresenter> enemy in plauerInSideFloorEnemy)
         {
             //GetFirstPositionAStar(enemy.Value.status.position, playerPresenter.status.position, mapPresenter);
-        }        
+        }
+
 
         foreach (KeyValuePair<int, CharacterPresenter> enemy in characterListPresenter.Where(presenter => presenter.Value.status.type == TileModel.CharaType.Enemy))
         {
             CharacterPresenter characterPresenter = enemy.Value;
+
+            // 周りにプレイヤーがいるか
+            var searchDirection = directions.Select(i => i + new Vector2Int((int) characterPresenter.status.position.x, (int) characterPresenter.status.position.z));
+            searchDirection = searchDirection.Where(i => mapPresenter.SearchCharaType(i, TileModel.CharaType.Player));
+            if (searchDirection.Any())
+            {
+                Vector2Int direction = searchDirection.First() - characterPresenter.status.position.GetVector2Int();
+                characterPresenter.SetDirection(direction.GetVector2Int());
+                characterPresenter.Attack(mapPresenter, characterListPresenter);
+            }
+            
             int actionType = characterPresenter.GetAction();
-            //とりあえず1を移動
+            // とりあえず1を移動
             if (actionType == 1)
             {
-                float x = Mathf.Sign(Random.Range(-1.0f, 1.0f)) * 200;
-                float z = Mathf.Sign(Random.Range(-1.0f, 1.0f)) * 200;
-                int nX = (x != 0 ? (int)Mathf.Sign(x) : 0);
-                int nZ = (z != 0 ? (int)Mathf.Sign(z) : 0);
-
-                InputAxis axis = new InputAxis(nX, nZ, x, z);
                 
+                InputAxis axis = InputAxis.GetRandomAxis();
+
                 Vector2Int beforePosition = new Vector2Int((int) characterPresenter.status.position.x, (int) characterPresenter.status.position.z);
                 Vector2Int afterPosition = new Vector2Int(beforePosition.x + axis.I.x, beforePosition.y + axis.I.y);
                 if (mapPresenter.IsCanMove(axis.I, characterPresenter))
                 {
-
-                    characterPresenter.Move(x, z);
+                    characterPresenter.Move(axis.F.x, axis.F.y);
                     
                     //移動元と移動先にキャラクター情報を設定
                     mapPresenter.SetUserModel(beforePosition, null);
@@ -233,6 +241,18 @@ public class CharacterListPresenter : MonoBehaviour {
         }
         Debug.Log(characterListPresenter.Count);
 	}
+	
+    public void Delete()
+    {
+        // hp0以下を削除
+        var deleteCharacterListPresenter = characterListPresenter.Where(p => p.Value.status.hp < 0).ToArray();
+        foreach (var character in deleteCharacterListPresenter)
+        {
+            int guid = character.Value.status.guid;
+            Destroy(characterListObject[guid]);
+            characterListPresenter.Remove(guid);
+        }
+    }
 		
     public CharacterPresenter GetCharacter(int guid)
     {

@@ -13,7 +13,7 @@ public class CalcAction{
         int damage = from.attack - to.defence;
         if (damage < 0)
         {
-            damage = 0;
+            damage = 1;
         }
         return damage;
     }

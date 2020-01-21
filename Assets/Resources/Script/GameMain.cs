@@ -135,12 +135,13 @@ public class GameMain : MonoBehaviour {
 
     private void DefaultAction(CharacterPresenter characterPresenter)
     {
-        InputAxis axis = GetInputAxis();
+        InputAxis axis = InputAxis.GetInputAxis();
         bool isShift = Input.GetKey(KeyCode.LeftShift);
         //攻撃
         if (Input.GetKeyDown(KeyCode.X) && characterPresenter.status.isAction == false && !characterPresenter.isMove)
         {
-            characterPresenter.Attack(mapPresenter, characterListPresenter);
+            characterPresenter.Attack(mapPresenter, characterListPresenter.characterListPresenter);
+            characterListPresenter.Delete();
             return;
         }                    
                    

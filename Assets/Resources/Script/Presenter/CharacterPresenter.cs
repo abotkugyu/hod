@@ -52,7 +52,7 @@ public class CharacterPresenter : MonoBehaviour {
     }
     
     //攻撃処理
-    public void Attack(MapPresenter m, CharacterListPresenter characterListPresenter)
+    public void Attack(MapPresenter m, Dictionary<int, CharacterPresenter> characterListPresenter)
     {
         Vector3 pos = status.position + status.direction;
         if (pos.x < 0 || pos.z < 0){
@@ -64,7 +64,7 @@ public class CharacterPresenter : MonoBehaviour {
             m.GetTileModel(vector2Int).charaType == TileModel.CharaType.Enemy)
         {
             CharacterPresenter characterPresenter = 
-                characterListPresenter.characterListPresenter
+                characterListPresenter
                     .FirstOrDefault(presenter => presenter.Key == m.GetTileModel(vector2Int).guid).Value;
             
             int damage = CalcAction.CalcAttack(status, characterPresenter.status);
@@ -74,7 +74,7 @@ public class CharacterPresenter : MonoBehaviour {
             Debug.Log("After Hp : "+ characterPresenter.status.hp);       
             if (characterPresenter.status.hp <= 0)
             {
-                characterListPresenter.Delete(characterPresenter);
+                //倒した
             }
         }
         SetIsAction(true);
