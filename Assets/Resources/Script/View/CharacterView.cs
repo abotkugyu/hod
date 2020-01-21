@@ -35,7 +35,7 @@ public class CharacterView : MonoBehaviour {
     public void Death()
     {
 	    GameObject effect = Resources.Load("Object/Effect/BigExplosion") as GameObject;
-	    effect.transform.Translate(model.transform.position);
+	    effect.transform.position = model.transform.position;
 	    var particle = effect.GetComponent<ParticleSystem>();
 	    particle.Play();
     }

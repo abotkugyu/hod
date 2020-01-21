@@ -74,7 +74,7 @@ public class CharacterPresenter : MonoBehaviour {
             Debug.Log("After Hp : "+ characterPresenter.status.hp);       
             if (characterPresenter.status.hp <= 0)
             {
-                //倒した
+                characterPresenter.Death();
             }
         }
         SetIsAction(true);

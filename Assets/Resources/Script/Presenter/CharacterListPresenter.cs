@@ -90,7 +90,8 @@ public class CharacterListPresenter : MonoBehaviour {
         {
             CharacterPresenter characterPresenter = enemy.Value;
 
-            // 周りにプレイヤーがいるか
+            // 周りにプレイヤーがいれば攻撃
+            var directions = new DirectionUtil().GetAroundDirection(100);
             var searchDirection = directions.Select(i => i + new Vector2Int((int) characterPresenter.status.position.x, (int) characterPresenter.status.position.z));
             searchDirection = searchDirection.Where(i => mapPresenter.SearchCharaType(i, TileModel.CharaType.Player));
             if (searchDirection.Any())
@@ -98,13 +99,14 @@ public class CharacterListPresenter : MonoBehaviour {
                 Vector2Int direction = searchDirection.First() - characterPresenter.status.position.GetVector2Int();
                 characterPresenter.SetDirection(direction.GetVector2Int());
                 characterPresenter.Attack(mapPresenter, characterListPresenter);
+                characterPresenter.SetIsAction(true);
+                continue;
             }
             
+            // 攻撃できなければランダムアクション
             int actionType = characterPresenter.GetAction();
-            // とりあえず1を移動
             if (actionType == 1)
-            {
-                
+            {                
                 InputAxis axis = InputAxis.GetRandomAxis();
 
                 Vector2Int beforePosition = new Vector2Int((int) characterPresenter.status.position.x, (int) characterPresenter.status.position.z);
@@ -135,8 +137,8 @@ public class CharacterListPresenter : MonoBehaviour {
             }
         }
     }
-
-    private List<Vector2Int> directions = new List<Vector2Int>
+    
+    private List<Vector2Int> _directions = new List<Vector2Int>
     {
         new Vector2Int(-1, -1),
         new Vector2Int(-1, 0),
@@ -181,7 +183,7 @@ public class CharacterListPresenter : MonoBehaviour {
     {
         aStar.status = 2;
         cacheAStarCostList.Add(aStar);
-        foreach (Vector2Int direction in directions)
+        foreach (Vector2Int direction in _directions)
         {
             AStarCost nowNode = new AStarCost
             {

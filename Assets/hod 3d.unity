@@ -221,7 +221,8 @@ PrefabInstance:
         type: 3}
       propertyPath: hudPresenter
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 3211132253558945381, guid: be4f69b82a7e44801826e3af85de64c4,
+        type: 3}
     m_RemovedComponents:
     - {fileID: 114442329095637132, guid: 4f7d638767ded4f3ca0dc942d6634895, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 4f7d638767ded4f3ca0dc942d6634895, type: 3}

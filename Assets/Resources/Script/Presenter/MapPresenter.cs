@@ -175,22 +175,22 @@ public class MapPresenter : MonoBehaviour {
                 else if (pathUp.x == x && y < roomPoint.y && path.Any(i => i == GameConfig.Around4Type.Up))
                 {
                     // 上通路
-                    SetTileModel(TileModel.TileType.Floor, pos, floorId);
+                    SetTileModel(TileModel.TileType.Path, pos, floorId);
                 }
                 else if(pathDown.x == x &&  y > roomPoint.y + roomSize.y && path.Any(i => i == GameConfig.Around4Type.Down))
                 {
                     // 下通路        
-                    SetTileModel(TileModel.TileType.Floor, pos, floorId);                    
+                    SetTileModel(TileModel.TileType.Path, pos, floorId);                    
                 }
                 else if(pathLeft.y == y &&  x < roomPoint.x && path.Any(i => i == GameConfig.Around4Type.Left))
                 {   
                     // 左通路   
-                    SetTileModel(TileModel.TileType.Floor, pos, floorId);                    
+                    SetTileModel(TileModel.TileType.Path, pos, floorId);                    
                 }
                 else if(pathRight.y == y &&  x > roomPoint.x + roomSize.x && path.Any(i => i == GameConfig.Around4Type.Right))
                 {
                     // 右通路   
-                    SetTileModel(TileModel.TileType.Floor, pos, floorId);                    
+                    SetTileModel(TileModel.TileType.Path, pos, floorId);                    
                 }
                 else
                 {
@@ -222,7 +222,7 @@ public class MapPresenter : MonoBehaviour {
                 {
                     for (var l = 0; l <= x; l++ )
                     {
-                        SetTileModel(TileModel.TileType.Floor, floorList[floorIndex].pathUp.AddX(l * n), floorList[floorIndex].floorId); 
+                        SetTileModel(TileModel.TileType.Path, floorList[floorIndex].pathUp.AddX(l * n), floorList[floorIndex].floorId); 
                     }
                     break;
                 }
@@ -239,7 +239,7 @@ public class MapPresenter : MonoBehaviour {
                 {
                     for (var l = 0; l <= x; l++ )
                     {
-                        SetTileModel(TileModel.TileType.Floor, floorList[floorIndex].pathDown.AddX(l * n), floorList[floorIndex].floorId); 
+                        SetTileModel(TileModel.TileType.Path, floorList[floorIndex].pathDown.AddX(l * n), floorList[floorIndex].floorId); 
                     }
                     break;
                 }
@@ -257,7 +257,7 @@ public class MapPresenter : MonoBehaviour {
                 {
                     for (var l = 0; l <= y; l++ )
                     {
-                        SetTileModel(TileModel.TileType.Floor, floorList[floorIndex].pathLeft.AddY(l * n), floorList[floorIndex].floorId); 
+                        SetTileModel(TileModel.TileType.Path, floorList[floorIndex].pathLeft.AddY(l * n), floorList[floorIndex].floorId); 
                     }
                     break;
                 }
@@ -274,7 +274,7 @@ public class MapPresenter : MonoBehaviour {
                 {
                     for (var l = 0; l <= y; l++ )
                     {
-                        SetTileModel(TileModel.TileType.Floor, floorList[floorIndex].pathRight.AddY(l * n), floorList[floorIndex].floorId); 
+                        SetTileModel(TileModel.TileType.Path, floorList[floorIndex].pathRight.AddY(l * n), floorList[floorIndex].floorId); 
                     }
                     break;
                 }
@@ -291,6 +291,11 @@ public class MapPresenter : MonoBehaviour {
     {
         var t = GetTileModel(position);
         if (t.tileType == TileModel.TileType.Floor)
+        {
+            GameObject original = Object.Instantiate(Resources.Load("Object/Map/Tile")) as GameObject;            
+            original.transform.Translate(position.x, 0, position.y);
+            mapListObject[position] = original;
+        } else if (t.tileType == TileModel.TileType.Path)
         {
             GameObject original = Object.Instantiate(Resources.Load("Object/Map/Tile")) as GameObject;            
             original.transform.Translate(position.x, 0, position.y);
@@ -403,14 +408,14 @@ public class MapPresenter : MonoBehaviour {
             if (characterPresenter.status.type == TileModel.CharaType.Player)
             {
                 if (
-                    (t.tileType == TileModel.TileType.Floor || t.tileType == TileModel.TileType.Stairs) && 
+                    (t.tileType == TileModel.TileType.Floor || t.tileType == TileModel.TileType.Path || t.tileType == TileModel.TileType.Stairs) && 
                     t.charaType == TileModel.CharaType.None)
                 {
                     return true;
                 }
             }else if (characterPresenter.status.type == TileModel.CharaType.Enemy)
             {
-                if (t.tileType == TileModel.TileType.Floor && t.charaType == TileModel.CharaType.None)
+                if ((t.tileType == TileModel.TileType.Floor || t.tileType == TileModel.TileType.Path) && t.charaType == TileModel.CharaType.None)
                 {
                     return true;
                 }

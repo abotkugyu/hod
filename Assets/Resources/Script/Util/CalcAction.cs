@@ -15,7 +15,7 @@ public class CalcAction{
         {
             damage = 1;
         }
-        return damage;
+        return damage*10;
     }
 
 }
