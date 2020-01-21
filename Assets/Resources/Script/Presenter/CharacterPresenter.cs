@@ -173,6 +173,12 @@ public class CharacterPresenter : MonoBehaviour {
             // 処理
         }
     }
+
+    public void Death()
+    {
+        characterView.Death();
+    }
+    
     public void CalcHp(int damage)
     {
         status.hp -= damage;

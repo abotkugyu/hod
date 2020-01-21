@@ -248,6 +248,7 @@ public class CharacterListPresenter : MonoBehaviour {
         var deleteCharacterListPresenter = characterListPresenter.Where(p => p.Value.status.hp < 0).ToArray();
         foreach (var character in deleteCharacterListPresenter)
         {
+            character.Value.Death();
             int guid = character.Value.status.guid;
             Destroy(characterListObject[guid]);
             characterListPresenter.Remove(guid);

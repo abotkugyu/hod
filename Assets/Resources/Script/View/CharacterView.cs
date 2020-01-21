@@ -32,7 +32,13 @@ public class CharacterView : MonoBehaviour {
     {
 	    GetComponent<Animator>().SetTrigger("attack");
     }
-
+    public void Death()
+    {
+	    GameObject effect = Resources.Load("Object/Effect/BigExplosion") as GameObject;
+	    effect.transform.Translate(model.transform.position);
+	    var particle = effect.GetComponent<ParticleSystem>();
+	    particle.Play();
+    }
     public void SetPosition(Vector3 position)
     {
 	    model.transform.position = position;

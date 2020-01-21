@@ -292,12 +292,12 @@ public class MapPresenter : MonoBehaviour {
         var t = GetTileModel(position);
         if (t.tileType == TileModel.TileType.Floor)
         {
-            GameObject original = Object.Instantiate(Resources.Load("Object/Tile")) as GameObject;            
+            GameObject original = Object.Instantiate(Resources.Load("Object/Map/Tile")) as GameObject;            
             original.transform.Translate(position.x, 0, position.y);
             mapListObject[position] = original;
         } else if (t.tileType == TileModel.TileType.Wall)
         {
-            GameObject original = Object.Instantiate(Resources.Load("Object/Block")) as GameObject;            
+            GameObject original = Object.Instantiate(Resources.Load("Object/Map/Block")) as GameObject;            
             original.transform.Translate(position.x, 0, position.y);
             mapListObject[position] = original;
         }        
