@@ -522,4 +522,13 @@ public class MapPresenter : MonoBehaviour {
         }
         return false;
     }
+    
+    public bool SearchTileType(Vector2Int v2, TileModel.TileType t)
+    {
+        if (map[v2].tileType == t)
+        {
+            return true;
+        }
+        return false;
+    }
 }

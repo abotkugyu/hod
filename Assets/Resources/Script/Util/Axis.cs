@@ -12,6 +12,18 @@ public struct InputAxis
         this.I = new Vector2Int(iX,iY);
         this.F = new Vector2(fX,fY);
     }
+ 
+    public InputAxis(Vector2Int v2)
+    {
+                 
+        float x = Mathf.Sign(v2.x) * 200;
+        float z = Mathf.Sign(v2.y) * 200;
+        int xA = (x != 0 ? (int)Mathf.Sign(x) : 0);
+        int zA = (z != 0 ? (int)Mathf.Sign(z) : 0);
+        
+        this.I = new Vector2Int(xA,zA);
+        this.F = new Vector2(x,z);
+    }
     
     /// <summary>
     ///   <para>X component of the vector.</para>
@@ -43,4 +55,5 @@ public struct InputAxis
         
         return new InputAxis(xA ,zA, x, z);
     }
+    
 }

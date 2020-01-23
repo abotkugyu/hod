@@ -4,7 +4,7 @@
 PlayerSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 20
-  productGUID: 00000000000000000000000000000000
+  productGUID: fb7a0287652a54e5c887910c90e6e29f
   AndroidProfiler: 0
   AndroidFilterTouchesWhenObscured: 0
   AndroidEnableSustainedPerformanceMode: 0
@@ -744,7 +744,7 @@ PlayerSettings:
   apiCompatibilityLevel: 6
   cloudProjectId: 502cd30c-f593-4520-b3fc-61329ef82ca4
   framebufferDepthMemorylessMode: 0
-  projectName: EffectsExamples
+  projectName: hod cloud 2d
   organizationId: abot_s
   cloudEnabled: 0
   enableNativePlatformBackendsForNewInputSystem: 0

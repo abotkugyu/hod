@@ -86,28 +86,36 @@ public class CharacterListPresenter : MonoBehaviour {
         }
 
 
+        var around1 = new DirectionUtil().GetAroundDirection(1);
+        var around100 = new DirectionUtil().GetAroundDirection(100);
         foreach (KeyValuePair<int, CharacterPresenter> enemy in characterListPresenter.Where(presenter => presenter.Value.status.type == TileModel.CharaType.Enemy))
         {
             CharacterPresenter characterPresenter = enemy.Value;
 
             // 周りにプレイヤーがいれば攻撃
-            var directions = new DirectionUtil().GetAroundDirection(100);
-            var searchDirection = directions.Select(i => i + new Vector2Int((int) characterPresenter.status.position.x, (int) characterPresenter.status.position.z));
-            searchDirection = searchDirection.Where(i => mapPresenter.SearchCharaType(i, TileModel.CharaType.Player));
-            if (searchDirection.Any())
+            var searchDirection1 = around1.Select(i => i + characterPresenter.status.position.GetVector2Int());
+            var hitEnemyDirection = searchDirection1.Where(i => mapPresenter.SearchCharaType(i, TileModel.CharaType.Player));
+                        
+            if (hitEnemyDirection.Any())
             {
-                Vector2Int direction = searchDirection.First() - characterPresenter.status.position.GetVector2Int();
+                Vector2Int direction = hitEnemyDirection.First() - characterPresenter.status.position.GetVector2Int();
                 characterPresenter.SetDirection(direction.GetVector2Int());
                 characterPresenter.Attack(mapPresenter, characterListPresenter);
                 characterPresenter.SetIsAction(true);
                 continue;
             }
             
+            //通路を検索
+            var hitPathDirection = around100.First(i => mapPresenter.SearchTileType(i + characterPresenter.status.position.GetVector2Int(), TileModel.TileType.Path));
+            
             // 攻撃できなければランダムアクション
             int actionType = characterPresenter.GetAction();
             if (actionType == 1)
             {                
-                InputAxis axis = InputAxis.GetRandomAxis();
+                var distance = hitPathDirection - characterPresenter.status.position.GetVector2Int();
+                var direction = new Vector2Int(System.Math.Sign(distance.x), System.Math.Sign(distance.y));                
+                
+                InputAxis axis = new InputAxis(direction);
 
                 Vector2Int beforePosition = new Vector2Int((int) characterPresenter.status.position.x, (int) characterPresenter.status.position.z);
                 Vector2Int afterPosition = new Vector2Int(beforePosition.x + axis.I.x, beforePosition.y + axis.I.y);
