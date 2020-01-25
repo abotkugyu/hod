@@ -17,6 +17,7 @@ public class CharacterListPresenter : MonoBehaviour {
         Vector2Int pos = mapPresenter.GetPopPoint();
         GameObject obj = Object.Instantiate(res, new Vector3(pos.x, 0, pos.y), Quaternion.identity) as GameObject;
         obj.layer = 9;
+        obj.transform.parent = transform;
 
         CharacterPresenter characterPresenter = obj.GetComponent<CharacterPresenter>();
         characterPresenter.Initialize(model, serialGuid);
@@ -106,16 +107,17 @@ public class CharacterListPresenter : MonoBehaviour {
             }
             
             //通路を検索
-            var hitPathDirection = around100.First(i => mapPresenter.SearchTileType(i + characterPresenter.status.position.GetVector2Int(), TileModel.TileType.Path));
+            //var hitPathDirection = around100.First(i => mapPresenter.SearchTileType(i + characterPresenter.status.position.GetVector2Int(), TileModel.TileType.Path));
             
             // 攻撃できなければランダムアクション
             int actionType = characterPresenter.GetAction();
             if (actionType == 1)
-            {                
+            {             
+                /*
                 var distance = hitPathDirection - characterPresenter.status.position.GetVector2Int();
                 var direction = new Vector2Int(System.Math.Sign(distance.x), System.Math.Sign(distance.y));                
-                
-                InputAxis axis = new InputAxis(direction);
+                */
+                InputAxis axis = InputAxis.GetRandomAxis();
 
                 Vector2Int beforePosition = new Vector2Int((int) characterPresenter.status.position.x, (int) characterPresenter.status.position.z);
                 Vector2Int afterPosition = new Vector2Int(beforePosition.x + axis.I.x, beforePosition.y + axis.I.y);

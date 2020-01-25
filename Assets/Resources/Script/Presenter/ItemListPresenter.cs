@@ -19,6 +19,7 @@ public class ItemListPresenter : MonoBehaviour
         GameObject obj = Object.Instantiate(res, new Vector3(pos.x, 0, pos.y), Quaternion.identity) as GameObject;
         obj.name = "Item;" + serialGuid;
         obj.layer = 9;
+        obj.transform.parent = transform;
         
         // item model作成
         ItemPresenter itemPresenter = obj.GetComponent<ItemPresenter>();      

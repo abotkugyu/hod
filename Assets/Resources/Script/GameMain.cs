@@ -33,7 +33,7 @@ public class GameMain : MonoBehaviour {
         mapPresenter.Generate();
                     
         //enemy生成
-        List<UserModel> enemies = EnemyData.GetRandoms(10);
+        List<UserModel> enemies = EnemyData.GetRandoms(50);
         enemies.ForEach(enemy => characterListPresenter.Generate(mapPresenter, enemy));
 
         //player生成
