@@ -22,7 +22,10 @@ public class ItemListPresenter : MonoBehaviour
         obj.transform.parent = transform;
         
         // item model作成
-        ItemPresenter itemPresenter = obj.GetComponent<ItemPresenter>();      
+        ItemPresenter itemPresenter = obj.AddComponent<ItemPresenter>();
+        itemPresenter.itemView = obj.AddComponent<ItemView>();
+        itemPresenter.itemView.model = obj;
+        
         itemPresenter.Initialize(model, serialGuid);
         itemPresenter.SetMapData(
             mapPresenter.GetTileModel(pos.x, pos.y).floorId,
