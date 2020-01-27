@@ -7,6 +7,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using ExtensionMethods;
+using UnityStandardAssets.CrossPlatformInput;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 
@@ -516,7 +517,7 @@ public class MapPresenter : MonoBehaviour {
 
     public bool SearchCharaType(Vector2Int v2, TileModel.CharaType t)
     {
-        if (map[v2].charaType == t)
+        if (ExistMap(v2) && map[v2].charaType == t)
         {
             return true;
         }
@@ -525,10 +526,20 @@ public class MapPresenter : MonoBehaviour {
     
     public bool SearchTileType(Vector2Int v2, TileModel.TileType t)
     {
-        if (map[v2].tileType == t)
+        if (ExistMap(v2) && map[v2].tileType == t)
         {
             return true;
         }
         return false;
+    }
+    
+    public bool ExistMap(Vector2Int v2)
+    {
+        if (v2.x < 0 || v2.y < 0 || v2.x >= maxMapX || v2.y >= maxMapY )
+        {
+            return false;
+        }
+        
+        return true;
     }
 }
