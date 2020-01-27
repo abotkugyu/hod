@@ -57,13 +57,15 @@ public class GameMain : MonoBehaviour {
         Vector2Int pos = mapPresenter.GetPopPoint();
         stairsListPresenter.DummyGenerate(mapPresenter, mapPresenter.CanSetObject(pos));
 
-        menuPresenter.itemMenuPresenter.Initialize(characterListPresenter.GetOwnCharacterPresenter().itemModels);
+        CharacterPresenter characterPresenter = characterListPresenter.GetOwnCharacterPresenter();
+        characterPresenter.characterView.Equip("");
+        menuPresenter.itemMenuPresenter.Initialize(characterPresenter.itemModels);
 
         //Create Hud
         GameObject res = Resources.Load("Object/Hud") as GameObject;
         GameObject obj = UnityEngine.Object.Instantiate(res, new Vector3(0, 0, 0), Quaternion.identity) as GameObject;
         hudPresenter = obj.GetComponent<HudPresenter>();
-        hudPresenter.UpdateHud(characterListPresenter.GetOwnCharacterPresenter().status);
+        hudPresenter.UpdateHud(characterPresenter.status);
 
     }
 	
@@ -105,6 +107,7 @@ public class GameMain : MonoBehaviour {
                 {
                     hudPresenter.UpdateHud(characterPresenter.status);
                     SetTurn(2);
+                    Resources.UnloadUnusedAssets();
                 }
             }
             else if (gameStatus.turn == 2)
@@ -114,6 +117,7 @@ public class GameMain : MonoBehaviour {
                 {
                     characterPresenter.status.isAction = false;
                     SetTurn(1);
+                    Resources.UnloadUnusedAssets();
                 }
             }
         }

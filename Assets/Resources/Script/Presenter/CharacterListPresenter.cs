@@ -115,7 +115,7 @@ public class CharacterListPresenter : MonoBehaviour {
             if (actionType == 1)
             {                
 //                var distance = hitPathDirection - characterPresenter.status.position.GetVector2Int();
-                var distance = GetFirstPositionAStar(characterPresenter.status.position.GetVector2Int(), hitPathDirection, mapPresenter, characterPresenter);
+                //var distance = GetFirstPositionAStar(characterPresenter.status.position.GetVector2Int(), hitPathDirection, mapPresenter, characterPresenter);
 
                 InputAxis axis = InputAxis.GetRandomAxis();
 

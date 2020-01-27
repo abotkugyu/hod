@@ -12,6 +12,10 @@ public class CharacterView : MonoBehaviour {
     public Rigidbody trans;
     [SerializeField]
     public GameObject hud;
+    [SerializeField]
+    public GameObject _arm;
+    [SerializeField]
+    public GameObject _weapon;
     
     public void Initialize()
     {
@@ -40,7 +44,25 @@ public class CharacterView : MonoBehaviour {
 	    var particle = effect.GetComponent<ParticleSystem>();
 	    particle.Play();
 	    Destroy(obj, 2);
+    }    
+    public void Equip(string modelName)
+    {
+	    // 一度持っているものを削除
+	    UnEquip();
+	    GameObject arm = Resources.Load("Object/Item/001") as GameObject;	    
+	    _weapon = Object.Instantiate(arm, _arm.transform.position, _arm.transform.rotation) as GameObject;
+	    _weapon.transform.parent = _arm.transform;
     }
+    
+    public void UnEquip()
+    {
+	    if (_weapon != null)
+	    {
+		    Destroy(_weapon);
+		    _weapon = null;
+	    }
+    }
+    
     public void SetPosition(Vector3 position)
     {
 	    model.transform.position = position;
