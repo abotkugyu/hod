@@ -34,10 +34,12 @@ public class CharacterView : MonoBehaviour {
     }
     public void Death()
     {
-	    GameObject effect = Resources.Load("Object/Effect/BigExplosion") as GameObject;
-	    effect.transform.position = model.transform.position;
+	    GameObject effect = Resources.Load("Object/Effect/Death") as GameObject;	    
+	    GameObject obj = Object.Instantiate(effect, model.transform.position, Quaternion.identity) as GameObject;
+	    obj.layer = 9;
 	    var particle = effect.GetComponent<ParticleSystem>();
 	    particle.Play();
+	    Destroy(obj, 2);
     }
     public void SetPosition(Vector3 position)
     {

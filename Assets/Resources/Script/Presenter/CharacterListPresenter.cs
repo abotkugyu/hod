@@ -17,6 +17,7 @@ public class CharacterListPresenter : MonoBehaviour {
         Vector2Int pos = mapPresenter.GetPopPoint();
         GameObject obj = Object.Instantiate(res, new Vector3(pos.x, 0, pos.y), Quaternion.identity) as GameObject;
         obj.layer = 9;
+        obj.transform.parent = transform;
 
         CharacterPresenter characterPresenter = obj.GetComponent<CharacterPresenter>();
         characterPresenter.Initialize(model, serialGuid);
@@ -107,6 +108,7 @@ public class CharacterListPresenter : MonoBehaviour {
             
             //通路を検索
             var hitPathDirection = around100.FirstOrDefault(i => mapPresenter.SearchTileType(i + characterPresenter.status.position.GetVector2Int(), TileModel.TileType.Path));
+
             
             // 攻撃できなければランダムアクション
             int actionType = characterPresenter.GetAction();
@@ -114,9 +116,8 @@ public class CharacterListPresenter : MonoBehaviour {
             {                
 //                var distance = hitPathDirection - characterPresenter.status.position.GetVector2Int();
                 var distance = GetFirstPositionAStar(characterPresenter.status.position.GetVector2Int(), hitPathDirection, mapPresenter, characterPresenter);
-                var direction = new Vector2Int(System.Math.Sign(distance.x), System.Math.Sign(distance.y));                
-                
-                InputAxis axis = new InputAxis(direction);
+
+                InputAxis axis = InputAxis.GetRandomAxis();
 
                 Vector2Int beforePosition = new Vector2Int((int) characterPresenter.status.position.x, (int) characterPresenter.status.position.z);
                 Vector2Int afterPosition = new Vector2Int(beforePosition.x + axis.I.x, beforePosition.y + axis.I.y);
@@ -163,7 +164,7 @@ public class CharacterListPresenter : MonoBehaviour {
     private class AStarCost
     {
         public Vector2Int position = new Vector2Int(0,0);
-        public int status = 0; // 0=none,1=open,2=close
+        public int status = 1; // 1=open,2=close
         public int cost = 0;
         public int estimateCost = 0;
         public int score = 0;
@@ -183,68 +184,61 @@ public class CharacterListPresenter : MonoBehaviour {
         nowNode.estimateCost = ecX > ecY ? ecX : ecY;
         nowNode.score = nowNode.cost + nowNode.estimateCost;
 
-        var cacheAStarCostList = new List<AStarCost>();
+        var cacheAStarCostList = new List<AStarCost>(){nowNode};
+        var routeAStarList = new List<AStarCost>();
         
-        var routeAStarList = GetPositionAStar(nowNode, to, new List<AStarCost>(), ref cacheAStarCostList, mapPresenter, characterPresenter);
+        GetPositionAStar(nowNode, to, routeAStarList, ref cacheAStarCostList, mapPresenter, characterPresenter);
 
         return routeAStarList.First().position;
     }
 
-    private new List<AStarCost> GetPositionAStar(AStarCost aStar, Vector2Int to,List<AStarCost> routeAStarList,ref List<AStarCost> cacheAStarCostList, MapPresenter mapPresenter, CharacterPresenter characterPresenter)
+    private new void GetPositionAStar(AStarCost aStar, Vector2Int to,List<AStarCost> routeAStarList,ref List<AStarCost> cacheAStarCostList, MapPresenter mapPresenter, CharacterPresenter characterPresenter)
     {
-        aStar.status = 2;
-        cacheAStarCostList.Add(aStar);
         List<AStarCost> aroundAStarList = new List<AStarCost>();
+        routeAStarList.Add(aStar);
         foreach (Vector2Int direction in _directions)
         {
             AStarCost nowNode = new AStarCost
             {
                 position = aStar.position + direction,
-                cost = aStar.cost + 1,
-                status = 1
+                cost = aStar.cost + 1
             };
 
             var ecX = (int) to.x - (int) nowNode.position.x;
             var ecY = (int) to.y - (int) nowNode.position.y;
 
             nowNode.estimateCost = ecX > ecY ? ecX : ecY;
-            nowNode.score = nowNode.cost + nowNode.estimateCost;
-
-            var cache = cacheAStarCostList.FirstOrDefault(aster => aster.position == nowNode.position);
-            //cacheにあれば移動先に加えない。
-            if (cache != null && !mapPresenter.IsCanMove(nowNode.position, characterPresenter))
+            nowNode.score = nowNode.cost + nowNode.estimateCost;         
+            
+            //cacheにあればOpenしない
+            if (cacheAStarCostList.FirstOrDefault(aster => aster.position == nowNode.position) != null && !mapPresenter.IsCanMove(nowNode.position, characterPresenter))
             {
                 continue;
             }
+            cacheAStarCostList.Add(nowNode);
 
             aroundAStarList.Add(nowNode);
             //目的地についたら
             if (nowNode.position == to)
             {
                 routeAStarList.Add(nowNode);
-                return routeAStarList;
             }
         }
 
-        if (aroundAStarList.Count == 0)
+        
+        if (aroundAStarList.Count < 1)
         {
-            return routeAStarList;            
+            return;
         }
+        
+        cacheAStarCostList.First(aster => aster.position == aStar.position).status = 2;
         
         var nextAroundAstar = aroundAStarList.OrderBy(astar => astar.cost + astar.estimateCost);
 
         foreach (var nextAstar in nextAroundAstar)
         {
-            
-            cacheAStarCostList.Add(nextAstar);
+            GetPositionAStar(nextAstar, to, routeAStarList, ref cacheAStarCostList, mapPresenter, characterPresenter);
         }
-        if (mapPresenter.IsCanMove(nowNode.position, characterPresenter))
-        {
-            //再起
-            return GetPositionAStar(nowNode, to,routeAStarList, ref cacheAStarCostList, mapPresenter, characterPresenter);
-        }
-
-        return routeAStarList;
     }
 
 

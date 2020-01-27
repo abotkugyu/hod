@@ -33,7 +33,7 @@ public class GameMain : MonoBehaviour {
         mapPresenter.Generate();
                     
         //enemy生成
-        List<UserModel> enemies = EnemyData.GetRandoms(10);
+        List<UserModel> enemies = EnemyData.GetRandoms(50);
         enemies.ForEach(enemy => characterListPresenter.Generate(mapPresenter, enemy));
 
         //player生成
@@ -44,7 +44,7 @@ public class GameMain : MonoBehaviour {
         gameStatus = new GameStatusModel();
         
         //item 配置
-        List<ItemModel> items = ItemData.GetRandoms(30);
+        List<ItemModel> items = ItemData.GetRandoms(50);
         items.ForEach(item => itemsListPresenter.Generate(mapPresenter, item));
         
         //階段配置
