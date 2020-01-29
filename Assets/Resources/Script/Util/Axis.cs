@@ -55,5 +55,4 @@ public struct InputAxis
         
         return new InputAxis(xA ,zA, x, z);
     }
-    
 }

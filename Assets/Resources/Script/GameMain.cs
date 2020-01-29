@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using ExtensionMethods;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -165,7 +166,7 @@ public class GameMain : MonoBehaviour {
             Vector2Int beforePosition = new Vector2Int((int) characterPresenter.status.position.x, (int) characterPresenter.status.position.z);
             Vector2Int afterPosition = new Vector2Int(beforePosition.x + axis.I.x, beforePosition.y + axis.I.y);
             
-            if (mapPresenter.IsCanMove(axis.I, characterPresenter))
+            if (mapPresenter.IsCanMove(axis.I, beforePosition, characterPresenter.status.type))
             {
                 if (!characterPresenter.isMove && characterPresenter.status.isAction == false)
                 {

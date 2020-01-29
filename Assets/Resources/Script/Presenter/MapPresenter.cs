@@ -348,16 +348,17 @@ public class MapPresenter : MonoBehaviour {
         //全部map埋まってたりしたら諦める。
         return new Vector2Int( 0, 0 );
     }
-    
+
     /// <summary>
     /// 移動できるかどうか
     /// </summary>
     /// <param name="axis"></param>
-    /// <param name="type"></param>
+    /// <param name="beforePosition"></param>
+    /// <param name="charaType"></param>
     /// <returns></returns>
-    public bool IsCanMove(Vector2Int axis, CharacterPresenter characterPresenter)
+    public bool IsCanMove(Vector2Int axis, Vector2Int beforePosition, TileModel.CharaType charaType)
     {
-        Vector2Int beforePosition = new Vector2Int((int) characterPresenter.status.position.x, (int) characterPresenter.status.position.z);
+        //Vector2Int beforePosition = new Vector2Int((int) characterPresenter.status.position.x, (int) characterPresenter.status.position.z);
         Vector2Int afterPosition = new Vector2Int(beforePosition.x + axis.x, beforePosition.y + axis.y);
         
         //移動先が0以上
@@ -406,7 +407,7 @@ public class MapPresenter : MonoBehaviour {
                 }
             }
             
-            if (characterPresenter.status.type == TileModel.CharaType.Player)
+            if (charaType == TileModel.CharaType.Player)
             {
                 if (
                     (t.tileType == TileModel.TileType.Floor || t.tileType == TileModel.TileType.Path || t.tileType == TileModel.TileType.Stairs) && 
@@ -414,7 +415,7 @@ public class MapPresenter : MonoBehaviour {
                 {
                     return true;
                 }
-            }else if (characterPresenter.status.type == TileModel.CharaType.Enemy)
+            }else if (charaType == TileModel.CharaType.Enemy)
             {
                 if ((t.tileType == TileModel.TileType.Floor || t.tileType == TileModel.TileType.Path) && t.charaType == TileModel.CharaType.None)
                 {

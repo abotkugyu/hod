@@ -115,31 +115,32 @@ public class CharacterListPresenter : MonoBehaviour {
             if (actionType == 1)
             {                
 //                var distance = hitPathDirection - characterPresenter.status.position.GetVector2Int();
-                //var distance = GetFirstPositionAStar(characterPresenter.status.position.GetVector2Int(), hitPathDirection, mapPresenter, characterPresenter);
 
-                InputAxis axis = InputAxis.GetRandomAxis();
+                var distance = GetFirstPositionAStar(characterPresenter.status.position.GetVector2Int(), hitPathDirection + characterPresenter.status.position.GetVector2Int(), mapPresenter, characterPresenter);
+
+                InputAxis axis = new InputAxis(distance - characterPresenter.status.position.GetVector2Int());
+                if (axis.I == new Vector2Int(0, 0))
+                {
+                    //移動先がなければ行動済みにする。
+                    characterPresenter.SetIsAction(true);
+                    continue;
+                }
 
                 Vector2Int beforePosition = new Vector2Int((int) characterPresenter.status.position.x, (int) characterPresenter.status.position.z);
                 Vector2Int afterPosition = new Vector2Int(beforePosition.x + axis.I.x, beforePosition.y + axis.I.y);
-                if (mapPresenter.IsCanMove(axis.I, characterPresenter))
-                {
-                    characterPresenter.Move(axis.F.x, axis.F.y);
-                    
-                    //移動元と移動先にキャラクター情報を設定
-                    mapPresenter.SetUserModel(beforePosition, null);
-                    mapPresenter.SetUserModel(afterPosition, characterPresenter.status);
-                    
-                    //StartMoveしてからSetPositionをする。
-                    
-                    characterPresenter.SetMapData(
-                        mapPresenter.GetTileModel(afterPosition).floorId,
-                        new Vector3(afterPosition.x, 0, afterPosition.y),
-                        new Vector3(axis.I.x, 0, axis.I.y)
-                    );
-                }else{
-                    //移動先がなければ行動済みにする。
-                    characterPresenter.SetIsAction(true);
-                }
+
+                characterPresenter.Move(axis.F.x, axis.F.y);
+                
+                //移動元と移動先にキャラクター情報を設定
+                mapPresenter.SetUserModel(beforePosition, null);
+                mapPresenter.SetUserModel(afterPosition, characterPresenter.status);
+                
+                characterPresenter.SetMapData(
+                    mapPresenter.GetTileModel(afterPosition).floorId,
+                    new Vector3(afterPosition.x, 0, afterPosition.y),
+                    new Vector3(axis.I.x, 0, axis.I.y)
+                );
+                
             }else
             {
                 //GetNearCharacterPosition(GameConfig.SearchType.Around8, TileModel.CharaType.Player, mapPresenter.map);
@@ -177,25 +178,25 @@ public class CharacterListPresenter : MonoBehaviour {
         
         nowNode.position = from;
         
-        var ecX = (int)to.x - (int)from.x;
-        var ecY = (int)to.y - (int)from.y;
-
         nowNode.cost = 0;
-        nowNode.estimateCost = ecX > ecY ? ecX : ecY;
+        nowNode.estimateCost = EstimateCost(nowNode.position, to);
         nowNode.score = nowNode.cost + nowNode.estimateCost;
 
         var cacheAStarCostList = new List<AStarCost>(){nowNode};
         var routeAStarList = new List<AStarCost>();
         
-        GetPositionAStar(nowNode, to, routeAStarList, ref cacheAStarCostList, mapPresenter, characterPresenter);
-
-        return routeAStarList.First().position;
+        GetPositionAStar(nowNode, to, ref routeAStarList, ref cacheAStarCostList, mapPresenter, characterPresenter);
+        if (routeAStarList.Count > 0)
+        {
+            routeAStarList.Reverse();
+            return routeAStarList.First().position;
+        }
+        return new Vector2Int(0, 0);
     }
 
-    private new void GetPositionAStar(AStarCost aStar, Vector2Int to,List<AStarCost> routeAStarList,ref List<AStarCost> cacheAStarCostList, MapPresenter mapPresenter, CharacterPresenter characterPresenter)
+    private bool GetPositionAStar(AStarCost aStar, Vector2Int to, ref List<AStarCost> routeAStarList, ref List<AStarCost> cacheAStarCostList, MapPresenter mapPresenter, CharacterPresenter characterPresenter)
     {
         List<AStarCost> aroundAStarList = new List<AStarCost>();
-        routeAStarList.Add(aStar);
         foreach (Vector2Int direction in _directions)
         {
             AStarCost nowNode = new AStarCost
@@ -204,42 +205,53 @@ public class CharacterListPresenter : MonoBehaviour {
                 cost = aStar.cost + 1
             };
 
-            var ecX = (int) to.x - (int) nowNode.position.x;
-            var ecY = (int) to.y - (int) nowNode.position.y;
-
-            nowNode.estimateCost = ecX > ecY ? ecX : ecY;
+            nowNode.estimateCost = EstimateCost(nowNode.position, to);
             nowNode.score = nowNode.cost + nowNode.estimateCost;         
             
             //cacheにあればOpenしない
-            if (cacheAStarCostList.FirstOrDefault(aster => aster.position == nowNode.position) != null && !mapPresenter.IsCanMove(nowNode.position, characterPresenter))
+            if (cacheAStarCostList.FirstOrDefault(aster => aster.position == nowNode.position) != null || !mapPresenter.IsCanMove(direction, aStar.position, characterPresenter.status.type))
             {
                 continue;
             }
             cacheAStarCostList.Add(nowNode);
-
             aroundAStarList.Add(nowNode);
             //目的地についたら
             if (nowNode.position == to)
             {
                 routeAStarList.Add(nowNode);
+                return true;
             }
         }
-
         
         if (aroundAStarList.Count < 1)
         {
-            return;
+            return false;
         }
         
-        cacheAStarCostList.First(aster => aster.position == aStar.position).status = 2;
+        cacheAStarCostList.First(_ => _.position == aStar.position).status = 2;
         
-        var nextAroundAstar = aroundAStarList.OrderBy(astar => astar.cost + astar.estimateCost);
+        var nextAroundAStar = aroundAStarList.OrderBy(a => a.cost + a.estimateCost);
 
-        foreach (var nextAstar in nextAroundAstar)
+        foreach (var nextAStar in nextAroundAStar)
         {
-            GetPositionAStar(nextAstar, to, routeAStarList, ref cacheAStarCostList, mapPresenter, characterPresenter);
+            if (GetPositionAStar(nextAStar, to, ref routeAStarList, ref cacheAStarCostList, mapPresenter,
+                characterPresenter))
+            {
+                routeAStarList.Add(nextAStar);
+                return true;
+            }
         }
+        return false;
     }
+
+    public int EstimateCost(Vector2Int from, Vector2Int to)
+    {        
+        var ecX = Mathf.Abs((int) to.x - (int) from.x);
+        var ecY = Mathf.Abs((int) to.y - (int) from.y);
+
+        return ecX > ecY ? ecX : ecY;
+    }
+    
 
 
     //敵の行動フラグをリセットする

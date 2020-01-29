@@ -11,6 +11,7 @@ public class DirectionUtil
         {
             for (var y = -1; y <= n; y++)
             {
+                if (x == 0 && y == 0) continue;
                 directions.Add(new Vector2Int(x, y));
             }
             if (x == n && n < distance)
