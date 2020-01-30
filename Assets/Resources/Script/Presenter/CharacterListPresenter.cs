@@ -107,9 +107,9 @@ public class CharacterListPresenter : MonoBehaviour {
             }
             
             //通路を検索
+            //TODO 同じフロアの通れる近くの通路を探索
             var hitPathDirection = around100.FirstOrDefault(i => mapPresenter.SearchTileType(i + characterPresenter.status.position.GetVector2Int(), TileModel.TileType.Path));
 
-            
             // 攻撃できなければランダムアクション
             int actionType = characterPresenter.GetAction();
             if (actionType == 1)
@@ -119,9 +119,17 @@ public class CharacterListPresenter : MonoBehaviour {
                 var distance = GetFirstPositionAStar(characterPresenter.status.position.GetVector2Int(), hitPathDirection + characterPresenter.status.position.GetVector2Int(), mapPresenter, characterPresenter);
 
                 InputAxis axis = new InputAxis(distance - characterPresenter.status.position.GetVector2Int());
+
                 if (axis.I == new Vector2Int(0, 0))
                 {
                     //移動先がなければ行動済みにする。
+                    characterPresenter.SetIsAction(true);
+                    continue;
+                }
+
+                if (!mapPresenter.IsCanMove(axis.I, characterPresenter.status.position.GetVector2Int(), characterPresenter.status.type))
+                {                    
+                    // TODO 移動先に邪魔なものがあれば縦か横移動をする。
                     characterPresenter.SetIsAction(true);
                     continue;
                 }
@@ -199,20 +207,21 @@ public class CharacterListPresenter : MonoBehaviour {
         List<AStarCost> aroundAStarList = new List<AStarCost>();
         foreach (Vector2Int direction in _directions)
         {
-            AStarCost nowNode = new AStarCost
-            {
-                position = aStar.position + direction,
-                cost = aStar.cost + 1
-            };
-
-            nowNode.estimateCost = EstimateCost(nowNode.position, to);
-            nowNode.score = nowNode.cost + nowNode.estimateCost;         
-            
+            var p = aStar.position + direction;
             //cacheにあればOpenしない
-            if (cacheAStarCostList.FirstOrDefault(aster => aster.position == nowNode.position) != null || !mapPresenter.IsCanMove(direction, aStar.position, characterPresenter.status.type))
+            if (cacheAStarCostList.Any(aster => aster.position == p) || !mapPresenter.IsCanMoveAStar(direction, aStar.position, characterPresenter.status.type))
             {
                 continue;
             }
+            
+            AStarCost nowNode = new AStarCost
+            {
+                position = p,
+                cost = aStar.cost + 1
+            };
+            nowNode.estimateCost = EstimateCost(nowNode.position, to);
+            nowNode.score = nowNode.cost + nowNode.estimateCost;    
+                        
             cacheAStarCostList.Add(nowNode);
             aroundAStarList.Add(nowNode);
             //目的地についたら

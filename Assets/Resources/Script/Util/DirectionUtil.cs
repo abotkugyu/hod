@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class DirectionUtil
@@ -6,19 +7,15 @@ public class DirectionUtil
     public List<Vector2Int> GetAroundDirection(int distance)
     {
         List<Vector2Int> directions = new List<Vector2Int>();
-        var n = 1;
-        for (var x = -1;x <= n; x++)
+        for (var x = -distance;x <= distance; x++)
         {
-            for (var y = -1; y <= n; y++)
+            for (var y = -distance; y <= distance; y++)
             {
                 if (x == 0 && y == 0) continue;
                 directions.Add(new Vector2Int(x, y));
             }
-            if (x == n && n < distance)
-            {
-                n++;
-            }
-        }        
-        return directions;
+        }
+
+        return directions.OrderBy(_ => Mathf.Abs(_.x) >= Mathf.Abs(_.y) ? Mathf.Abs(_.x) : Mathf.Abs(_.y)).ToList();
     }
 }

@@ -426,6 +426,74 @@ public class MapPresenter : MonoBehaviour {
 
         return false;
     }
+    
+    /// <summary>
+    /// 移動できるかどうか
+    /// </summary>
+    /// <param name="axis"></param>
+    /// <param name="beforePosition"></param>
+    /// <param name="charaType"></param>
+    /// <returns></returns>
+    public bool IsCanMoveAStar(Vector2Int axis, Vector2Int beforePosition, TileModel.CharaType charaType)
+    {
+        //Vector2Int beforePosition = new Vector2Int((int) characterPresenter.status.position.x, (int) characterPresenter.status.position.z);
+        Vector2Int afterPosition = new Vector2Int(beforePosition.x + axis.x, beforePosition.y + axis.y);
+        
+        //移動先が0以上
+        if (afterPosition.x > 0 && afterPosition.y > 0 && afterPosition.x < maxMapX && afterPosition.y < maxMapY)
+        {            
+            var t = GetTileModel(new Vector2Int(afterPosition.x, afterPosition.y));
+
+                        
+            // 斜め移動の際は壁がないことを確認
+            if (axis.x != 0 && axis.y != 0)
+            {
+                if (axis.x == -1 && axis.y == -1)
+                {
+                    if (GetTileModel(beforePosition + Vector2Int.down).tileType == TileModel.TileType.Wall ||
+                        GetTileModel(beforePosition + Vector2Int.left).tileType == TileModel.TileType.Wall
+                    )
+                    {
+                        return false;
+                    }                    
+                }
+                if (axis.x == 1 && axis.y == -1)
+                {
+                    if (GetTileModel(beforePosition + Vector2Int.down).tileType == TileModel.TileType.Wall ||
+                        GetTileModel(beforePosition + Vector2Int.right).tileType == TileModel.TileType.Wall
+                    )
+                    {
+                        return false;
+                    }                    
+                }
+                if (axis.x == -1 && axis.y == 1)
+                {
+                    if (GetTileModel(beforePosition + Vector2Int.up).tileType == TileModel.TileType.Wall ||
+                        GetTileModel(beforePosition + Vector2Int.left).tileType == TileModel.TileType.Wall
+                    )
+                    {
+                        return false;
+                    }                    
+                }
+                if (axis.x == 1 && axis.y == 1)
+                {
+                    if (GetTileModel(beforePosition + Vector2Int.up).tileType == TileModel.TileType.Wall ||
+                        GetTileModel(beforePosition + Vector2Int.right).tileType == TileModel.TileType.Wall
+                    )
+                    {
+                        return false;
+                    }                    
+                }
+            }
+            
+            if ((t.tileType == TileModel.TileType.Floor || t.tileType == TileModel.TileType.Path))
+            {
+                return true;
+            }            
+        }
+
+        return false;
+    }
 
     /// <summary>
     /// 八方向List<int>を返す
