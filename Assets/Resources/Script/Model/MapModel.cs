@@ -88,4 +88,9 @@ public class FloorModel
     public Vector2Int pathDown;
     public Vector2Int pathLeft;
     public Vector2Int pathRight;
+
+    public Vector2Int[] GetPathList()
+    {
+        return new []{pathUp, pathDown, pathLeft, pathRight};
+    }
 }

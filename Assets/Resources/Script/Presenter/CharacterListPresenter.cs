@@ -89,10 +89,11 @@ public class CharacterListPresenter : MonoBehaviour {
 
         var around1 = new DirectionUtil().GetAroundDirection(1);
         var around100 = new DirectionUtil().GetAroundDirection(100);
+
         foreach (KeyValuePair<int, CharacterPresenter> enemy in characterListPresenter.Where(presenter => presenter.Value.status.type == TileModel.CharaType.Enemy))
         {
             CharacterPresenter characterPresenter = enemy.Value;
-
+            
             // 周りにプレイヤーがいれば攻撃
             var searchDirection1 = around1.Select(i => i + characterPresenter.status.position.GetVector2Int());
             var hitEnemyDirection = searchDirection1.Where(i => mapPresenter.SearchCharaType(i, TileModel.CharaType.Player));
@@ -107,8 +108,11 @@ public class CharacterListPresenter : MonoBehaviour {
             }
             
             //通路を検索
-            //TODO 同じフロアの通れる近くの通路を探索
-            var hitPathDirection = around100.FirstOrDefault(i => mapPresenter.SearchTileType(i + characterPresenter.status.position.GetVector2Int(), TileModel.TileType.Path));
+
+            //var hitPathDirection = around100.FirstOrDefault(i => mapPresenter.SearchTileType(i + characterPresenter.status.position.GetVector2Int(), TileModel.TileType.Path));
+            
+            var floorModel = mapPresenter.GetFloorModel(characterPresenter.status.floorId).GetPathList();
+            var to = floorModel.Min(v2 => v2 - characterPresenter.status.position.GetVector2Int());
 
             // 攻撃できなければランダムアクション
             int actionType = characterPresenter.GetAction();
@@ -116,7 +120,7 @@ public class CharacterListPresenter : MonoBehaviour {
             {                
 //                var distance = hitPathDirection - characterPresenter.status.position.GetVector2Int();
 
-                var distance = GetFirstPositionAStar(characterPresenter.status.position.GetVector2Int(), hitPathDirection + characterPresenter.status.position.GetVector2Int(), mapPresenter, characterPresenter);
+                var distance = GetFirstPositionAStar(characterPresenter.status.position.GetVector2Int(), to, mapPresenter, characterPresenter);
 
                 InputAxis axis = new InputAxis(distance - characterPresenter.status.position.GetVector2Int());
 

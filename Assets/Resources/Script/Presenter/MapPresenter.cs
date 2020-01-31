@@ -611,4 +611,9 @@ public class MapPresenter : MonoBehaviour {
         
         return true;
     }
+
+    public FloorModel GetFloorModel(int floorId)
+    {
+        return floorList.First(_ => _.Value.floorId == floorId).Value;
+    }
 }
