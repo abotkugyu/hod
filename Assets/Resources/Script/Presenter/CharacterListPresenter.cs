@@ -108,12 +108,10 @@ public class CharacterListPresenter : MonoBehaviour {
             }
             
             //通路を検索
-
             //var hitPathDirection = around100.FirstOrDefault(i => mapPresenter.SearchTileType(i + characterPresenter.status.position.GetVector2Int(), TileModel.TileType.Path));
-            
             var floorModel = mapPresenter.GetFloorModel(characterPresenter.status.floorId).GetPathList();
-            var to = floorModel.Min(v2 => v2 - characterPresenter.status.position.GetVector2Int());
-
+            var to = floorModel[0];
+            
             // 攻撃できなければランダムアクション
             int actionType = characterPresenter.GetAction();
             if (actionType == 1)
