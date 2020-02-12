@@ -65,17 +65,15 @@ public class FloorModel
     }
 
     public FloorModel(int floorId, Vector2Int floorSize, Vector2Int floorPoint, Vector2Int roomSize ,Vector2Int roomPoint,
-        Vector2Int pathUp, Vector2Int pathDown, Vector2Int pathLeft,  Vector2Int pathRight)
+        PathModel outerPath, PathModel innerPath)
     {
         this.floorId = floorId;
         this.floorSize = floorSize;
         this.roomSize = roomSize;
         this.floorPoint = floorPoint;
         this.roomPoint = roomPoint;
-        this.pathUp = pathUp;
-        this.pathDown = pathDown;
-        this.pathLeft = pathLeft;
-        this.pathRight = pathRight;
+        this.outerPath = outerPath;
+        this.innerPath = innerPath;
     }
 
     public int floorId;
@@ -84,13 +82,16 @@ public class FloorModel
     public Vector2Int floorPoint;
     public Vector2Int roomPoint;
     
-    public Vector2Int pathUp;
-    public Vector2Int pathDown;
-    public Vector2Int pathLeft;
-    public Vector2Int pathRight;
+    
+    public PathModel outerPath;
+    public PathModel innerPath;
 
-    public Vector2Int[] GetPathList()
-    {
-        return new []{pathUp, pathDown, pathLeft, pathRight};
-    }
+}
+
+public class PathModel
+{
+    public Vector2Int up = Vector2Int.zero;
+    public Vector2Int down = Vector2Int.zero;
+    public Vector2Int left = Vector2Int.zero;
+    public Vector2Int right = Vector2Int.zero;
 }

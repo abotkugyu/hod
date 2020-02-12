@@ -109,19 +109,25 @@ public class CharacterListPresenter : MonoBehaviour {
             
             //通路を検索
             //var hitPathDirection = around100.FirstOrDefault(i => mapPresenter.SearchTileType(i + characterPresenter.status.position.GetVector2Int(), TileModel.TileType.Path));
-            var floorModel = mapPresenter.GetFloorModel(characterPresenter.status.floorId).GetPathList();
-            var to = floorModel[0];
-            
+            var pathModel = mapPresenter.GetFloorModel(characterPresenter.status.floorId).innerPath;
+
+            var to = pathModel.up != Vector2Int.zero ? pathModel.up : Vector2Int.zero;
+            to = pathModel.down != Vector2Int.zero ? pathModel.down : to;
+            to = pathModel.left != Vector2Int.zero ? pathModel.left : to;
+            to = pathModel.right != Vector2Int.zero ? pathModel.right : to;
+
             // 攻撃できなければランダムアクション
             int actionType = characterPresenter.GetAction();
             if (actionType == 1)
             {                
 //                var distance = hitPathDirection - characterPresenter.status.position.GetVector2Int();
-
-                var distance = GetFirstPositionAStar(characterPresenter.status.position.GetVector2Int(), to, mapPresenter, characterPresenter);
-
-                InputAxis axis = new InputAxis(distance - characterPresenter.status.position.GetVector2Int());
-
+                InputAxis axis = InputAxis.GetRandomAxis();
+                if (to != Vector2Int.zero)
+                {                 
+                    var distance = GetFirstPositionAStar(characterPresenter.status.position.GetVector2Int(), to, mapPresenter, characterPresenter);
+                    axis = new InputAxis(distance - characterPresenter.status.position.GetVector2Int());
+                }
+                
                 if (axis.I == new Vector2Int(0, 0))
                 {
                     //移動先がなければ行動済みにする。

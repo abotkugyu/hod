@@ -154,14 +154,36 @@ public class MapPresenter : MonoBehaviour {
         //roomの開始xy座標
         Vector2Int roomPoint = new Vector2Int(Random.Range(1, floorSize.x-roomSize.x-1) + floorPoint.x,Random.Range(1, floorSize.y-roomSize.y-1) + floorPoint.y);
         
-        //通路座標
-        Vector2Int pathUp = new Vector2Int(Random.Range(roomPoint.x, roomPoint.x + roomSize.x), floorPoint.y);
-        Vector2Int pathDown = new Vector2Int(Random.Range(roomPoint.x, roomPoint.x + roomSize.x), floorPoint.y + floorSize.y);
-        Vector2Int pathLeft = new Vector2Int(floorPoint.x,Random.Range(roomPoint.y, roomPoint.y + roomSize.y));
-        Vector2Int pathRight = new Vector2Int(floorPoint.x + floorSize.x,Random.Range(roomPoint.y, roomPoint.y + roomSize.y));
-                
         //通路を何方向に出すかランダムで取得
         var path = pathType.OrderBy(a => Guid.NewGuid ()).ToArray().Take(Random.Range(1, pathType.Count));
+        
+        PathModel outerPath = new PathModel();
+        PathModel innerPath = new PathModel();
+        if (path.Any(i => i == GameConfig.Around4Type.Up))
+        {
+            var x = Random.Range(roomPoint.x, roomPoint.x + roomSize.x);
+            outerPath.up = new Vector2Int(x, floorPoint.y == 0 ? 1 : floorPoint.y);
+            innerPath.up = new Vector2Int(x, roomPoint.y-1);   
+        }
+        if (path.Any(i => i == GameConfig.Around4Type.Down))
+        {
+            var x = Random.Range(roomPoint.x, roomPoint.x + roomSize.x); 
+            
+            outerPath.down = new Vector2Int(x, floorPoint.y + floorSize.y < maxMapY ? floorPoint.y + floorSize.y : maxMapY - 1);
+            innerPath.down = new Vector2Int(x, roomPoint.y+ roomSize.y + 1);   
+        }
+        if (path.Any(i => i == GameConfig.Around4Type.Left))
+        {
+            var y = Random.Range(roomPoint.y, roomPoint.y + roomSize.y); 
+            outerPath.left = new Vector2Int(floorPoint.x != 0 ? floorPoint.x : 1, y);    
+            innerPath.left = new Vector2Int(roomPoint.x - 1 , y);        
+        }
+        if (path.Any(i => i == GameConfig.Around4Type.Right))
+        {
+            var y = Random.Range(roomPoint.y, roomPoint.y + roomSize.y); 
+            outerPath.right = new Vector2Int(floorPoint.x + floorSize.x < maxMapX ? floorPoint.x + floorSize.x : maxMapX - 1, y);    
+            innerPath.right = new Vector2Int(roomPoint.x + roomSize.x + 1 , y);        
+        }
         
         for (int x = floorPoint.x; x < floorPoint.x + floorSize.x; x++)
         {
@@ -173,22 +195,22 @@ public class MapPresenter : MonoBehaviour {
                     SetTileModel(TileModel.TileType.Floor, pos, floorId);
                     popPoint.Add(pos);
                 }
-                else if (pathUp.x == x && y < roomPoint.y && path.Any(i => i == GameConfig.Around4Type.Up))
+                else if (outerPath.up != Vector2Int.zero && outerPath.up.x == x && y < roomPoint.y)
                 {
                     // 上通路
                     SetTileModel(TileModel.TileType.Path, pos, floorId);
                 }
-                else if(pathDown.x == x &&  y > roomPoint.y + roomSize.y && path.Any(i => i == GameConfig.Around4Type.Down))
+                else if(outerPath.down != Vector2Int.zero && outerPath.down.x == x &&  y > roomPoint.y + roomSize.y)
                 {
                     // 下通路        
                     SetTileModel(TileModel.TileType.Path, pos, floorId);                    
                 }
-                else if(pathLeft.y == y &&  x < roomPoint.x && path.Any(i => i == GameConfig.Around4Type.Left))
+                else if(outerPath.left != Vector2Int.zero && outerPath.left.y == y &&  x < roomPoint.x)
                 {   
                     // 左通路   
                     SetTileModel(TileModel.TileType.Path, pos, floorId);                    
                 }
-                else if(pathRight.y == y &&  x > roomPoint.x + roomSize.x && path.Any(i => i == GameConfig.Around4Type.Right))
+                else if(outerPath.right != Vector2Int.zero && outerPath.right.y == y &&  x > roomPoint.x + roomSize.x)
                 {
                     // 右通路   
                     SetTileModel(TileModel.TileType.Path, pos, floorId);                    
@@ -201,7 +223,7 @@ public class MapPresenter : MonoBehaviour {
         }
         
         return new FloorModel(floorId, floorSize, floorPoint, roomSize, roomPoint,
-            pathUp, pathDown, pathLeft, pathRight);
+            outerPath, innerPath);
     }
 
     /// <summary>
@@ -213,71 +235,92 @@ public class MapPresenter : MonoBehaviour {
     private void ConnectPath(Vector2Int floorIndex)
     {
         // 上下検索
-        for (var x = 1 ; x < maxMapX / 2; x++)
+        if (floorList[floorIndex].outerPath.up != Vector2Int.zero)
         {
-            foreach (var n in new[] {1,-1})
+            for (var x = 1; x < maxMapX / 2; x++)
             {
-                var searchPath = floorList[floorIndex].pathUp.AddXY(x * n, -1);
-
-                if (map.ContainsKey(searchPath) && map[searchPath].tileType == TileModel.TileType.Floor)
+                foreach (var n in new[] {1, -1})
                 {
-                    for (var l = 0; l <= x; l++ )
+                    var searchPath = floorList[floorIndex].outerPath.up.AddXY(x * n, -1);
+
+                    if (map.ContainsKey(searchPath) && map[searchPath].tileType == TileModel.TileType.Floor)
                     {
-                        SetTileModel(TileModel.TileType.Path, floorList[floorIndex].pathUp.AddX(l * n), floorList[floorIndex].floorId); 
+                        for (var l = 0; l <= x; l++)
+                        {
+                            SetTileModel(TileModel.TileType.Path, floorList[floorIndex].outerPath.up.AddX(l * n),
+                                floorList[floorIndex].floorId);
+                        }
+
+                        break;
                     }
-                    break;
                 }
             }
         }
 
-        for (var x = 1; x < maxMapX / 2; x++)
+        if (floorList[floorIndex].outerPath.down != Vector2Int.zero)
         {
-            foreach (var n in new[] {1,-1})
+            for (var x = 1; x < maxMapX / 2; x++)
             {
-                var searchPath = floorList[floorIndex].pathDown.AddXY(x * n, 1);
-
-                if (map.ContainsKey(searchPath) && map[searchPath].tileType == TileModel.TileType.Floor)
+                foreach (var n in new[] {1, -1})
                 {
-                    for (var l = 0; l <= x; l++ )
-                    {
-                        SetTileModel(TileModel.TileType.Path, floorList[floorIndex].pathDown.AddX(l * n), floorList[floorIndex].floorId); 
-                    }
-                    break;
-                }
-            }
-        }
-                
-        // 左右検索
-        for (var y = 1 ; y < maxMapY / 2; y++)
-        {
-            foreach (var n in new[] {1,-1})
-            {
-                var searchPath = floorList[floorIndex].pathLeft.AddXY(-1, y * n);
+                    var searchPath = floorList[floorIndex].outerPath.down.AddXY(x * n, 1);
 
-                if (map.ContainsKey(searchPath) && map[searchPath].tileType == TileModel.TileType.Floor)
-                {
-                    for (var l = 0; l <= y; l++ )
+                    if (map.ContainsKey(searchPath) && map[searchPath].tileType == TileModel.TileType.Floor)
                     {
-                        SetTileModel(TileModel.TileType.Path, floorList[floorIndex].pathLeft.AddY(l * n), floorList[floorIndex].floorId); 
+                        for (var l = 0; l <= x; l++)
+                        {
+                            SetTileModel(TileModel.TileType.Path, floorList[floorIndex].outerPath.down.AddX(l * n),
+                                floorList[floorIndex].floorId);
+                        }
+
+                        break;
                     }
-                    break;
                 }
             }
         }
 
-        for (var y = 1 ; y < maxMapY / 2; y++)
-        {
-            foreach (var n in new[] {1, -1})
-            {
-                var searchPath = floorList[floorIndex].pathRight.AddXY(1, y * n);
 
-                if (map.ContainsKey(searchPath) && map[searchPath].tileType == TileModel.TileType.Floor)
+        if (floorList[floorIndex].outerPath.left != Vector2Int.zero)
+        {
+            // 左右検索
+            for (var y = 1; y < maxMapY / 2; y++)
+            {
+                foreach (var n in new[] {1, -1})
                 {
-                    for (var l = 0; l <= y; l++ )
+                    var searchPath = floorList[floorIndex].outerPath.left.AddXY(-1, y * n);
+
+                    if (map.ContainsKey(searchPath) && map[searchPath].tileType == TileModel.TileType.Floor)
                     {
-                        SetTileModel(TileModel.TileType.Path, floorList[floorIndex].pathRight.AddY(l * n), floorList[floorIndex].floorId); 
+                        for (var l = 0; l <= y; l++)
+                        {
+                            SetTileModel(TileModel.TileType.Path, floorList[floorIndex].outerPath.left.AddY(l * n),
+                                floorList[floorIndex].floorId);
+                        }
+
+                        break;
                     }
-                    break;
+                }
+            }
+        }
+
+        if (floorList[floorIndex].outerPath.right != Vector2Int.zero)
+        {
+            for (var y = 1; y < maxMapY / 2; y++)
+            {
+                foreach (var n in new[] {1, -1})
+                {
+                    var searchPath = floorList[floorIndex].outerPath.right.AddXY(1, y * n);
+
+                    if (map.ContainsKey(searchPath) && map[searchPath].tileType == TileModel.TileType.Floor)
+                    {
+                        for (var l = 0; l <= y; l++)
+                        {
+                            SetTileModel(TileModel.TileType.Path, floorList[floorIndex].outerPath.right.AddY(l * n),
+                                floorList[floorIndex].floorId);
+                        }
+
+                        break;
+                    }
                 }
             }
         }
