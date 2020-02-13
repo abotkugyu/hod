@@ -67,9 +67,11 @@ public class CharacterListPresenter : MonoBehaviour {
         /// TODO全プレイヤーで検索する
         CharacterPresenter player = characterListPresenter.FirstOrDefault(presenter => presenter.Value.status.type == TileModel.CharaType.Player).Value;
 
+
         //プレイヤーと同じフロアにいるかで分ける
         foreach (KeyValuePair<int, CharacterPresenter> enemy in characterListPresenter.Where(presenter => presenter.Value.status.type == TileModel.CharaType.Enemy))
         {
+            enemy.Value.beforeStatus = enemy.Value.status;
             if (enemy.Value.status.floorId == player.status.floorId)
             {
                 plauerInSideFloorEnemy.Add(enemy.Key, enemy.Value);
@@ -85,7 +87,6 @@ public class CharacterListPresenter : MonoBehaviour {
         {
             //GetFirstPositionAStar(enemy.Value.status.position, playerPresenter.status.position, mapPresenter);
         }
-
 
         var around1 = new DirectionUtil().GetAroundDirection(1);
         var around100 = new DirectionUtil().GetAroundDirection(100);
@@ -122,7 +123,7 @@ public class CharacterListPresenter : MonoBehaviour {
             {                
 //                var distance = hitPathDirection - characterPresenter.status.position.GetVector2Int();
                 InputAxis axis = InputAxis.GetRandomAxis();
-                if (to != Vector2Int.zero)
+                if (to != Vector2Int.zero && to != characterPresenter.status.position.GetVector2Int())
                 {                 
                     var distance = GetFirstPositionAStar(characterPresenter.status.position.GetVector2Int(), to, mapPresenter, characterPresenter);
                     axis = new InputAxis(distance - characterPresenter.status.position.GetVector2Int());
@@ -185,7 +186,7 @@ public class CharacterListPresenter : MonoBehaviour {
         public int cost = 0;
         public int estimateCost = 0;
         public int score = 0;
-
+        public int distance = 0;
     }
     
     private Vector2Int GetFirstPositionAStar(Vector2Int from, Vector2Int to, MapPresenter mapPresenter, CharacterPresenter characterPresenter)
@@ -228,6 +229,7 @@ public class CharacterListPresenter : MonoBehaviour {
                 cost = aStar.cost + 1
             };
             nowNode.estimateCost = EstimateCost(nowNode.position, to);
+            nowNode.distance = DistanceCost(nowNode.position, to);
             nowNode.score = nowNode.cost + nowNode.estimateCost;    
                         
             cacheAStarCostList.Add(nowNode);
@@ -247,7 +249,7 @@ public class CharacterListPresenter : MonoBehaviour {
         
         cacheAStarCostList.First(_ => _.position == aStar.position).status = 2;
         
-        var nextAroundAStar = aroundAStarList.OrderBy(a => a.cost + a.estimateCost);
+        var nextAroundAStar = aroundAStarList.OrderBy(a => a.score).ThenBy(a => a.distance);
 
         foreach (var nextAStar in nextAroundAStar)
         {
@@ -269,7 +271,13 @@ public class CharacterListPresenter : MonoBehaviour {
         return ecX > ecY ? ecX : ecY;
     }
     
+    public int DistanceCost(Vector2Int from, Vector2Int to)
+    {        
+        var ecX = Mathf.Abs((int) to.x - (int) from.x);
+        var ecY = Mathf.Abs((int) to.y - (int) from.y);
 
+        return ecX + ecY;
+    }    
 
     //敵の行動フラグをリセットする
     public void TurnReset()

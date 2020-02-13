@@ -7,6 +7,7 @@ public class CharacterPresenter : MonoBehaviour {
 
     // Use this for initialization
     public UserModel status;
+    public UserModel beforeStatus;
     
     [SerializeField]
     public CharacterView characterView;
