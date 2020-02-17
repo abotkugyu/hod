@@ -12,7 +12,6 @@ public static class PlayerData{
     {
         TextAsset masterJson = Resources.Load<TextAsset>("Master/Player");
         master = JsonUtility.FromJson<JsonModel>(masterJson.ToString());
-        Debug.Log(String.Format("Load Success Player Data : {0}",master.list[0].name));
     }    
 
     public static UserModel GetRandom()

@@ -34,9 +34,7 @@ public class CharacterListPresenter : MonoBehaviour {
 
         //mapに配置
         mapPresenter.SetUserModel(pos, characterPresenter.status);
-
-        Debug.Log(characterPresenter.status.position.x + ":"+ characterPresenter.status.position.z + "," + characterPresenter.characterView.trans.position.x + ":" + characterPresenter.characterView.trans.position.z);
-    }
+   }
     
     //敵が全部動いたかどうか
     public bool IsAllAction()
@@ -93,6 +91,8 @@ public class CharacterListPresenter : MonoBehaviour {
 
         foreach (KeyValuePair<int, CharacterPresenter> enemy in characterListPresenter.Where(presenter => presenter.Value.status.type == TileModel.CharaType.Enemy))
         {
+            System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+            sw.Start();
             CharacterPresenter characterPresenter = enemy.Value;
             
             // 周りにプレイヤーがいれば攻撃
@@ -120,14 +120,16 @@ public class CharacterListPresenter : MonoBehaviour {
             // 攻撃できなければランダムアクション
             int actionType = characterPresenter.GetAction();
             if (actionType == 1)
-            {                
+            {
 //                var distance = hitPathDirection - characterPresenter.status.position.GetVector2Int();
                 InputAxis axis = InputAxis.GetRandomAxis();
                 if (to != Vector2Int.zero && to != characterPresenter.status.position.GetVector2Int())
-                {                 
+                {
                     var distance = GetFirstPositionAStar(characterPresenter.status.position.GetVector2Int(), to, mapPresenter, characterPresenter);
                     axis = new InputAxis(distance - characterPresenter.status.position.GetVector2Int());
                 }
+                sw.Stop();
+                Debug.Log(characterPresenter.status.guid+",from:"+characterPresenter.status.position.GetVector2Int()+",to:"+to+",time:"+sw.ElapsedMilliseconds);
                 
                 if (axis.I == new Vector2Int(0, 0))
                 {
