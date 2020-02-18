@@ -6,7 +6,7 @@ using UnityEngine;
 public class ItemMenuView : MonoBehaviour {
 	
 	[SerializeField]
-	public GameObject itemWindow;
+	public GameObject view;
 		
 	public GameObject cursor;
 	private int itemCellWidth = 100;
@@ -15,23 +15,23 @@ public class ItemMenuView : MonoBehaviour {
 	[SerializeField]
 	public List<GameObject> itemCellViewList;
 
-	private void initialize()
+	private void Initialize()
 	{	
 	}
 	
-	public void show ()
+	public void Show ()
 	{
-		itemWindow.SetActive(true);
+		view.SetActive(true);
 	}
 
-	public void hide ()
+	public void Hide ()
 	{
-		itemWindow.SetActive(false);
+		view.SetActive(false);
 	}
 
-	public bool is_visible()
+	public bool IsVisible()
 	{
-		return itemWindow.active;
+		return view.active;
 	}
 
 	public void Refresh(List<ItemModel> itemModels)
@@ -39,10 +39,10 @@ public class ItemMenuView : MonoBehaviour {
 		Destroy(cursor);
 		itemCellViewList.ForEach(Destroy);
 		itemCellViewList.Clear();
-		GameObject res1 = Resources.Load("Object/ItemWindow/ItemCell") as GameObject;
+		GameObject res1 = Resources.Load("Object/Window/_ItemMenu/ItemCell") as GameObject;
 		for (int i = 0; i < itemModels.Count; i++)
 		{
-			GameObject itemCell = Instantiate (res1, itemWindow.transform, true);
+			GameObject itemCell = Instantiate (res1, view.transform, true);
 			itemCell.transform.localPosition = GetItemCellPosition(i);
 			itemCellViewList.Add(itemCell);
 			
@@ -51,8 +51,8 @@ public class ItemMenuView : MonoBehaviour {
 		}
 		
 		// cursor
-		GameObject res2 = Resources.Load("Object/ItemWindow/Cursol") as GameObject;		
-		cursor = Instantiate (res2, itemWindow.transform, true);
+		GameObject res2 = Resources.Load("Object/Window/_ItemMenu/Cursor") as GameObject;		
+		cursor = Instantiate (res2, view.transform, true);
 		cursor.transform.localPosition = GetCursorPosition(0);	
 	}
 

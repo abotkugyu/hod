@@ -19,11 +19,11 @@ public class ItemMenuPresenter : MonoBehaviour {
 		{
 			selectedId = 1;
 			Refresh();
-			itemMenuView.show();
+			itemMenuView.Show();
 		}
 		else
 		{
-			itemMenuView.hide();
+			itemMenuView.Hide();
 		}
 	}
 
@@ -34,7 +34,7 @@ public class ItemMenuPresenter : MonoBehaviour {
     
 	public bool GetIsShowItemMenu()
 	{
-		return itemMenuView.is_visible();
+		return itemMenuView.IsVisible();
 	}
 
 	public ItemModel GetSelectedItemModel()

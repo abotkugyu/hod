@@ -5,6 +5,7 @@ using UnityEngine;
 public class MenuPresenter : MonoBehaviour {
 
     public ItemMenuPresenter itemMenuPresenter;
+    public ActionLogPresenter actionLogPresenter;
     
     public void Initialize()
     {
