@@ -72,7 +72,9 @@ public class CharacterPresenter : MonoBehaviour {
             
             Debug.Log("Attack Damage : "+ damage);            
             characterPresenter.CalcHp(damage);
-            Debug.Log("After Hp : "+ characterPresenter.status.hp);       
+            Debug.Log("After Hp : "+ characterPresenter.status.hp);
+            
+            ActionLogModel.Instance.AddLog(LogType.AttackLog, new string[]{status.name, characterPresenter.status.name, damage.ToString()});
             if (characterPresenter.status.hp <= 0)
             {
                 characterPresenter.Death();

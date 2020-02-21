@@ -9,6 +9,7 @@ public class UserModel
     public UserModel(UserModel model)
     {
         id = model.id;
+        name = model.name;
         maxHp = model.hp;
         maxMp = model.mp;
         maxEp = model.ep;

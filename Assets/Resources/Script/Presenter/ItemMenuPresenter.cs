@@ -13,7 +13,7 @@ public class ItemMenuPresenter : MonoBehaviour {
 		itemsModels = models;
 	}
 	
-	public void ShowItemMenu(bool isOpen)
+	public void ShowView(bool isOpen)
 	{
 		if (isOpen)
 		{

@@ -12,7 +12,7 @@ public class ActionLogView : MonoBehaviour
     public GameObject view;		
     public Text text;
 
-    private void Initialize()
+    private ActionLogView()
     {	
     }
 	
@@ -33,7 +33,8 @@ public class ActionLogView : MonoBehaviour
 
     public void Refresh(List<String> logs)
     {
-        logs.Reverse();
-        text.text = string.Join("\n", logs);
+        lock(logs){
+            text.text = string.Join("\n", logs.ToArray().Reverse());
+        }
     }
 }

@@ -74,9 +74,9 @@ MonoBehaviour:
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
-    m_VerticalOverflow: 0
+    m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u3042\u3042\u3042\u3042\u3042"
+  m_Text: 
 --- !u!1 &1272889810187064368
 GameObject:
   m_ObjectHideFlags: 0
@@ -163,6 +163,7 @@ GameObject:
   - component: {fileID: 1348554891541698046}
   - component: {fileID: 1168679603824344182}
   - component: {fileID: 1169137514858055500}
+  - component: {fileID: 8225230790670330778}
   m_Layer: 5
   m_Name: ActionLog
   m_TagString: Untagged
@@ -250,3 +251,17 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &8225230790670330778
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1273092218667358946}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 97466bd7f380c44d98706f1973052317, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  view: {fileID: 1272889810187064368}
+  text: {fileID: 573340443346200838}

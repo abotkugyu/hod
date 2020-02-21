@@ -7,17 +7,19 @@ public class ActionLogPresenter : MonoBehaviour
 {
 	
     public ActionLogView actionLogView;
-    private List<String> logs;
-	
-    public void Initialize()
-    {
+
+    private void Start()
+    {        
+        if (GetIsShow())
+        {
+            Refresh();
+        }
     }
-	
-    public void ShowItemMenu(bool isOpen)
+
+    public void ShowView(bool isOpen)
     {
         if (isOpen)
         {
-            Refresh();
             actionLogView.Show();
         }
         else
@@ -25,16 +27,13 @@ public class ActionLogPresenter : MonoBehaviour
             actionLogView.Hide();
         }
     }
-
     public void Refresh()
     {
-        actionLogView.Refresh(logs);
+        actionLogView.Refresh(ActionLogModel.Instance.logs);
     }
     
     public bool GetIsShow()
     {
         return actionLogView.IsVisible();
     }
-
-
 }

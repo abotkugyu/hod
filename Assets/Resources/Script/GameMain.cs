@@ -67,7 +67,7 @@ public class GameMain : MonoBehaviour {
         GameObject obj = UnityEngine.Object.Instantiate(res, new Vector3(0, 0, 0), Quaternion.identity) as GameObject;
         hudPresenter = obj.GetComponent<HudPresenter>();
         hudPresenter.UpdateHud(characterPresenter.status);
-
+        
     }
 	
     public int phase = 2;
@@ -85,7 +85,12 @@ public class GameMain : MonoBehaviour {
             {
                 if (Input.GetKeyDown(KeyCode.I))
                 {
-                    menuPresenter.itemMenuPresenter.ShowItemMenu(!menuPresenter.itemMenuPresenter.GetIsShowItemMenu());
+                    menuPresenter.itemMenuPresenter.ShowView(!menuPresenter.itemMenuPresenter.GetIsShowItemMenu());
+                }
+                
+                if (Input.GetKeyDown(KeyCode.N))
+                {
+                    menuPresenter.actionLogPresenter.ShowView(!menuPresenter.actionLogPresenter.GetIsShow());
                 }
                 
                 if (Input.GetKeyDown(KeyCode.L))
@@ -236,7 +241,7 @@ public class GameMain : MonoBehaviour {
                     itemsListPresenter.Delete(itemPresenter);
                 }
 
-                menuPresenter.itemMenuPresenter.ShowItemMenu(false);
+                menuPresenter.itemMenuPresenter.ShowView(false);
             }
         }        
     }
