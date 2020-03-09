@@ -4,18 +4,19 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
+using Object = UnityEngine.Object;
 
 public class ActionLogView : MonoBehaviour
 {
-	
     [SerializeField]
     public GameObject view;		
     public Text text;
 
-    private ActionLogView()
-    {	
+
+    public void Initialize()
+    {
     }
-	
+
     public void Show ()
     {
         view.SetActive(true);
@@ -28,13 +29,11 @@ public class ActionLogView : MonoBehaviour
 
     public bool IsVisible()
     {
-        return view.active;
+        return text.IsActive();
     }
 
     public void Refresh(List<String> logs)
     {
-        lock(logs){
-            text.text = string.Join("\n", logs.ToArray().Reverse());
-        }
+        text.text = string.Join("\n", logs.ToArray().Reverse());  
     }
 }

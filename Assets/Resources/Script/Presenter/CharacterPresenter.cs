@@ -14,7 +14,10 @@ public class CharacterPresenter : MonoBehaviour {
     public float speed = 4.0f;
     public bool isMove = false;
     public Vector3 targetPosition;        
+    
     public List<ItemModel> itemModels;
+    public Vector2Int[] nextDestinationCache = new Vector2Int[]{};
+    public int cantMoveStack = 0;
    
     void Update () {
         if (status.isOwn)
@@ -74,7 +77,7 @@ public class CharacterPresenter : MonoBehaviour {
             characterPresenter.CalcHp(damage);
             Debug.Log("After Hp : "+ characterPresenter.status.hp);
             
-            ActionLogModel.Instance.AddLog(LogType.AttackLog, new string[]{status.name, characterPresenter.status.name, damage.ToString()});
+            ActionLogPresenter.Instance.AddLog(LogType.Attack, new string[]{status.name, characterPresenter.status.name, damage.ToString()});
             if (characterPresenter.status.hp <= 0)
             {
                 characterPresenter.Death();

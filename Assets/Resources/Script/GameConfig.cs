@@ -26,3 +26,8 @@ public class GameConfig : MonoBehaviour {
         Right = 4
     }
 }
+
+public enum LogType
+{
+    Attack = 0
+}

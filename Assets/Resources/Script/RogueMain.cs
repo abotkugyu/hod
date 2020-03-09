@@ -6,7 +6,7 @@ using ExtensionMethods;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-public class GameMain : MonoBehaviour {
+public class RogueMain : MonoBehaviour {
 
     public GameStatusModel gameStatus;
     
@@ -25,7 +25,9 @@ public class GameMain : MonoBehaviour {
     [SerializeField]    
     public MenuPresenter menuPresenter;
 
-	void Start () {
+	void Start ()
+    {
+        ActionLogPresenter.CreateInstance();
         ItemData.Load();
         EnemyData.Load();
         PlayerData.Load();
@@ -34,13 +36,21 @@ public class GameMain : MonoBehaviour {
         mapPresenter.Generate();
                     
         //enemy生成
-        List<UserModel> enemies = EnemyData.GetRandoms(50);
-        enemies.ForEach(enemy => characterListPresenter.Generate(mapPresenter, enemy));
+        List<UserModel> enemies = EnemyData.GetRandoms(1);
+        enemies.ForEach(enemy =>
+        {
+            Vector2Int _pos = mapPresenter.GetPopPoint();            
+            UserModel _model = characterListPresenter.Generate(_pos, mapPresenter.GetTileModel(_pos.x, _pos.y).floorId, enemy);
+            mapPresenter.SetUserModel(_pos, _model);
+        });
 
         //player生成
         UserModel player = PlayerData.GetRandom();
         player.isOwn = true;
-        characterListPresenter.Generate(mapPresenter, player);
+        
+        Vector2Int position = mapPresenter.GetPopPoint(); 
+        UserModel model = characterListPresenter.Generate(position, mapPresenter.GetTileModel(position.x, position.y).floorId, player);
+        mapPresenter.SetUserModel(position, model);
                 
         gameStatus = new GameStatusModel();
         
@@ -90,7 +100,7 @@ public class GameMain : MonoBehaviour {
                 
                 if (Input.GetKeyDown(KeyCode.N))
                 {
-                    menuPresenter.actionLogPresenter.ShowView(!menuPresenter.actionLogPresenter.GetIsShow());
+                    ActionLogPresenter.Instance.ShowView();
                 }
                 
                 if (Input.GetKeyDown(KeyCode.L))

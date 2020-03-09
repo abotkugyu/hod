@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 [System.Serializable]
@@ -94,4 +96,19 @@ public class PathModel
     public Vector2Int down = Vector2Int.zero;
     public Vector2Int left = Vector2Int.zero;
     public Vector2Int right = Vector2Int.zero;
+
+    public Vector2Int GetRandom()
+    {
+        var to = new List<Vector2Int>();
+        if (this.up != Vector2Int.zero) to.Add(this.up);
+        if (this.down != Vector2Int.zero) to.Add(this.down);
+        if (this.left != Vector2Int.zero) to.Add(this.left);
+        if (this.right != Vector2Int.zero) to.Add(this.right);
+        if (to.Count > 0)
+        {
+            return to.OrderBy(i => Guid.NewGuid()).First();
+        }
+
+        return Vector2Int.zero;
+    }
 }

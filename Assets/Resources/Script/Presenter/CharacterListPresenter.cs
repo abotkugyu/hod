@@ -11,10 +11,9 @@ public class CharacterListPresenter : MonoBehaviour {
     public Dictionary<int, CharacterPresenter> characterListPresenter = new Dictionary<int, CharacterPresenter>();
     public int serialGuid = 1;
 
-    public void Generate(MapPresenter mapPresenter, UserModel model)
+    public UserModel Generate(Vector2Int pos, int floorId, UserModel model)
     {        
         GameObject res = Resources.Load("Object/"+model.modelName.Replace('_','/')) as GameObject;
-        Vector2Int pos = mapPresenter.GetPopPoint();
         GameObject obj = Object.Instantiate(res, new Vector3(pos.x, 0, pos.y), Quaternion.identity) as GameObject;
         obj.layer = 9;
         obj.transform.parent = transform;
@@ -23,7 +22,7 @@ public class CharacterListPresenter : MonoBehaviour {
         characterPresenter.Initialize(model, serialGuid);
 
         characterPresenter.SetMapData(
-            mapPresenter.GetTileModel(pos.x, pos.y).floorId,
+            floorId,
             new Vector3(pos.x, 0, pos.y),
             new Vector3(0, 0, -1)
             );
@@ -31,10 +30,8 @@ public class CharacterListPresenter : MonoBehaviour {
         characterListPresenter[serialGuid] = characterPresenter;
         characterListObject[serialGuid] = obj;
         serialGuid++;
-
-        //mapに配置
-        mapPresenter.SetUserModel(pos, characterPresenter.status);
-   }
+        return characterPresenter.status;
+    }
     
     //敵が全部動いたかどうか
     public bool IsAllAction()
@@ -125,8 +122,12 @@ public class CharacterListPresenter : MonoBehaviour {
                 InputAxis axis = InputAxis.GetRandomAxis();
                 if (to != Vector2Int.zero && to != characterPresenter.status.position.GetVector2Int())
                 {
-                    var distance = GetFirstPositionAStar(characterPresenter.status.position.GetVector2Int(), to, mapPresenter, characterPresenter);
-                    axis = new InputAxis(distance - characterPresenter.status.position.GetVector2Int());
+                    var wayList = GetDestinationWayList(characterPresenter.status.position.GetVector2Int(), to, mapPresenter, characterPresenter);
+                    if (wayList.Length > 0)
+                    {
+                        axis = new InputAxis(wayList.First() - characterPresenter.status.position.GetVector2Int());
+                        characterPresenter.nextDestinationCache = wayList;
+                    }
                 }
                 sw.Stop();
                 Debug.Log(characterPresenter.status.guid+",from:"+characterPresenter.status.position.GetVector2Int()+",to:"+to+",time:"+sw.ElapsedMilliseconds);
@@ -191,7 +192,7 @@ public class CharacterListPresenter : MonoBehaviour {
         public int distance = 0;
     }
     
-    private Vector2Int GetFirstPositionAStar(Vector2Int from, Vector2Int to, MapPresenter mapPresenter, CharacterPresenter characterPresenter)
+    private Vector2Int[] GetDestinationWayList(Vector2Int from, Vector2Int to, MapPresenter mapPresenter, CharacterPresenter characterPresenter)
     {
         AStarCost nowNode = new AStarCost();       
         
@@ -208,9 +209,9 @@ public class CharacterListPresenter : MonoBehaviour {
         if (routeAStarList.Count > 0)
         {
             routeAStarList.Reverse();
-            return routeAStarList.First().position;
+            return routeAStarList.Select(_ => _.position).ToArray();
         }
-        return new Vector2Int(0, 0);
+        return new Vector2Int[] { };
     }
 
     private bool GetPositionAStar(AStarCost aStar, Vector2Int to, ref List<AStarCost> routeAStarList, ref List<AStarCost> cacheAStarCostList, MapPresenter mapPresenter, CharacterPresenter characterPresenter)
