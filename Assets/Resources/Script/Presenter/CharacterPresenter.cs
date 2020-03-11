@@ -16,7 +16,8 @@ public class CharacterPresenter : MonoBehaviour {
     public Vector3 targetPosition;        
     
     public List<ItemModel> itemModels;
-    public Vector2Int[] nextDestinationCache = new Vector2Int[]{};
+    public List<Vector2Int> cacheNextDestination;
+    public List<Vector2Int> cacheBerofePosition;
     public int cantMoveStack = 0;
    
     void Update () {
@@ -77,6 +78,7 @@ public class CharacterPresenter : MonoBehaviour {
             characterPresenter.CalcHp(damage);
             Debug.Log("After Hp : "+ characterPresenter.status.hp);
             
+            ActionLogPresenter.Instance.ShowView();
             ActionLogPresenter.Instance.AddLog(LogType.Attack, new string[]{status.name, characterPresenter.status.name, damage.ToString()});
             if (characterPresenter.status.hp <= 0)
             {

@@ -27,7 +27,7 @@ public class ActionLogPresenter : GameSingleton<ActionLogPresenter>
         }
         Refresh();
     }
-    public void ShowView()
+    public void SwitchShowView()
     {        
         if (!actionLogView.view.activeSelf)
         {
@@ -37,6 +37,11 @@ public class ActionLogPresenter : GameSingleton<ActionLogPresenter>
         {
             actionLogView.Hide();
         }
+    }
+    
+    public void ShowView()
+    {
+        actionLogView.Show();
     }
     public void Refresh()
     {

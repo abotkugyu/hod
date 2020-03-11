@@ -36,7 +36,7 @@ public class RogueMain : MonoBehaviour {
         mapPresenter.Generate();
                     
         //enemy生成
-        List<UserModel> enemies = EnemyData.GetRandoms(1);
+        List<UserModel> enemies = EnemyData.GetRandoms(50);
         enemies.ForEach(enemy =>
         {
             Vector2Int _pos = mapPresenter.GetPopPoint();            
@@ -100,7 +100,7 @@ public class RogueMain : MonoBehaviour {
                 
                 if (Input.GetKeyDown(KeyCode.N))
                 {
-                    ActionLogPresenter.Instance.ShowView();
+                    ActionLogPresenter.Instance.SwitchShowView();
                 }
                 
                 if (Input.GetKeyDown(KeyCode.L))
@@ -157,6 +157,7 @@ public class RogueMain : MonoBehaviour {
     {
         InputAxis axis = InputAxis.GetInputAxis();
         bool isShift = Input.GetKey(KeyCode.LeftShift);
+        bool isZ = Input.GetKey(KeyCode.Z);
         //攻撃
         if (Input.GetKeyDown(KeyCode.X) && characterPresenter.status.isAction == false && !characterPresenter.isMove)
         {
@@ -166,7 +167,11 @@ public class RogueMain : MonoBehaviour {
         }                    
                    
         if (axis.F.x != 0 || axis.F.y != 0)
-        {        
+        {
+            if (isZ && (axis.F.x == 0 || axis.F.y == 0))
+            {
+                return;
+            }
             // 向き変更
             if (!characterPresenter.isMove)
             {

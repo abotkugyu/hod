@@ -88,8 +88,6 @@ public class CharacterListPresenter : MonoBehaviour {
 
         foreach (KeyValuePair<int, CharacterPresenter> enemy in characterListPresenter.Where(presenter => presenter.Value.status.type == TileModel.CharaType.Enemy))
         {
-            System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
-            sw.Start();
             CharacterPresenter characterPresenter = enemy.Value;
             
             // 周りにプレイヤーがいれば攻撃
@@ -105,32 +103,40 @@ public class CharacterListPresenter : MonoBehaviour {
                 continue;
             }
             
-            //通路を検索
-            //var hitPathDirection = around100.FirstOrDefault(i => mapPresenter.SearchTileType(i + characterPresenter.status.position.GetVector2Int(), TileModel.TileType.Path));
-            var pathModel = mapPresenter.GetFloorModel(characterPresenter.status.floorId).innerPath;
-
-            var to = pathModel.up != Vector2Int.zero ? pathModel.up : Vector2Int.zero;
-            to = pathModel.down != Vector2Int.zero ? pathModel.down : to;
-            to = pathModel.left != Vector2Int.zero ? pathModel.left : to;
-            to = pathModel.right != Vector2Int.zero ? pathModel.right : to;
-
             // 攻撃できなければランダムアクション
             int actionType = characterPresenter.GetAction();
             if (actionType == 1)
             {
-//                var distance = hitPathDirection - characterPresenter.status.position.GetVector2Int();
+
                 InputAxis axis = InputAxis.GetRandomAxis();
-                if (to != Vector2Int.zero && to != characterPresenter.status.position.GetVector2Int())
+                //キャッシュに残るもので移動できるか、移動できなければ再計算
+                if (characterPresenter.cacheNextDestination.Count > 0 && mapPresenter.IsCanMove(characterPresenter.cacheNextDestination.First() - characterPresenter.status.position.GetVector2Int(),
+                    characterPresenter.status.position.GetVector2Int(), characterPresenter.status.type))
                 {
-                    var wayList = GetDestinationWayList(characterPresenter.status.position.GetVector2Int(), to, mapPresenter, characterPresenter);
-                    if (wayList.Length > 0)
-                    {
-                        axis = new InputAxis(wayList.First() - characterPresenter.status.position.GetVector2Int());
-                        characterPresenter.nextDestinationCache = wayList;
-                    }
+                     axis = new InputAxis(characterPresenter.cacheNextDestination.First() -
+                                                    characterPresenter.status.position.GetVector2Int());
+                     characterPresenter.cacheNextDestination.RemoveAt(0);
                 }
-                sw.Stop();
-                Debug.Log(characterPresenter.status.guid+",from:"+characterPresenter.status.position.GetVector2Int()+",to:"+to+",time:"+sw.ElapsedMilliseconds);
+                else
+                {
+                    System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+                    sw.Start();
+                    //通路を検索
+                    var to = mapPresenter.GetFloorModel(characterPresenter.status.floorId).innerPath.GetRandom();
+                    if (to != Vector2Int.zero && to != characterPresenter.status.position.GetVector2Int())
+                    {
+                        var wayList = GetDestinationWayList(characterPresenter.status.position.GetVector2Int(), to,
+                            mapPresenter, characterPresenter);
+                        if (wayList.Length > 0)
+                        {
+                            axis = new InputAxis(wayList.First() - characterPresenter.status.position.GetVector2Int());
+                            characterPresenter.cacheNextDestination = wayList.ToList();
+                        }
+                    }
+                    sw.Stop();
+                    Debug.Log(characterPresenter.status.guid+",from:"+characterPresenter.status.position.GetVector2Int()+",to:"+to+",time:"+sw.ElapsedMilliseconds);
+                }
+
                 
                 if (axis.I == new Vector2Int(0, 0))
                 {
